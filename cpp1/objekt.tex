@@ -1,0 +1,457 @@
+\hkapitola{Vytváření objektů}
+
+\begin{frame}[fragile]
+\begin{block}{Vytváření objektů}
+\begin{itemize}
+\item Staticky alokované objekty (\uv{statické objekty})
+\begin{itemize}
+\item na stacku (lokální proměnné, parametry funkcí)
+\item globální prostor
+\item statické atributy tříd
+
+\end{itemize}
+\item Dynamicky alokované objekty
+\begin{itemize}
+\item new, delete
+\end{itemize}
+
+\end{itemize}
+\end{block}
+\end{frame}
+
+\kapitola{Staticky alokované objekty}
+
+\begin{frame}
+\begin{block}{Staticky alokované objekty}
+\begin{itemize}
+\item vytváří a ruší je kompilátor
+\begin{itemize}
+\item destruktor volá kompilátor!
+\end{itemize}
+\item životnost 
+\begin{itemize}
+\item do konce bloku (lokální proměnné, parametry)
+\item do konce programu (globální proměnné, statické atributy tříd)
+\end{itemize}
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Vytváření statických objektů}
+
+\begin{yesblock}
+\begin{lstlisting}
+void main() {
+  // bezparametrický konstruktor
+  Pes rafan;
+  // parametrický konstruktor
+  Pes kousak("Kousak", 200);
+
+  // kopírovací konstruktor
+  Pes kopieKousaka(kousak);
+  Pes jinaKopieKousaka = kousak;
+  // operátor=
+  jinaKopieKousaka = kousak;
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Vytváření statických objektů\ldots}
+\begin{noblock}
+\begin{lstlisting}
+// NELZE -> jedná se o deklaraci funkce!
+// funkce vracející objekt Pes, bez parametrů
+Pes rafan(); 
+
+// lze, ale nevhodné -> může vést k vytvoření dočasného objektu a kopírování
+Pes kousak = Pes("Kousak", 200);
+
+// lze, ale nevhodné -> dochází k dvojímu volání destruktoru, dojde ke zničení VMT tabulky -> přestává fungovat polymorfizmus
+kousak.~Pes();
+\end{lstlisting}
+\end{noblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Uniform initialization\cpp{11}}
+\begin{bitemize}
+\item C++11
+\item použití pomocí složených závorek
+\item volá konstruktor nebo inicializuje veřejné datové složky
+\item jednotná syntaxe u všech případů!
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}
+void main() {
+  // bezparametrický konstruktor
+  Pes rafan{};
+  // parametrický konstruktor
+  Pes kousak{"Kousak", 200};
+  // kopie
+  Pes kopieKousaka{kousak};
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\pkapitola{Volání funkcí -- předávání parametrů, návratová hodnota}
+
+
+\begin{frame}[fragile]
+\frametitle{Parametry funkcí}
+
+\begin{yesblock}
+\begin{lstlisting}
+void funkce(Pes pes) {
+  pes.stekej();
+}
+
+Pes rafan{};
+// dojde k vytvoření kopie (kopírovací konstruktor)
+// &pes != &rafan
+funkce(rafan);
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Parametry funkcí (reference)}
+\begin{bitemize}
+\item Reference = předání odkazem
+\begin{itemize}
+\item \uv{Ukazatelem na pozadí}
+\end{itemize}
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}
+void funkce(Pes& pes) {
+  pes.stekej();
+}
+
+Pes rafan{};
+// objekt je předán odkazem
+// &pes == &rafan
+funkce(rafan);
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Parametry funkcí (ukazatel)}
+
+\begin{yesblock}
+\begin{lstlisting}
+void funkce(Pes* pes) {
+  pes->stekej();
+
+  // nezmění objekt, ani proměnné rafan a ptr
+  // změní pouze lokální proměnnou pes
+  pes = 0xdeadbeef;
+}
+
+Pes rafan{};
+// objekt je předán pomocí ukazatele (je vytvořena kopie "Pes*" = 4(8) bajtové číslo - adresa v paměti)
+Pes* ptr = &rafan;
+// ptr == &rafan
+funkce(ptr);
+// ptr == &rafan
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Parametry funkcí (ukazatel na ukazatel)}
+
+\begin{yesblock}
+\begin{lstlisting}
+void funkce(Pes** pes) {
+  (*pes)->stekej();
+
+  // nezmění objekt, ani proměnnou rafan
+  // změní ukazatel ptr
+  *pes = 0xdeadbeef;
+}
+
+Pes rafan{};
+// objekt je předán pomocí ukazatele (je vytvořena kopie "Pes*" = 4(8) bajtové číslo - adresa v paměti)
+Pes* ptr = &rafan;
+// ptr == &rafan
+funkce(&ptr);
+// ptr == 0xdeadbeef
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Návratová hodnota}
+\begin{bitemize}
+\item Vrácení staticky alokovaného objektu vede ke kopírování
+\begin{itemize}
+\item Normálně se ale využije RVO (return value optimalization -- optimalizace kompilátorem)
+\item Standard C++17 definuje \uv{Guaranteed copy elision} (= RVO ve standardu)
+\end{itemize}
+\end{bitemize}
+\vskip -1ex
+\begin{yesblock}
+\begin{lstlisting}
+Pes funkce() {
+  Pes rafan{};
+  return rafan;
+  // objekt rafan - zaniká, ven jde kopie
+}
+
+// pes je vytvořen pomocí kopírovacího konstruktoru
+// RVO -> kopírování nemusí nastat, objekt je předán "celý"
+Pes pes = funkce();
+
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Návratová hodnota (reference)}
+\begin{block}{}
+Referenci lze vracet, pokud objekt nadále existuje
+\begin{itemize}
+\item je dynamicky alokovaný
+\item je static (pozor u vícevláknových programů)
+\item je na globálním prostoru (dtto)
+\end{itemize}
+\end{block}
+
+
+\begin{yesblock}
+\begin{lstlisting}
+Pes& funkce() {
+  Pes* rafan = new Pes{};
+  return *rafan;
+  // dynamicky alokovaný objekt je platný, dokud nezavoláme delete
+}
+
+// ok, ale pozor na memory leak!
+Pes& pes = funkce();
+
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Návratová hodnota (reference)}
+\begin{bitemize}
+\item Návratový typ -- reference  + staticky alokovaný lokální objekt => nefunguje
+\end{bitemize}
+
+\begin{noblock}
+\begin{lstlisting}
+Pes& funkce() {
+  Pes rafan{};
+  return rafan;
+  // objekt rafan - zaniká, ven jde zmetek!
+}
+
+// pes ukazuje na rozbitou paměť!
+Pes& pes = funkce();
+
+// MSVC obsahuje rozšíření, které daný příklad korektně provede, my pojedeme dle standardu C++ a nebudeme na to spoléhat
+\end{lstlisting}
+\end{noblock}
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Návratová hodnota (reference)}
+
+\begin{bonusblock}{Prodloužení životnosti dočasných objektů}
+\begin{itemize}
+\item Standard C++ umožňuje prodloužit životnost objektu v návratové hodnotě
+\begin{itemize}
+\item pro konstantní L-reference
+\item pro R-reference
+\end{itemize}
+\end{itemize}
+\end{bonusblock}
+
+\begin{bonusblock}{}
+\begin{lstlisting}
+const Pes& funkce() {
+  Pes rafan;
+  return rafan;
+}
+
+// ok - uplatněno prodloužení životnosti objektu dle standardu
+const Pes& pes = funkce();
+
+\end{lstlisting}
+\end{bonusblock}
+\end{frame}
+
+
+\kapitola{Dynamicky alokované objekty}
+
+\begin{frame}
+\begin{block}{Dynamicky alokované objekty}
+\begin{itemize}
+\item Vznikají a zanikají na náš explicitní příkaz (new / delete)
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Objekt}
+%\begin{bitemize}
+%\item Objekt
+%\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}
+// vytvoření proměnné typu ukazatel
+Pes* rafan = nullptr;
+// alokace paměti, volání konstruktoru
+rafan = new Pes{};
+
+rafan->stekej();
+(*rafan).stekej();
+
+// volání destruktoru, dealokace paměti
+delete rafan;
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Pole objektů}
+%\begin{bitemize}
+%\item Pole objektů
+%\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}
+// vytvoření proměnné typu ukazatel
+Pes* rafani = nullptr;
+// alokace paměti (5 * sizeof(Pes)), 5x volání konstruktoru
+rafani = new Pes[5];
+
+rafani[0].stekej();
+(rafani + 0)->stekej();
+(*(rafani + 0)).stekej();
+
+// volání destruktorů (5x), dealokace paměti
+delete[] rafani;
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Pole ukazatelů na objekt}
+%\begin{bitemize}
+%\item Pole ukazatelů na objekt
+%\end{bitemize}
+
+\begin{yesblock}
+
+\begin{lstlisting}[basicstyle=\small]
+Pes** rafani = nullptr;
+rafani = new Pes*[5]; // alokace paměti (5 * sizeof(Pes*)), nevolá konstruktor!
+
+for (int i = 0; i < 5; i++) 
+  rafani[i] = new Pes{}; // alokace paměti objektu, konstruktor
+
+rafani[0]->stekej();
+(*rafani[0]).stekej();
+(**(rafani+0)).stekej();
+
+for (int i = 0; i < 5; i++) 
+  delete rafani[i]; // destruktory, dealokace paměti objektů
+
+delete[] rafani; // dealokace paměti pole
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{oldblock}
+\begin{itemize}
+\item malloc, free -- neumí volat konstruktor a destruktor
+\begin{itemize}
+\item nepoužívejte je
+\end{itemize}
+\end{itemize}
+\end{oldblock}
+
+\begin{deprecatedblock}{}
+\begin{lstlisting}[basicstyle={\small},commentstyle={\dcc}]
+// vytvoření proměnné typu ukazatel
+Pes* rafan = nullptr;
+// alokace paměti
+rafan = (Pes*)malloc(sizeof(Pes));
+// konstrukce
+new(rafan) Pes;
+
+// ...
+
+// destrukce
+rafan->~Pes();
+// uvolnění paměti
+free(rafan);
+rafan = nullptr;
+\end{lstlisting}
+\end{deprecatedblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{noblock}{}
+%[basicstyle={\small},commentstyle={\dcc}]
+\begin{lstlisting}
+// nekorektní kombinace new-delete[] / new[]-delete
+Pes* pes = new Pes;
+delete[] pes;
+
+pes = new Pes[2];
+delete pes;
+\end{lstlisting}
+\end{noblock}
+
+\begin{noblock}{}
+\begin{lstlisting}
+// dvojí volání destruktoru
+Pes* pes = new Pes;
+
+pes->~Pes();
+delete pes;
+\end{lstlisting}
+\end{noblock}
+\end{frame}

@@ -1,0 +1,487 @@
+% chybí - advance, distance, iter_swap
+
+\hkapitola{Iterátory}
+
+
+\begin{frame}[fragile]
+\begin{block}{Iterátory}
+\begin{itemize}
+\item představují obecné \textit{rozhraní} pro procházení kontejnerů
+\item vycházejí z logiky práce s ukazateli
+\item umožňují číst i zapisovat hodnoty
+\end{itemize}
+
+\end{block}
+
+\begin{block}{Kategorie iterátorů}
+\begin{itemize}
+\item vstupní (input) -- slouží k získání dat z kontejneru
+\item výstupní (output) -- slouží k zapsání dat do kontejneru (standardně fungují tak, že přepisují stávající data!)
+\end{itemize}
+
+Detailní popis vlastností k nalezení na: 
+\url{http://www.cplusplus.com/reference/iterator/InputIterator}
+\url{http://en.cppreference.com/w/cpp/iterator}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Druhy iterátorů}
+\begin{block}{}
+\begin{itemize}
+\item vstupní (input) -- jednou lze přistoupit k prvku (pak je nutné posun na další prvek)
+\item výstupní (output) -- jednou lze zapsat prvek (pak je nutné posun na další prvek)
+\item dopředný (forward) -- jeden prvek lze číst opakovaně, lze i zapisovat
+\item obousměrný (bidirectional) -- v kontejneru jde pohyb dopředu i dozadu
+\item s náhodným přístupem (random access) -- v kontejneru jde pohyb i~o~$X$ prvků na obě strany
+\item spojitý (contiguous)\cpp{17} -- iterátor nad spojitým paměťovým blokem
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{block}{Procházení rozsahu}
+Na projití rozsahu potřebujeme dva iterátory - začátek a konec. Proto všude najdeme dvojice metod: begin-end, cbegin-cend, rbegin-rend, crbegin-crend.
+	
+\begin{itemize}
+\item \lstinline|begin-end| -- pohyb dopředu, prvky nekonstatní
+\item \lstinline|cbegin-cend| -- pohyb dopředu, prvky konstatní
+\item \lstinline|rbegin-rend| -- pohyb odzadu, prvky nekonstatní
+\item \lstinline|crbegin-crend| -- pohyb odzadu, prvky konstatní
+
+\end{itemize}
+\end{block}
+
+\begin{exampleblock}{{\YES} Použití iterátoru}
+\begin{itemize}
+\item \lstinline|*it| -- přístup k hodnotě prvku
+\item \lstinline|it->...| -- přístup k hodnotě prvku (objekty)
+\item \lstinline|++it, it++| -- posun na další prvky
+\item \lstinline|it != it2, it != kontejner.end()| -- kontrola konce
+\end{itemize}
+\end{exampleblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Použití vstupních iterátorů}
+\begin{yesblock}
+\begin{lstlisting}
+vector<int> vect;
+
+for(vector<int>::iterator it = vect.begin(); it != vector.end(); it++) {
+	int data = *it;
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Použití vstupních iterátorů}
+\begin{yesblock}
+\begin{lstlisting}
+struct osoba { string jmeno; string prijmeni; };
+
+vector<osoba> vect;
+
+for (auto it = vect.begin(); it != vect.end(); it++) {
+	osoba& os = *it;
+	string jmeno = it->jmeno;
+	string prijmeni = (*it).prijmeni;
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Použití vstupních iterátorů -- foreach\cpp{11}}
+\begin{yesblock}
+\begin{lstlisting}
+struct osoba { string jmeno; string prijmeni; };
+
+vector<osoba> vect;
+
+for (osoba& it : vect) {
+// také lze
+// for (auto& it : vect) {
+	osoba& os = it;
+	string jmeno = it.jmeno;
+	string prijmeni = it.prijmeni;
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{alertblock}{{\NO} Pozor na rušení platnosti iterátorů}
+\begin{lstlisting}
+vector<int> vect;
+
+for (auto it = vect.begin(); it != vect.end(); it++) {
+	if (*it == 123456) 
+		vect.erase(it); // smazani prvku -> zrusi platnost iteratoru -> crash
+}		
+\end{lstlisting}
+\end{alertblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+for (auto it = vect.begin(); it != vect.end(); ) {
+	if (*it == 123456) 
+		it = vect.erase(it); // ok -> erase vraci platny iterator na dalsi prvek
+	else
+		it++;
+}		
+\end{lstlisting}
+\end{yesblock}	
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{alertblock}{{\NO} Použití výstupních iterátorů}
+\begin{lstlisting}
+vector<int> vect;
+auto it = vect.begin();
+*it = 123;
+// crash - vektor byl prazdny
+\end{lstlisting}
+\end{alertblock}
+
+\begin{exampleblock}{{\YES} Použití výstupních iterátorů}
+\begin{lstlisting}
+vector<int> vect;
+vect.resize(2);
+auto it = vect.begin();
+*it = 123;
+it++;
+*it = 456;
+// vect nyni obsahuje [123, 456]
+\end{lstlisting}
+\end{exampleblock}	
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Výstupní iterátorové adaptéry}
+\begin{block}{}
+Aby výstupní iterátory \textbf{nepřepisovaly}, ale \textbf{vkládaly} data - používají se adaptéry (hl. soubor \lstinline|<iterator>|) \vskip.3cm		
+\begin{itemize}
+\item \lstinline|insert_iterator| - volá metodu insert
+\begin{itemize}
+\item adaptér lze snadno vytvořit využitím pomocné funkce \lstinline|inserter(kontejner, pozice)|
+\end{itemize}
+\item \lstinline|back_insert_iterator| - volá metodu \lstinline|push_back|
+\begin{itemize}
+
+\item \lstinline|back_inserter(kontejner)|
+\end{itemize}
+\item \lstinline|front_insert_iterator| - volá metodu \lstinline|push_front|
+\begin{itemize}
+\item \lstinline|front_inserter(kontejner)|
+\end{itemize}
+
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{{\YES} Použití výstupních iterátorů -- adaptéru back\_insert\_iterator}
+\begin{lstlisting}
+vector<int> vect;
+auto it = back_inserter(vect);
+*it = 123;
+it++;
+*it = 456;
+it++;
+*it = 789;
+// vect nyni obsahuje [123, 456, 789]
+\end{lstlisting}
+\end{exampleblock}	
+
+\begin{yesblock}
+\begin{lstlisting}
+vector<int> vect;
+auto it = back_inserter(vect);
+for(int i = 0; i < 10; i++, it++) {
+	*it = i;
+}
+// vect = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+\end{lstlisting}
+\end{yesblock}	
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{{\YES} Kopírování obsahu pomocí dvou iterátorů}
+\begin{lstlisting}
+vector<int> read = {1, 10, 15, 20};
+vector<int> write;
+
+auto wit = back_inserter(write);
+
+for (auto rit = read.begin(); rit != read.end(); rit++, wit++){
+	*wit = *rit;
+}
+// write = [1, 10, 15, 20]
+\end{lstlisting}
+\end{exampleblock}	
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Proudové iterátorové adaptéry}
+\begin{block}{}
+Pro přístup k proudům (*stream) se standardně používají operátory \lstinline|<<| a \lstinline|>>|. Existují dva adaptéry, aby se daly zpracovávat jako iterátory:
+
+\begin{itemize}
+\item \lstinline|ostream_iterator|
+\begin{itemize}
+\item  \lstinline|ostream_iterator(ostream)|
+\item  \lstinline|ostream_iterator(ostream, oddelovac)|		
+\end{itemize}
+\item \lstinline|istream_iterator|
+\begin{itemize}
+\item \lstinline|istream_iterator(istream)|
+\end{itemize}
+
+\end{itemize}
+
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{{\YES} Proudový iterátorový adaptér}
+\begin{lstlisting}
+ostream_iterator<int> osi{ cout, "--" };
+
+*osi = 10;
+osi++;
+*osi = 20;
+osi++;
+*osi = 30;
+osi++;
+
+// na výstupu bude: 10--20--30--
+\end{lstlisting}
+\end{exampleblock}	
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{block}{Pomocné funkce v <iterator>}
+\begin{itemize}
+\item \lstinline|advance(iterator, posun)| -- posune iterátor o "posun" prvků
+\item \lstinline|distance(it1, it2)| -- vrací počet prvků v rozsahu it1 -- it2
+\item \lstinline|next(it, posun = 1)|\cpp{11} -- posune iterátor na následující prvek
+\item \lstinline|prev(it, posun = 1)|\cpp{11} -- posune iterátor na předcházející prvek
+\item \lstinline|iter_swap(it1, it2)| -- prohodí obsah iterátorů it1 a it2
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+\kapitola{Tvorba vlastního vstupního iterátoru}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{{\YES} Šablona kontejneru MyArray}
+\begin{lstlisting}
+// šablona staticky alokovaného pole obsahující prvku typu T (počet prvků je Size)
+template<typename T, int Size>
+struct MyArray {
+
+	// pole prvků
+	T _data[Size];
+	// velikost pole
+	const int _size = Size;
+};
+\end{lstlisting}
+\end{exampleblock}	
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{exampleblock}{{\YES} Základ iterátoru \ldots}
+\begin{lstlisting}
+template<typename T, int Size>
+struct MyArray {
+
+	// implementace iterátoru
+	struct iterator {
+	};
+
+	// begin - vrací iterátor ukazující na první prvek pole
+	iterator begin() {
+	}
+
+	// end - vrací iterátor ukazující za poslední prvek pole
+	iterator end() {
+	}
+	
+	// ...
+\end{lstlisting}
+\end{exampleblock}	
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{deprecatedblock}{{\WARNING} Definice veřejných typů}
+\begin{lstlisting}
+// do C++17 lze dědit z std::iterator
+struct iterator : std::iterator<std::forward_iterator_tag, T>
+\end{lstlisting}
+\end{deprecatedblock}	
+
+
+\begin{exampleblock}{{\YES} Definice veřejných typů}
+\begin{lstlisting}
+typedef forward_iterator_tag iterator_category;
+
+typedef T value_type;
+typedef ptrdiff_t difference_type; // int / int64
+
+typedef T* pointer;
+typedef T& reference;
+\end{lstlisting}
+\end{exampleblock}	
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{exampleblock}{{\YES} Definice iterátoru\ldots}
+\begin{lstlisting}
+struct iterator {
+	public:
+		// konstruktor iterátoru - předáváme ukazatel s prvekem kam bude iterátor ukazovat
+		iterator(T* ptr) : _ptr(ptr) { } 
+
+	private:
+		// pro realizaci iterátoru stačí uchovat ukazatel na aktuální prvek
+		T* _ptr;
+};		
+\end{lstlisting}
+\end{exampleblock}	
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{{\YES} Metody begin() a end() v MyArray}
+\begin{lstlisting}
+// implementace begin() a end(), aby vracely korektní iterátor
+iterator begin() {
+	return {_data};
+}
+
+iterator end() {
+	return {_data + _size};
+}
+\end{lstlisting}
+\end{exampleblock}	
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{{\YES} Posun iterátoru na další prvky}
+\begin{lstlisting}
+// posun iterátoru na další prvek
+iterator& operator++() {
+	_ptr++;
+	return *this;
+}
+
+// postinkrementální varianta
+iterator operator++(int) {
+	iterator copy{*this};
+	_ptr++;
+	return copy;
+}
+\end{lstlisting}
+\end{exampleblock}	
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{{\YES} Přístup k prvkům 1.}
+\begin{lstlisting}
+// vrácení prvku z iterátoru
+reference operator*() const {
+	// stačí dereferencovat ukazatel na aktuální prvek
+	return *_ptr;
+}
+\end{lstlisting}
+\end{exampleblock}	
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{exampleblock}{{\YES} Přístup k prvkům 2.}
+\begin{lstlisting}
+// přístup k prvkům pomocí operátoru šipky
+pointer operator->() const{
+	return _ptr;
+}    	
+\end{lstlisting}
+\end{exampleblock}	
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{{\YES} Porovnání iterátorů}
+\begin{lstlisting}
+// porovnání iterátorů - aby bylo možné zjistit konec iterování
+bool operator==(const iterator& it) const {
+	return _ptr == it._ptr;
+}
+
+bool operator!=(const iterator& it) const {
+	return !(*this == it);
+}	
+\end{lstlisting}
+\end{exampleblock}	
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{{\YES} Konstruktor MyArray pro initializer\_list}
+\begin{lstlisting}
+#include <initializer_list>		
+MyArray(std::initializer_list<T> il) {
+	int i = 0;
+	for (auto it = il.begin(); it != il.end(); it++) {
+		_data[i] = *it;
+	}
+}
+\end{lstlisting}
+\end{exampleblock}		
+
+\begin{exampleblock}{{\YES} Test iterátoru}
+\begin{lstlisting}
+// a je hotovo... test kontejneru a iterátoru
+// vytvoření pole s prvky [1, 2, 3]
+MyArray<int, 3> ary { 1, 2, 3 };
+
+for (auto it = ary.begin(); it != ary.end(); ++it) {
+	std::cout << *it << std::endl;
+}
+\end{lstlisting}
+\end{exampleblock}	
+\end{frame}
+

@@ -1,0 +1,510 @@
+\kapitola{Datové složky a operace}
+
+\begin{frame}[fragile]
+\frametitle{Viditelnost / přístupová práva}
+
+\begin{bitemize}
+\item 3 úrovně:
+\begin{itemize}
+\item \lstinline|public| -- přístupné všude
+\item \lstinline|protected| -- přístupné z potomků
+\item \lstinline|private| -- přístupné pouze z vnitřku třídy
+\end{itemize}
+\item výchozí hodnota:
+\begin{itemize}
+\item \lstinline|struct| -- \lstinline|public|
+\item \lstinline|class| -- \lstinline|private|
+\end{itemize}
+
+\item změna viditelnosti:
+\begin{itemize}
+\item uvozuje se blok (\lstinline|viditelnost: ...|)
+\item bloky se mohou opakovat, být zpřeházené
+\end{itemize}
+\end{bitemize}
+
+\begin{bonusblock}{friend}
+\begin{itemize}
+\item přátelé třídy (\lstinline|friend|) mají přístup i k \lstinline|protected| a \lstinline|private| složkám
+\end{itemize}
+\end{bonusblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Viditelnost / přístupová práva}
+\begin{yesblock}
+\begin{lstlisting}
+struct Pes {
+// implicitní public: (platí pro struct)
+// implicitní private: (platí pro class)
+
+  string jmeno; // je public
+
+private:
+  int id; // je private
+  int vek; // je private
+ 
+protected:
+  int pocetChlupu; // je protected
+
+public:
+  int pocetNohou; // je public
+};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+\pkapitola{Atributy (datové složky)}
+
+\begin{frame}[fragile]
+\frametitle{Atributy}
+
+\begin{noteblock}{}
+\begin{lstlisting}
+[static] datovýTyp názevAtributu [inicializátor];
+\end{lstlisting}
+\end{noteblock}
+
+\begin{bitemize}
+\item \lstinline|static| -- statický atribut (váže se na třídu, ne na objekt)
+\item \lstinline|[inicializátor]|\cpp{11} -- umožňuje nastavit výchozí hodnotu (nelze u~statických atributů)
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}
+  int pocetChlupu = 12345;  
+  static int pocetPsu;
+\end{lstlisting}
+\end{yesblock}
+
+
+\begin{bonusblock}{}
+\begin{itemize}
+\item Dále existují modifikátory: \lstinline|mutable|, \lstinline|volatile|
+\end{itemize}
+\end{bonusblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Statické atributy}
+\begin{bitemize}
+\item statické atributy potřebují vyhradit paměť a inicializovat -- v CPP souboru
+\end{bitemize}
+
+\begin{exampleblock}{PES.H}
+\begin{lstlisting}
+struct Pes {
+  static int pocetPsu;
+};
+\end{lstlisting}
+\end{exampleblock}
+
+\begin{exampleblock}{PES.CPP}
+\begin{lstlisting}
+int Pes::pocetPsu = 0;
+\end{lstlisting}
+\end{exampleblock}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Statické atributy (použití)}
+\begin{exampleblock}{MAIN.CPP}
+\begin{lstlisting}
+  Pes pes = PsiBouda::vytvorPsa();
+  Pes::pocetPsu++;
+
+  cout << "Pocet psu: " << Pes::pocetPsu;
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+\pkapitola{Metody}
+
+
+\begin{frame}[fragile]
+\frametitle{Metody}
+
+\begin{noteblock}{}
+\begin{lstlisting}
+deklaraceMetody:
+[static] [virtual] datovýTypNávratovéHodnoty názevMetody([parametry]) [const] [override] [final] [noexcept];
+\end{lstlisting}
+\end{noteblock}
+
+\begin{bitemize}
+\item \lstinline|static| -- statická metoda (váže se na třídu, ne na objekt)
+\item \lstinline|virtual| -- virtuální metoda (polymorfizmus)
+\item \lstinline|const| -- konstantní metoda (nemění stav objektu)
+\item \lstinline|override|\cpp{11} -- označuje přetíženou metodu z předka (polymorfizmus)
+\item \lstinline|final|\cpp{11} -- zakazuje další přepisování metody v potomcích
+\item \lstinline|noexcept|\cpp{11} -- označuje metodu, která nevyvolává výjimky
+\end{bitemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Metody\ldots}
+\begin{bonusblock}{}
+\begin{itemize}
+\item modifikátor \lstinline|inline| -- optimalizace, nevolá funkci, vkládá kód přímo na místo volání; kompilátor dosadí automaticky, pokud je metoda definována uvnitř třídy
+\item modifikátor \lstinline|volatile| -- nestálé metody
+\item \lstinline|deklaraceMetody = delete;| -- C++11, smazání metody
+\item \lstinline|deklaraceMetody = default;| -- C++11, vynucení implementace metody kompilátorem
+\end{itemize}
+\end{bonusblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Deklarace a definice metody uvnitř třídy}
+\begin{yesblock}
+\begin{lstlisting}
+struct Pes {
+  // deklarace - úplný funkční prototyp, bez těla
+  void stekej();
+
+  // definice - deklarace + tělo
+  void kousej(Osoba& osoba) {
+    osoba.zran(KOUSNUTI_DO_KOTNIKU);    
+  }
+};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Deklarace a definice metody vně třídy}
+\begin{bitemize}
+\item definice metody vně třídy musí specifikovat, že jde o metodu dané třídy
+\begin{itemize}
+\item používá se operátor ::
+\item uvádějí se pouze modifikátory \lstinline|const|, \lstinline|override|, \lstinline|noexcept|
+\end{itemize}
+\end{bitemize}
+\begin{yesblock}
+\begin{lstlisting}
+struct Pes {
+  // deklarace
+  void kousej(Osoba& osoba);
+};
+
+// definice
+void Pes::kousej(Osoba& osoba) {
+  osoba.zran(KOUSNUTI_DO_KOTNIKU);   
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Metody a this}
+
+\begin{bitemize}
+\item uvnitř instančních metod je dostupný ukazatel \lstinline|this| (odpovídá \lstinline|Třída*|)
+\begin{itemize}
+\item není potřeba, implicitně je možné se odkazovat na složky třídy
+\end{itemize}
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}
+struct Pes {
+  void obnovZdravi() {
+    // this je Pes*, následující výrazy jsou totožné
+    _zdravi = 100;
+    this->_zdravi = 100;
+    (*this)._zdravi = 100;
+  }
+
+private:
+  int _zdravi;
+};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\pkapitola{Speciální metody}
+
+\begin{frame}
+\frametitle{Speciální metody}
+\begin{block}{}
+Existuje několik speciálních metod souvisejících s vytvářením a rušením objektů:
+\begin{itemize}
+\item konstruktory (bez parametrů, s parametry, kopírovací, konverzní, move)
+\item destruktor
+\item operátor =
+\end{itemize}
+Základní verzi těchto metod nám vytvoří automaticky kompilátor, pokud některou z metod nadefinujeme sami, kompilátor pak nemusí nic vytvářet (chybějící bezparametrický konstruktor).
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Vznik a zánik objektu}
+\begin{block}{}
+\lstinline|struct Pes| dědí z (\lstinline|struct Zvire| dědí z (\lstinline|struct Objekt|))
+\end{block}
+
+\begin{block}{Proces vzniku a zániku objektu Pes}
+\begin{itemize}
+\item konstruktor \lstinline|Objekt|
+\item konstruktor \lstinline|Zvire|
+\item konstruktor \lstinline|Pes|
+\item[]
+\begin{itemize}
+\item objekt žije, lze volat metody\ldots
+\end{itemize}
+
+\item destruktor \lstinline|Pes|
+\item destruktor \lstinline|Zvire|
+\item destruktor \lstinline|Objekt|
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Konstruktor}
+\begin{noteblock}{}
+\begin{lstlisting}
+názevTřídy([parametry]) [inicializačníČást];
+
+inicializačníČást:
+ : atribut1(hodnota1), ...
+\end{lstlisting}
+\end{noteblock}
+
+\begin{bitemize}
+\item nemá návratovou hodnotu (ani \lstinline|void|)!
+\item inicializační část -- pro inicializaci datových složek
+\begin{itemize}
+\item je potřeba pro inicializaci referenčních atributů
+\end{itemize}
+\end{bitemize}
+
+\begin{bonusblock}{}
+\begin{itemize}
+\item modifikátor \lstinline|explicit| -- zakazuje implicitní konverze
+\end{itemize}
+\end{bonusblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Bezparametrický konstruktor}
+\begin{yesblock}
+\begin{lstlisting}
+struct Pes {
+
+  Pes() {
+    cout << "konstruktor Pes()" << endl;
+  }
+
+};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Parametrický konstruktor}
+\begin{yesblock}
+\begin{lstlisting}
+struct Pes {
+
+  Pes(int zdravi) {
+    cout << "konstruktor Pes(int)" << endl;
+    _zdravi = zdravi;
+  }
+
+private:
+  int _zdravi;
+};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Parametrický konstruktor s inicializační částí}
+\begin{yesblock}
+\begin{lstlisting}
+struct Pes {
+
+  Pes(int zdravi) : _zdravi(zdravi) {
+    cout << "konstruktor Pes(int)" << endl;
+  }
+
+private:
+  int _zdravi;
+};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Kopírovací konstruktor}
+\begin{bitemize}
+\item kompilátor ho umí vytvořit automaticky
+\begin{itemize}
+\item vytváří mělkou kopii (\lstinline|memcpy(kopie, original, sizeof(Typ))|)
+\end{itemize}
+\end{bitemize}
+\begin{yesblock}
+\begin{lstlisting}
+struct Pes {
+
+  Pes(const Pes& pes) {
+    cout << "konstruktor Pes(const Pes&)" << endl;
+    _zdravi = pes._zdravi;
+  }
+
+private:
+  int _zdravi;
+};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Delegování konstruktorů\cpp{11}}
+\begin{bonusblock}{}
+\begin{itemize}
+\item delegování umožňuje zavolat jiný konstruktor před vlastním vykonáním konstruktoru (od C++11)
+\item inicializační část pak musí obsahovat pouze volání delegovaného konstruktoru!
+\end{itemize}
+\end{bonusblock}
+\vskip -2ex
+\begin{bonusblock}{}
+\begin{lstlisting}[basicstyle=\scriptsize]
+struct Pes {
+  Pes(std::string jmeno) : _jmeno(pes,_jmeno) { 
+    cout << "konstruktor Pes(std::string)" << endl;
+  }
+
+  Pes(std::string jmeno, int vek) : Pes(jmeno) {
+    cout << "konstruktor Pes(std::string, int)" << endl;
+    _vek = vek;
+  }
+
+private:
+  std::string _jmeno;
+  int _vek;
+};
+\end{lstlisting}
+\end{bonusblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{operátor =}
+\begin{bonusblock}{}
+\begin{itemize}
+\item \lstinline|operator=| přepíše obsah objektu jiným objektem
+\begin{itemize}
+\item kompilátor vytváří automaticky
+\item funguje na stejném principu jako kopírovací konstruktor
+\end{itemize}
+\end{itemize}
+\end{bonusblock}
+\vskip -2ex
+\begin{bonusblock}{}
+\begin{lstlisting}[basicstyle=\small]
+struct Pes {
+  Pes& operator=(const Pes& pes) {
+    if (this == &pes)
+      return *this;
+
+    _jmeno = pes._jmeno;
+    return *this;
+  }
+
+private:
+  std::string _jmeno;
+};
+\end{lstlisting}
+\end{bonusblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Move konstruktor\cpp{11}}
+\begin{bonusblock}{}
+\begin{itemize}
+\item C++11 zavedlo novou \uv{move} sémantiku, funguje jako optimalizace, umožňuje převzít data z dočasných objektů
+\begin{itemize}
+\item R-value reference (\lstinline|Typ&&|)
+\item move konstruktor (\lstinline|Typ(Typ&&))|)
+\item move assignment operátor (\lstinline|operator=(Typ&&)|)
+\end{itemize}
+\end{itemize}
+\end{bonusblock}
+\vskip -2ex
+\begin{bonusblock}{}
+\begin{lstlisting}[basicstyle=\small]
+struct Pes {
+
+  Pes(Pes&& pes) : _jmeno(std::move(pes._jmeno)) {
+    cout << "konstruktor Pes(Pes&&)" << endl;
+  }
+
+private:
+  std::string _jmeno;
+};
+\end{lstlisting}
+\end{bonusblock}
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Destruktor}
+\begin{noteblock}{}
+\begin{lstlisting}
+[virtual] ~názevTřídy();
+\end{lstlisting}
+\end{noteblock}
+
+\begin{bitemize}
+\item nemá návratovou hodnotu (ani \lstinline|void|)!
+\item \lstinline|virtual| -- je potřeba při využívání polymorfizmu a dědičnosti!
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}
+struct Pes {
+  ~Pes() {
+    cout << "destruktor Pes()" << endl;
+  }
+};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}

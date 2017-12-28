@@ -1,0 +1,1360 @@
+\hkapitola{Šablony}
+\kapitola{Generické programování}
+
+\begin{frame}[fragile]
+\begin{twocols}
+\begin{lstlisting}[basicstyle=\small]
+void Vypis(int hodnota) {
+  cout << hodnota << endl;
+}
+\end{lstlisting}
+\vskip 1cm
+\pause
+\begin{lstlisting}[basicstyle=\small]
+void Vypis(std::string hodnota) {
+  cout << hodnota << endl;
+}
+\end{lstlisting}
+\vskip 1cm
+\pause
+\begin{lstlisting}[basicstyle=\small]
+void Vypis(Kocka& hodnota) {
+  cout << hodnota << endl;
+}
+\end{lstlisting}
+
+\twocolssep
+\pause
+\begin{lstlisting}[basicstyle=\small]
+struct PoleIntu {
+  int* _pole;
+};
+\end{lstlisting}
+\vskip 1cm
+\pause
+\begin{lstlisting}[basicstyle=\small]
+struct PoleStringu {
+  std::string* _pole;
+};
+\end{lstlisting}
+\vskip 1cm
+\pause
+\begin{lstlisting}[basicstyle=\small]
+struct PoleKocek {
+  Kocka* _pole;
+};
+\end{lstlisting}
+
+\end{twocols}
+\end{frame}
+
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{twocols}
+\begin{lstlisting}[basicstyle=\small]
+void Vypis(int hodnota) {
+  cout << hodnota << endl;
+}
+void Vypis(std::string hodnota) {
+  cout << hodnota << endl;
+}
+void Vypis(Kocka& hodnota) {
+  cout << hodnota << endl;
+}
+void Vypis(double hodnota) {
+  cout << hodnota << endl;
+}
+void Vypis(bool hodnota) {
+  cout << hodnota << endl;
+}
+void Vypis(Pes& hodnota) {
+  cout << hodnota << endl;
+}
+void Vypis(Kralik& hodnota) {
+  cout << hodnota << endl;
+}
+\end{lstlisting}
+
+\twocolssep
+
+\begin{lstlisting}[basicstyle=\small]
+struct PoleIntu {
+  int* _pole;
+};
+struct PoleStringu {
+  std::string* _pole;
+};
+struct PoleKocek {
+  Kocka* _pole;
+};
+struct PoleDoublu {
+  double* _pole;
+};
+struct PoleBoolu {
+  bool* _pole;
+};
+struct PolePsu {
+  Pes* _pole;
+};
+struct PoleKraliku {
+  Kralik* _pole;
+};
+\end{lstlisting}
+
+\end{twocols}
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{twocols}
+\begin{lstlisting}[basicstyle=\scriptsize]
+void Vypis(int hodnota) {
+  cout << hodnota << endl;
+}
+void Vypis(std::string hodnota) {
+  cout << hodnota << endl;
+}
+void Vypis(Kocka& hodnota) {
+  cout << hodnota << endl;
+}
+void Vypis(double hodnota) {
+  cout << hodnota << endl;
+}
+void Vypis(bool hodnota) {
+  cout << hodnota << endl;
+}
+void Vypis(Pes& hodnota) {
+  cout << hodnota << endl;
+}
+void Vypis(Kralik& hodnota) {
+  cout << hodnota << endl;
+}
+void Vypis(unsigned int hodnota) {
+  cout << hodnota << endl;
+}
+void Vypis(long long hodnota) {
+  cout << hodnota << endl;
+}
+void Vypis(exception& hodnota) {
+  cout << hodnota << endl;
+}
+\end{lstlisting}
+
+\twocolssep
+
+\begin{lstlisting}[basicstyle=\scriptsize]
+struct PoleIntu {
+  int* _pole;
+};
+struct PoleStringu {
+  std::string* _pole;
+};
+struct PoleKocek {
+  Kocka* _pole;
+};
+struct PoleDoublu {
+  double* _pole;
+};
+struct PoleBoolu {
+  bool* _pole;
+};
+struct PolePsu {
+  Pes* _pole;
+};
+struct PoleKraliku {
+  Kralik* _pole;
+};
+struct PoleUIntu {
+  unsigned int* _pole;
+};
+struct PoleLongLong {
+  long long* _pole;
+};
+struct PoleException {
+  exception* _pole;
+};
+\end{lstlisting}
+
+\end{twocols}
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{block}{Generické programování}
+\begin{itemize}
+\item využívá abstraktních vzorů funkcí a tříd
+\item základem jsou šablony (templates)
+\end{itemize}
+\end{block}
+
+\begin{block}{Šablony}
+\begin{itemize}
+\item podobné makrům preprocesoru
+\item zpracovává je kompilátor
+\item umožňují pracovat s parametry, které jsou obecného datového typu
+\item jedna šablona může definovat celou množinu funkcí/tříd
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+template<typename T>
+void Vypis(T& hodnota) {
+  cout << hodnota << endl;
+}
+
+template<typename T>
+struct Pole {
+  T* _pole;
+};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{block}{Šablona třídy?}
+\begin{itemize}
+\item šablona
+\begin{itemize}
+\item to co programátor vytvoří
+\item kus zdrojového kódu, který se vlastně ani použít nemusí
+\end{itemize}
+\vskip 2ex
+\item instance šablony
+\begin{itemize}
+\item konkrétní datový typ
+\item vytvoří kompilátor (automaticky/na vyžádání)
+\item kus binárního kódu, který se pak používá
+\end{itemize}
+\vskip 2ex
+\item objekt
+\begin{itemize}
+\item typu \uv{instance šablony}
+\end{itemize}
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{twocols}
+\begin{center}
+\color{blue} \bfseries
+Programátor
+\end{center}
+
+\twocolssep
+
+\begin{center}
+\color{red} \bfseries
+Kompilátor
+\end{center}
+\end{twocols}
+\pause
+\begin{center}
+\bfseries Šablona 
+\end{center}
+
+\begin{center}
+\begin{minipage}{5cm}
+\vskip -2ex
+\begin{exampleblock}{}
+\begin{lstlisting}[basicstyle=\scriptsize]
+template<typename T>
+struct Pole {
+  T* _pole;
+};
+\end{lstlisting}
+\end{exampleblock}
+
+\end{minipage}
+\end{center}
+\pause
+\begin{center}
+\bfseries Instance šablony 
+\end{center}
+\vskip -2ex
+
+\begin{twocols}
+
+\begin{exampleblock}{}
+\begin{lstlisting}[basicstyle=\scriptsize]
+// vytvořena automaticky na pozadí
+\end{lstlisting}
+\end{exampleblock}
+
+\twocolssep
+
+\begin{noteblock}{}
+\begin{lstlisting}[basicstyle=\scriptsize]
+struct .?AU?<@\$@>Pole@H@@ {
+  int* _pole;
+};
+\end{lstlisting}
+\end{noteblock}
+\end{twocols}
+
+\pause
+\begin{center}
+\bfseries Objekt 
+\end{center}
+\vskip -2ex
+
+\begin{twocols}
+\begin{exampleblock}{}
+\begin{lstlisting}[basicstyle=\scriptsize]
+Pole<int> poleIntu{};
+\end{lstlisting}
+\end{exampleblock}
+
+\twocolssep
+
+\begin{noteblock}{}
+\begin{lstlisting}[basicstyle=\scriptsize]
+.?AU?<@\$@>Pole@H@@ poleIntu{};
+\end{lstlisting}
+\end{noteblock}
+\end{twocols}
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+\kapitola{Šablona a její parametry}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Šablona}
+\begin{block}{}
+\begin{itemize}
+\item je generický předpis funkce, typu nebo metody
+\item definuje seznam parametrů šablony (typové, hodnotové)
+\begin{itemize}
+\item uvnitř šablony jsou to konstanty
+\end{itemize}
+
+\item pro jednu funkci, typ nebo metodu může existovat více variant šablon
+\begin{itemize}
+\item základní šablona
+\item explicitní specializace šablony
+\item parciální specializace šablony (pouze šablony typů)
+\end{itemize}
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Šablona}
+\begin{noteblock}{}
+\begin{lstlisting}
+template<parametrŠablony... , ...>
+deklaraceNeboDefiniceFunkceTypuMetody;
+
+parametrŠablony:
+  typename|class názevParametru
+  typHodnotovéhoTypu názevParametru
+  template<...> typename názevParametru
+\end{lstlisting}
+\end{noteblock}
+
+\begin{block}{Parametry šablony}
+\begin{itemize}
+\item uvnitř instance šablony představují \textbf{konstantní hodnoty}
+\item mohou představovat typ, konkrétní hodnotu (číslo, ukazatel, \ldots) nebo vnořenou šablonu
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Typové parametry}
+\begin{block}{}
+\begin{itemize}
+\item představují libovolný datový typ (primitivní i objektový)
+\item jakmile je zvolen je uvnitř šablony uplatňována standardní striktní typová kontrola
+\item používá se zástupné slovo \lstinline|typename| nebo \lstinline|class| (starší, stále dostupné z důvodu zpětné kompatibility)
+\end{itemize}
+\end{block}
+
+\begin{yesblock}
+\begin{lstlisting}
+template<typename ParametrSablony> 
+struct Pole {
+  ParametrSablony _array[10];
+};
+
+Pole<int> poleIntu{};
+Pole<Kocka> poleKocek{};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Hodnotové parametry}
+\vskip -1ex
+\begin{block}{}
+\begin{itemize}
+\item představují konkrétní (číselnou) hodnotu
+\begin{itemize}
+\item celočíselný parametr
+\item výčtový 
+\item ukazatel na objekt
+\item reference na objekt
+\item ukazatel na funkci
+\item třídní ukazatel
+\end{itemize}
+
+\item uvnitř šablony představují neměnné konstanty
+\end{itemize}
+\end{block}
+
+\vskip -1ex
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+template<int CiselnyParametr> 
+struct Pole {
+  int _array[CiselnyParametr];
+};
+
+Pole<10> poleDesetiIntu{};
+Pole<50> polePadesatiIntu{};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Hodnotové parametry\ldots}
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\scriptsize]
+enum TypObjektu { Kamen, Strom, Ker, Trava };
+
+template<TypObjektu typ> 
+struct Pole {
+  void* _array[10];
+};
+
+Pole<Kamen> poleSutru{};
+Pole<Strom> poleStromecku{};
+\end{lstlisting}
+\end{yesblock}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\scriptsize]
+void func1(Object* ptr) { ... }
+void func2(Object* ptr) { ... }
+
+template<void (*function) (Object*)> 
+struct Pole {
+  void* _array[10];
+};
+
+Pole<func1> poleSFunkci1{};
+Pole<func2> poleSFunkci2{};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Parametrů může být více}
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+template<typename Typ, int VelikostPole> 
+struct Pole {
+  Typ _array[VelikostPole];
+};
+
+Pole<Kamen, 10> poleDesetiSutru{};
+Pole<Strom, 3> poleTriStromecku{};
+\end{lstlisting}
+\end{yesblock}
+
+\begin{bonusblock}{Variadic templates\cpp{11}}
+\begin{itemize}
+\item C++11 zavedlo šablony s proměnným počtem parametrů
+\item \lstinline|template<typename... args> struct StructWithVarArgs { };|
+\item část parametrů může být specifikována konkrétně
+\begin{itemize}
+\item \lstinline|template<typename First, typename... Rest> struct...|
+\end{itemize}
+\end{itemize}
+\end{bonusblock}
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Instance šablony}
+
+\begin{block}{}
+\begin{itemize}
+\item instance šablony představuje konkrétní datový typ nebo kód funkce, který překladač vytvoří po dosazení parametrů šablony
+\item kompilátor ji vytváří automaticky (při použití typu/funkce)
+\begin{itemize}
+\item lze také vynutit explicitní vytvoření
+\end{itemize}
+\item []
+\item \textbf{pokud chcete, aby kompilátor zkontroloval \uv{obsah} šablony, je potřeba instance šablony a její použití!}
+\item \textbf{aby mohla vzniknout instance šablony, je nutné znát kompletní definici šablonové funkce/typu (proto se šablony celé píšou do hlavičkových souborů)}
+
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Instance šablony\ldots}
+\begin{yesblock}
+\begin{lstlisting}
+template<typename T> 
+struct Pole { 
+  ... 
+};
+\end{lstlisting}
+\end{yesblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+// explicitní vytvoření instance šablony Pole<int>
+template struct Pole<int>; 
+
+// implicitní vytvoření instance šablony Pole<string>
+Pole<string> globalniPoleStringu{};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\kapitola{Použití šablon}
+\pkapitola{Šablony funkcí}
+
+\begin{frame}[fragile]
+\begin{block}{}
+\begin{itemize}
+\item funkce podporují automatické odvození parametrů šablony
+\begin{itemize}
+\item parametry musí vhodně odpovídat, nesmí dojít ke sporné situace
+\end{itemize}
+\end{itemize}
+\end{block}
+	
+\begin{yesblock}
+\begin{lstlisting}
+template<typename Typ>
+void vypis(const Typ& vystup) {
+  cout << vystup;
+}
+\end{lstlisting}
+\end{yesblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+int intyzr = 123;
+double dabl = 3.141592;
+
+vypis<int>(intyzr); // explicitní uvedení parametrů šablony
+vypis(dabl); // kompilátor automaticky odvodí parametry šablony
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+template<typename Typ>
+bool porovnej(const Typ& a, const Typ& b) {
+  return a == b;
+}
+\end{lstlisting}
+\end{yesblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+int intyzrAlfa = 123;
+int intyzrBeta = 456;
+double dabl = 3.141592;
+
+bool vysledek;
+vysledek = porovnej(intyzrAlfa, intyzrBeta);
+\end{lstlisting}
+\end{yesblock}
+\vskip -4ex
+\begin{noblock}
+\begin{lstlisting}
+vysledek = porovnej(intyzrAlfa, dabl); // int,double?!?
+\end{lstlisting}
+\end{noblock}
+\end{frame}
+
+
+
+\pkapitola{Šablony objektových typů}
+
+
+
+\begin{frame}[fragile]
+\begin{block}{}
+\begin{itemize}
+\item u struktur a tříd je nutné vždy definovat parametry šablony
+\begin{itemize}
+\item při splnění určitých podmínek je automatické odvození parametrů podporováno od C++17
+\end{itemize}
+\end{itemize}
+\end{block}
+
+\begin{yesblock}
+\begin{lstlisting}
+template<typename Typ>
+struct Pole {
+  ...
+};
+\end{lstlisting}
+\end{yesblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+Pole<int> poleIntu{};
+Pole<string> poleStringu{};
+\end{lstlisting}
+\end{yesblock}
+
+\end{frame}
+
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{block}{}
+\begin{itemize}
+\item složky definované uvnitř typu zapisujeme bez úprav
+\end{itemize}
+\end{block}
+
+\begin{yesblock}
+\begin{lstlisting}
+template<typename Typ>
+struct Pole {
+  
+  const Typ& dej(int index) const {
+    return _pole[index];
+  }
+
+private:
+  Typ _pole[10];
+};
+\end{lstlisting}
+\end{yesblock}
+
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\vskip -1.5ex
+\begin{block}{}
+\begin{itemize}
+\item složky definované vně typu musí oznámit kompilátoru, že se jedná o šablonu
+\begin{itemize}
+\item je nutné definovat s jakými parametry pracujeme
+\end{itemize}
+\end{itemize}
+\end{block}
+\vskip -1.5ex
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+template<typename Typ>
+struct Pole {
+ 
+  const Typ& dej(int index) const;
+
+private:
+  Typ _pole[10];
+};
+
+template<typename Typ> // <@$\commentcolor\leftarrow$@> je to šablona a jaké má parametry
+//==============
+const Typ& Pole<Typ>::dej(int index) const {
+// <@\hskip 1.9cm@> ===== <@$\commentcolor\leftarrow$@> jaká konkrétní varianta šablony to je
+  return _pole[index];
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{block}{}
+\begin{itemize}
+\item statické atributy se definují jako šablony
+\end{itemize}
+\end{block}
+
+\begin{yesblock}
+\begin{lstlisting}
+template <typename T>
+struct Pole {
+
+  static int PocetPoli;
+
+};
+
+template <typename T>
+int Pole<T>::PocetPoli = 0;
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\kapitola{Vnořené šablony}
+
+
+
+\begin{frame}[fragile]
+\begin{block}{}
+\begin{itemize}
+\item představuje šablonu v šabloně
+\item ve vnořených šablonách je možné pracovat s
+\begin{itemize}
+\item aktuálními šablonovými parametry
+\item i s parametry nadřazených šablon
+\end{itemize}
+
+\item při vytvoření instance nadřazené šablony nevznikají automaticky instance vnořených šablon
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{block}{}
+\begin{itemize}
+\item uvnitř šablony je možné definovat další šablony (vnořené typy, metody)
+\end{itemize}
+\end{block}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+template <typename T>
+struct Pole {
+  
+  template <typename U>
+  U collect(U (*funkce)(U, T*), U init) {
+    U tmp = init;
+    for (auto&& item : _pole)      
+      tmp = funkce(tmp, &item);
+
+    return tmp;
+  }
+
+private:
+  T _pole[10];
+};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{block}{}
+\begin{itemize}
+\item vnější definice vnořené šablony vyžaduje definování všech šablon
+\end{itemize}
+\end{block}
+\vskip -1ex
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+template <typename T>
+struct Pole {
+  
+  template <typename U>
+  U collect(U (*funkce)(U, T*), U init);
+};
+
+template <typename T>
+template <typename U>
+U Pole<T>::collect(U (*funkce)(U, T*), U init) {
+  U tmp = init;
+  for (auto&& item : _pole)      
+    tmp = funkce(tmp, &item);
+
+  return tmp;
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+
+\kapitola{Závislá jména}
+
+
+\begin{frame}[fragile]
+\begin{block}{}
+\begin{itemize}
+\item pokud pracujeme s obecným typem a ten představuje komplexní typ může se objevit problém závislých jmen
+\item nelze přímo pracovat s vnořenými typy pod obecným typem (nebo závislých na obecném typu)
+\begin{itemize}
+\item kompilátor je nevidí
+\end{itemize}
+\item nelze přímo pracovat s vnořenými šablonami pod obecným typem (nebo závislých na obecném typu)
+\begin{itemize}
+\item kompilátor je nevidí
+\end{itemize}
+\end{itemize}
+\end{block}
+
+
+\begin{noblock}
+\begin{lstlisting}
+template<typename T>
+struct S {
+  T::iterator _iter; // <@\commentcolor$\leftarrow$@> error - neznám "T::iterator"
+};
+\end{lstlisting}
+\end{noblock}
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{block}{}
+\begin{itemize}
+\item vnořený typ je nutné označit pomocí \lstinline|typename|
+\end{itemize}
+\end{block}
+
+
+\begin{noblock}
+\begin{lstlisting}
+template<typename T>
+struct S {
+  T::iterator _iter; // <@\commentcolor$\leftarrow$@> error - neznám "T::iterator"
+};
+\end{lstlisting}
+\end{noblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+template<typename T>
+struct S {
+  typename T::iterator _iter;
+};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{block}{}
+\begin{itemize}
+\item \lstinline|typedef| rovněž musí použít \lstinline|typename|
+\end{itemize}
+\end{block}
+
+\begin{noblock}
+\begin{lstlisting}
+template<typename T>
+struct S {
+  typedef T::iterator TIterator; // <@\commentcolor$\leftarrow$@> error - neznám "T::iterator"
+  TIterator _iter;
+};
+\end{lstlisting}
+\end{noblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+template<typename T>
+struct S {
+  typedef typename T::iterator TIterator;
+  TIterator _iter;
+};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{block}{}
+\begin{itemize}
+\item pro použití vnořených šablon je potřeba \lstinline|template|
+\end{itemize}
+\end{block}
+
+\begin{noblock}
+\begin{lstlisting}[basicstyle=\small]
+struct Usage {
+  template<typename U>
+  void method() {
+    ...
+  }
+};
+
+// předpokládejme T = Usage
+template<typename T>
+struct Template {
+  void m() {
+    T t{};
+    t.method<int>(); // <@\commentcolor$\leftarrow$@> error - neznám "t.method"
+  }
+};
+\end{lstlisting}
+\end{noblock}
+\end{frame}
+
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{block}{}
+\begin{itemize}
+\item pro použití vnořených šablon je potřeba \lstinline|template|
+\end{itemize}
+\end{block}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+struct Usage {
+  template<typename U>
+  void method() {
+    ...
+  }
+};
+
+// předpokládejme T = Usage
+template<typename T>
+struct Template {
+  void m() {
+    T t{};
+    t.template method<int>();
+  }
+};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{block}{}
+\begin{itemize}
+\item oba uvedené případy se mohou i kombinovat\ldots
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\scriptsize]
+struct Usage {
+    template<typename TT>
+    struct NestedTemplateStruct {
+        struct iterator {
+            int _x = 123;
+        };
+    };
+};
+
+
+// předpokládejme T = Usage
+template<typename T>
+struct Template {
+	
+    void m() {
+        T t{};
+        typename T::template NestedTemplateStruct<int>::iterator iteratorVar;
+        cout << iteratorVar._x << endl;
+    }
+};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\nezkouskove
+
+\kapitola{Specializace šablon}
+\pkapitola{Explicitní specializace}
+
+\begin{frame}[fragile]
+\frametitle{Explicitní specializace}
+\begin{block}{}
+\begin{itemize}
+\item představuje jinou realizaci šablony (vlastní kód je nově definovaný) pro konkrétní sadu parametrů
+\begin{itemize}
+\item s původní šablonou sdílí jenom jméno (kód ne!)
+\end{itemize}
+\item použitelné pro šablony funkcí i typů
+\item může existovat mnoho explicitních specializací jedné šablony
+\end{itemize}
+\end{block}
+
+\begin{noteblock}{}
+\begin{itemize}
+\item definuje se po definici základní šablony
+\item definuje se jako šablona, ale
+\begin{itemize}
+\item nemá obecné šablonové parametry (uvádí se \lstinline|template<>|)
+\item za názvem typu/funkce se uvádí konkrétní sada parametrů, pro kterou tato šablona bude použita (\lstinline|... sablonaFunkce<int>() ...|)
+\end{itemize}
+\end{itemize}
+\end{noteblock}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Explicitní specializace funkce}
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+// Základní šablona
+template<typename T>
+void printTemplate(string name, T value) {
+	cout << name << ": " << value << endl;
+}
+
+// Explicitní specializace
+template<> 
+// explicitní specializace je šablonou, ale všechny parametry jsou konkrétní hodnoty
+void printTemplate<double>(string name, double value) {
+	cout << name << ": " << fixed << setprecision(3) << value << endl;
+}
+
+printTemplate("Char", 'x'); // Char: 'x'
+printTemplate("Int", 15);  // Int: 15
+printTemplate("Double", 3.14); // Double: 3.140
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Explicitní specializace třídy}
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+// Základní šablona
+template<typename T>
+struct Comparator : ComparatorBase {
+
+  int compare(const T& a, const T& b) const;
+};
+
+template<typename T>
+int Comparator<T>::compare(const T& a, const T& b) const {
+  return b - a;
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Explicitní specializace třídy\ldots}
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+// Explicitní specializace
+template<>
+struct Comparator<const char*> : ComparatorBase {
+
+  int compare(const char* a, const char* b) const;
+};
+
+// metody explicitně specializované třídy se definují bez template<>
+int Comparator<const char*>::compare(const char* a, const char* b) const {
+  return strcmp(a, b);
+}	
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Explicitní specializace třídy\ldots}
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+struct ComparatorBase {
+  constexpr static int FIRST_IS_BIGGER = 1;
+  constexpr static int EQUAL = 0;
+  constexpr static int SECOND_IS_BIGGER = -1;
+};
+\end{lstlisting}
+\end{yesblock}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+Comparator<int> cInt{};
+cout << (cInt.compare(20, 40) == Comparator<int>::FIRST_IS_BIGGER ? "20 > 40" : "20 <= 40") << endl;
+
+Comparator<const char*> cCstr{};
+int result = cCstr.compare("hello", "hella");
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\pkapitola{Parciální specializace}
+
+\begin{frame}[fragile]
+\frametitle{Parciální specializace}
+\begin{block}{}
+\begin{itemize}
+\item představuje jinou realizaci šablony (vlastní kód je nově definovaný) pro částečně specifikované parametry šablony
+\begin{itemize}
+\item s původní šablonou sdílí jenom jméno (kód ne!)
+\end{itemize}
+\item použitelné pouze pro šablony typů
+\item může existovat mnoho parciálních specializací jedné šablony
+\end{itemize}
+\end{block}
+
+\begin{noteblock}{}
+\begin{itemize}
+\item definuje se po definici základní šablony
+\item definuje se jako šablona, ale
+\begin{itemize}
+\item má obecné/konkrétní/částečně specifikované šablonové parametry (uvádí se \lstinline|template<...>|)
+\item za názvem typu/funkce se uvádí konkrétní sada parametrů, pro kterou tato šablona bude použita (\lstinline|... SablonaTridy<int, T>() ...|)
+\end{itemize}
+\end{itemize}
+\end{noteblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Co a jak lze specializovat - parciálně?}
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+template<typename T, typename U, int S>
+struct Template { }; 
+
+// lze některé parametry přesně definovat (jako u explicitní specializace)
+// zde definujeme S
+template<typename T, typename U>
+struct Template<T, U, 10> { }; 
+
+// zde definujeme U a S
+template<typename T>
+struct Template<T, int, 10> { }; 
+
+// lze některé typové parametry označit za obecné ukazatele
+// zde definujeme T jako libovolný ukazatel
+template<typename T, typename U, int S>
+struct Template<T*, U, S> { }; 
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+%\frametitle{}
+\begin{block}{Jedna věc může být definována jako}
+\begin{itemize}
+\item základní šablona
+\item několik parciálních specializací
+\item několik explicitních specializací
+\end{itemize}
+\end{block}
+
+\begin{block}{}
+\begin{itemize}
+\item kompilátor pak vybírá nejvhodnější sadu parametrů
+\begin{itemize}
+\item přesná shoda s explicitní specializací
+\item shoda s parciální specializací
+\item jako nouzovka -- základní šablona
+\end{itemize}
+\item nesmí dojít ke shodě u více parciálních specializací
+\begin{itemize}
+\item \lstinline|<T*, U>| a \lstinline|<T, U*>| -- co použít pro \lstinline|<int*, int*>|
+\end{itemize}
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Parciální specializace\ldots}
+\begin{yesblock}
+\begin{lstlisting}
+template<typename T>
+struct Comparator<T*> : ComparatorBase {
+
+  int compare(T* a, T* b) const;
+};
+
+template<typename T>
+int Comparator<T*>::compare(T* a, T* b) const {
+  return *b - *a;
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Parciální specializace\ldots}
+\begin{yesblock}
+\begin{lstlisting}
+Comparator<int*> cInt{};
+
+int* a = new int{ 20 };
+int* b = new int{ 40 };
+
+cout << (cInt.compare(a, b) == Comparator<int>::FIRST_IS_BIGGER ? "20 > 40" : "20 <= 40") << endl;
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+\zkouskove

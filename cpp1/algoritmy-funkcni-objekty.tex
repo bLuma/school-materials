@@ -1,0 +1,1079 @@
+\hkapitola{Algoritmy}
+
+
+\begin{frame}[fragile]
+\frametitle{Algoritmy}
+\begin{block}{}
+\begin{itemize}
+\item obecné algoritmy pro zpracování dat v kontejnerech (nebo i jinde -- využívá se iterátorů pro přístup k datům)
+\item hlavičkové soubory \lstinline|<algorithm>| a \lstinline|<numeric>|
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\kapitola{Algoritmus copy}
+
+
+\begin{frame}[fragile]
+\frametitle{Algoritmus copy}
+\begin{block}{}
+\begin{itemize}
+\item kopíruje prvky ze vstupního rozsahu na cílové umístění
+\begin{itemize}
+\item cílem může být jiný kontejner
+\item ale i jiná část zdrojového kontejneru
+\item pomocí adaptérů je možné prvky zapisovat i do proudů (soubor, konzole)
+\end{itemize}
+\item naivní implementace je jednoduchý cyklus a operátor= pro zkopírování prvků
+\begin{itemize}
+\item reálně složité šablony, které na základě typu iterátorů použijí nejvhodnější algoritmus
+\item v případě spojitých oblastí paměti lze využít i \lstinline|memcpy|
+\end{itemize}
+\item existuje celá řada variant algoritmu
+\begin{itemize}
+\item \lstinline|copy_n|, \lstinline|copy_if|, \lstinline|copy_backward|
+
+\end{itemize}
+\end{itemize}
+\end{block}
+
+\begin{yesblock}
+\begin{lstlisting}
+copy(src.begin(), src.end(), dest.begin());
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{block}{copy - možná implementace}
+\begin{lstlisting}
+template<class InputIterator, class OutputIterator>
+OutputIterator copy (InputIterator first, InputIterator last, OutputIterator result)
+{
+	while (first != last) {
+		*result = *first;
+		
+		++result; 
+		++first;
+	}
+	
+	return result;
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{block}{copy - možná implementace}
+\begin{lstlisting}
+template<class InputIterator, class OutputIterator>
+OutputIterator copy (InputIterator first, InputIterator last, OutputIterator result)
+{
+	// iteruj, dokud nedojdeme na konec
+	while (first != last) {
+		// z iterátoru first vezmi objekt a ulož ho na místo kam ukazuje it. result
+		*result = *first;
+		
+		// posuň oba iterátory na další prvek
+		++result; 
+		++first;
+	}
+	
+	return result;
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{noblock}
+\begin{lstlisting}
+vector<int> source {0, 1, 20, 4, 50, 60};
+vector<int> destination;
+
+copy(source.begin(), source.end(), destination.begin());
+\end{lstlisting}
+\end{noblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+vector<int> source {0, 1, 20, 4, 50, 60};
+vector<int> destination;
+
+// 1) použití reserve/resize
+destination.resize(source.size());
+copy(source.begin(), source.end(), destination.begin());
+
+// 2) použití vkládacího iterátorového adaptéru
+copy(source.begin(), source.end(), back_inserter(destination));
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+\kapitola{Algoritmus find}
+
+
+\begin{frame}[fragile]
+\frametitle{Algoritmus find}
+\begin{block}{}
+\begin{itemize}
+\item vyhledá prvek v zadaném rozsahu
+\item vrací iterátor na jeho pozici nebo vrací koncový iterátor
+\item prvek pozná podle shody (==) s jiným prvkem
+\begin{itemize}
+\item existuje predikátová verze algoritmu \lstinline|find_if|
+\end{itemize}
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{block}{find - možná implementace}
+\begin{lstlisting}
+template<class InputIterator, class T>
+InputIterator find (InputIterator first, InputIterator last, const T& val)
+{
+	while (first != last) {
+		if (*first == val) 
+			return first;
+		
+		++first;
+	}
+	
+	return last;
+}		
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+vector<int> vect {0, 4, 45, 20, 40, 50};
+
+auto it = find(vect.begin(), vect.end(), 40);
+if (it != vect.end()) 
+	cout << "prvek 40 nalezen";
+\end{lstlisting}
+\end{yesblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+vector<Osoba> vect {{"Jan", "Stastny"}, {"Petr", "Mlady"}};
+
+auto it = find(vect.begin(), vect.end(), Osoba{"Jiri", "Veliky"});
+if (it != vect.end()) 
+	cout << "Osoba Jiri Veliky nalezena";
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Algoritmus find\_if}
+
+\begin{block}{}
+\begin{itemize}
+\item stejný princip jako \lstinline|find|, ale využívá predikátovou funkci na porovnání prvků
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{block}{find\_if - možná implementace}
+\begin{lstlisting}
+template<class InputIterator, class UnaryPredicate>
+InputIterator find_if (InputIterator first, InputIterator last, UnaryPredicate pred)
+{
+	while (first != last) {
+		if (pred(*first)) 
+			return first;
+			
+		++first;
+	}
+	
+	return last;
+}	
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Predikát -- obyčejná funkce}
+
+\begin{yesblock}
+\begin{lstlisting}
+bool jeVetsiNez40(int hodnota) {
+	return hodnota > 40;
+}
+\end{lstlisting}
+\end{yesblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+vector<int> vect {0, 4, 45, 20, 40, 50};
+
+auto it = find_if(vect.begin(), vect.end(), jeVetsiNez40);
+if (it != vect.end()) 
+	cout << "prvek vetsi nez 40 nalezen -> " << *it;
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Predikát -- funkční objekt}
+\begin{yesblock}
+\begin{lstlisting}
+struct jeVetsiNez40FO {
+	bool operator()(int prvek) const {
+		return prvek > 40;
+	}
+};
+\end{lstlisting}
+\end{yesblock}
+\begin{yesblock}
+\begin{lstlisting}
+vector<int> vect {0, 4, 45, 20, 40, 50};
+
+auto it = find_if(vect.begin(), vect.end(), jeVetsiNez40FO{});
+if (it != vect.end()) 
+	cout << "prvek vetsi nez 40 nalezen -> " << *it;
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Predikát -- standardní funkční objekty}
+\begin{yesblock}
+\begin{lstlisting}
+vector<int> vect {0, 4, 45, 20, 40, 50};
+
+// 1) std::binder1st, std::binder2nd - deprecated od C++11
+auto it = find_if(vect.begin(), vect.end(), 
+	bind2nd(greater<int>(), 40)
+	);
+	
+// 2) std::bind (od C++11) - lepší, obecnější, trochu složitější
+using std::placeholders::_1;
+auto it = find_if(vect.begin(), vect.end(), 
+	bind(greater<int>(), _1, 40)
+	);
+	
+if (it != vect.end()) 
+	cout << "prvek vetsi nez 40 nalezen -> " << *it;
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Predikát -- lambda výraz}
+\begin{yesblock}
+\begin{lstlisting}
+vector<int> vect {0, 4, 45, 20, 40, 50};
+
+auto it = find_if(vect.begin(), vect.end(), 
+	[ ](int prvek) { return prvek > 40;}
+	);
+
+if (it != vect.end()) 
+	cout << "prvek vetsi nez 40 nalezen -> " << *it;
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\kapitola{Funkční objekty}
+
+
+\begin{frame}[fragile]
+\begin{block}{Funkční objekty, adaptéry, bindery}
+\begin{itemize}
+\item \lstinline|<functional>|
+\item umožňují psát obecné funkce pro použití s algoritmy jako predikáty, transformační funkce, \ldots
+\item systém adaptérů značně obměněn ve standardu C++11, změny pokračují v C++17
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{binder1st, binder2nd}
+
+\begin{oldblock}{}
+\begin{itemize}
+\item \lstinline|std::binder1st, std::binder2nd| -- převádějí binární funkci na unární
+\item jeden z parametrů je nahrazen konstantou, může být vypočtena i v době vytváření binderu
+\item od C++11 deprecated, od C++17 odebráno, bylo nahrazeno jednotným \lstinline|std::bind|
+\item pro snadnější zápis se používaly funkce \lstinline|bind1st(), bind2nd()|
+\end{itemize}
+\vskip 1ex
+
+\begin{lstlisting}[basicstyle=\scriptsize]
+struct Plus : std::binary_function<int, int, int> {
+	int operator()(int a, int b) const {
+		return a + b;
+	}
+};
+////////////////////////////////////////////////////
+auto plus5 = bind2nd(Plus{}, 5);
+
+cout << plus5(1) << endl; // 6
+cout << plus5(5) << endl; // 10
+\end{lstlisting}
+\end{oldblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Deprecated/removed funkční objekty}
+
+\begin{oldblock}{}
+\begin{itemize}
+\item kromě \lstinline|std::binder1st, std::binder2nd| byla odebrána řada dalších funkčních objektů
+\item \lstinline|std::unary_function, std::binary_function| -- definuje typy argumentů a návratové hodnoty funkce
+\item \lstinline|std::ptr_fun| -- vytváří \uv{objektový} ukazatel na funkci
+\item \lstinline|std::mem_fun| -- dtto na metodu (skrze ukazatel)
+\item \lstinline|std::mem_fun_ref| --  dtto na metodu (skrze referenci)
+\item a objekty/wrappery s nimi související
+\end{itemize}
+\end{oldblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Funkční objekty -- operátorové -- aritmetické}
+\begin{block}{}
+\begin{itemize}
+\item \lstinline|std::plus| -- $x + y$
+\item \lstinline|std::minus| -- $x - y$
+\item \lstinline|std::multiplies| -- $x * y$
+\item \lstinline|std::divides| -- $x / y$
+\item \lstinline|std::modulus| -- $x \% y$
+\item \lstinline|std::negate| -- $-x$
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Funkční objekty -- operátorové -- porovnávací}
+\begin{block}{}
+\begin{itemize}
+\item \lstinline|std::equal_to| -- $x == y$
+\item \lstinline|std::not_equal_to| -- $x != y$
+\item \lstinline|std::greater| -- $x > y$
+\item \lstinline|std::less| -- $x < y$
+\item \lstinline|std::greater_equal| -- $x >= y$
+\item \lstinline|std::less_equal| -- $x <= y$
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Funkční objekty -- operátorové -- logické a bitové}
+\begin{block}{}
+\begin{itemize}
+\item \lstinline|std::logical_and| -- $x \&\& y$
+\item \lstinline|std::logical_or| -- $x || y$
+\item \lstinline|std::logical_not| -- $!x$
+\item \lstinline|std::bit_and| -- $x \& y$
+\item \lstinline|std::bit_or| -- $x | y$
+\item \lstinline|std::bit_xor| -- $x $\^{}$ y$
+\item \lstinline|std::bit_not|\cpp{14} -- \~{}$x$
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Funkční objekty -- příklad}
+\begin{yesblock}
+\begin{lstlisting}
+std::multiplies<double> multipliesDouble{};
+cout << multipliesDouble(10, 3.2) << endl; 
+// 32
+
+std::equal_to<int> equalToInt{};
+cout << (equalToInt(4, 4) ? "T" : "F") << endl; 
+// T
+
+std::equal_to<string> equalToString{};
+cout << (equalToString("hello", "hella") ? "T" : "F") << endl; 
+// F
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+\newcommand{\impbullet}{\textcolor{red}{\LARGE\textbullet}}
+\newcommand{\impbulletl}{\textcolor{red}{\large\textbullet}}
+
+
+\begin{frame}[fragile]
+\frametitle{Funkční objekty}
+\begin{block}{Function wrappers}
+\begin{itemize}
+\item[\impbullet] \lstinline|function|\cpp{11} -- slouží jako wrapper pro libovolný druh funkce (funkce, metoda, lambda, \ldots) dle daného předpisu
+\item \lstinline|mem_fn|\cpp{11} -- vytváří funkční objekt ze specifikované metody
+\end{itemize}
+\end{block}
+
+\begin{block}{Invoke}
+\begin{itemize}
+\item \lstinline|invoke|\cpp{17} -- vyvolání funkce/objektu se specifikovanými argumenty
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Funkční objekty}
+
+\begin{block}{Bind}
+\begin{itemize}
+\item[\impbullet] \lstinline|bind|\cpp{11} -- vytvoří fce objekt s možností statického nastavení některých parametrů
+\item \lstinline|is_bind_expression|\cpp{11} -- indikuje, že daný objekt je výrazem \lstinline|std::bind|
+\item \lstinline|is_placeholder|\cpp{11} -- indikuje, že daný objekt je standardní placeholder
+\end{itemize}
+\end{block}
+
+\begin{block}{Negators}
+\begin{itemize}
+\item \lstinline|not_fn|\cpp{17} -- vytvoří fce objekt negující výsledek specifikované funkce
+\item Do C++17 (pak deprecated)
+\begin{itemize}
+\item[\impbulletl] \lstinline|not1| -- vytváří fce objekt negující výsledek unární funkce
+\item[\impbulletl] \lstinline|not2| -- vytváří fce objekt negující výsledek binární funkce
+\end{itemize}
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Funkční objekty}
+\begin{block}{Searchers}
+\begin{itemize}
+\item \lstinline|default_searcher|\cpp{17}
+\item \lstinline|boyer_moore_searcher|\cpp{17}
+\item \lstinline|boyer_moore_horspool_searcher|\cpp{17}
+\end{itemize}
+\end{block}
+
+\begin{block}{Reference wrapper}
+\begin{itemize}
+\item \lstinline|reference_wrapper|\cpp{11}
+\item[\impbulletl] \lstinline|ref|\cpp{11} -- konstruuje wrapper pro referenci
+\item[\impbulletl] \lstinline|cref|\cpp{11} -- konstruuje wrapper pro konstatní referenci
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\pkapitola{bind}
+
+\begin{frame}[fragile]
+\frametitle{std::bind}
+
+\begin{block}{}
+\begin{itemize}
+\item umožňuje zabalit libovolnou funkci, funkční objekt, lambda výraz, metodu do funkčního objektu
+\item je možné nahradit specifické parametry konkrétní hodnotou nebo referencí
+\item je možné změnit pořadí parametrů
+\item je možné u metody specifikovat konkrétní objekt nad kterým má být metoda volána
+\item volitelné parametry se dosazují pomocí konstant \_1, \_2,~\ldots{} z~jmenného prostoru \lstinline|std::placeholders|
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{std::bind -- základní použití}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+void printVar(string variable, int value) {
+	cout << variable << ": " << value << endl;
+}
+////////////////////////////////////////////////
+auto pv1 = bind(printVar, "V1", 100);
+pv1();
+// V1: 100
+
+using namespace std::placeholders;
+auto pv2 = bind(printVar, "V2", _1);
+pv2(200);
+pv2(300);
+// V2: 200
+// V2: 300
+
+auto pv3 = bind(printVar, _2, _1);
+pv3(400, "V3");
+// V3: 400
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{std::bind -- použití na metody}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+using namespace std::placeholders;
+
+struct Counter {
+	int counter; 
+	
+	Counter(int c) : counter(c) {}
+
+	void set(int v) { counter = v; }
+	int get() const { return counter; }
+};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{std::bind -- použití na metody\ldots}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+auto setterTo100 = bind(&Counter::set, _1, 100);
+Counter c1{ 0 };
+setterTo100(c1);
+
+Counter c{ 0 };
+auto cSetter = bind(&Counter::set, &c, _1);
+cSetter(20);
+// c.counter == 20
+
+auto cGetter = bind(&Counter::get, &c);
+cout << cGetter() << endl;
+// 20
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{std::bind -- použití na reference}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+void increment(int& value) {
+	value++;
+	cout << value << endl;
+}
+///////////////////////////////////////////
+
+int v = 0;
+// do objektu i1 se přenese kopie v
+auto i1 = bind(increment, v);
+i1(); // 1
+i1(); // 2
+cout << v << endl; // 0
+
+// do objektu i1 se předá reference_wrapper
+auto i2 = bind(increment, ref(v));
+i2(); // 1
+i2(); // 2
+cout << v << endl; // 2
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\kapitola{Algoritmus remove}
+
+\begin{frame}[fragile]
+\frametitle{Algoritmus remove}
+\begin{block}{}
+\begin{itemize}
+\item slouží k odebrání prvků z rozsahu
+\item odebírá prvky podle shody (==)
+\item iterátory neumí přidat nebo odebrat prvky!
+\begin{itemize}
+\item algoritmus přeuspořádá pořadí prvků
+\item vrátí iterátor na nový konec rozsahu
+\item vlastní odebrání zbylých prvků je nutné provést ručně
+\end{itemize}
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{block}{remove -- možná implementace}
+\begin{lstlisting}
+template <class ForwardIterator, class T>
+ForwardIterator remove (ForwardIterator first, ForwardIterator last, const T& val)
+{
+	ForwardIterator result = first;
+	while (first != last) {
+		if (!(*first == val)) {
+			*result = *first;
+			++result;
+		}
+		++first;
+	}
+	
+	return result;
+}\end{lstlisting}
+\end{block}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{block}{remove -- možná implementace}
+\begin{lstlisting}
+template <class ForwardIterator, class T>
+ForwardIterator remove (ForwardIterator first, ForwardIterator last, const T& val)
+{
+	ForwardIterator result = first; // vytvoř kopii iterátoru first
+	while (first != last) { // projdi všechny prvky v rozsahu
+		if (!(*first == val)) { // pokud nejsou shodné s odebíraným
+			*result = *first; // zapiš do result
+			++result; // posuň result
+		}
+		++first; // posuň first
+	}
+	
+	return result;
+}\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{remove -- postup činnosti}
+\begin{block}{}
+\begin{lstlisting}
+remove({1, 10, 2, 10, 3, 4, 5, 10, 6, 7}, 10);
+\end{lstlisting}
+\end{block}
+\begin{block}<2->{}
+\newcommand{\F}{{\textbf{\color[rgb]{0,0.6,0}F}}}
+\newcommand{\R}{{\textbf{\color[rgb]{0.6,0,0}R}}}
+
+\only<2>{
+[\F\R 1, 10, 2, 10, 3, 4, 5, 10, 6, 7]
+
+first = 1
+
+[\textbf{1}, \F\R 10, 2, 10, 3, 4, 5, 10, 6, 7]
+}
+
+\only<3>{
+[1, \F\R 10, 2, 10, 3, 4, 5, 10, 6, 7]
+
+first == 10! nezapisuj
+
+[1, \R 10, \F 2, 10, 3, 4, 5, 10, 6, 7]
+}
+
+\only<4>{
+[1, \R 10, \F 2, 10, 3, 4, 5, 10, 6, 7]
+
+first = 2
+
+[1, \textbf{2}, \R 2, \F 10, 3, 4, 5, 10, 6, 7]
+}
+
+\only<5>{
+[1, 2, \R 2, \F 10, 3, 4, 5, 10, 6, 7]
+
+first = 10! nezapisuj
+
+[1, 2, \R 2, 10, \F 3, 4, 5, 10, 6, 7]
+}
+
+\only<6>{
+[1, 2, \R 2, 10, \F 3, 4, 5, 10, 6, 7]
+
+first = 3
+
+[1, 2, \textbf{3}, \R 10, 3, \F 4, 5, 10, 6, 7]
+}
+
+\only<7>{
+[1, 2, 3, \R 10, 3, \F 4, 5, 10, 6, 7]
+
+first = 4
+
+[1, 2, 3, \textbf{4}, \R 3, 4, \F 5, 10, 6, 7]
+}
+
+\only<8>{
+[1, 2, 3, 4, \R 3, 4, \F 5, 10, 6, 7]
+
+first = 5
+
+[1, 2, 3, 4, \textbf{5}, \R 4, 5, \F 10, 6, 7]
+}
+
+\only<9>{
+[1, 2, 3, 4, 5, \R 4, 5, \F 10, 6, 7]
+
+first == 10! nezapisuj 
+
+[1, 2, 3, 4, 5, \R 4, 5, 10, \F 6, 7]
+}
+
+\only<10>{
+[1, 2, 3, 4, 5, \R 4, 5, 10, \F 6, 7]
+
+first = 6
+
+[1, 2, 3, 4, 5, \textbf{6}, \R 5, 10, 6, \F 7]
+}
+
+\only<11>{
+[1, 2, 3, 4, 5, 6, \R 5, 10, 6, \F 7]
+
+first = 7
+
+[1, 2, 3, 4, 5, 6, \textbf{7}, \R 10, 6, 7] \F
+}
+
+
+\only<12>{
+[\textbf{1, 2, 3, 4, 5, 6, 7}, \R \textit{10, 6, 7}]
+}
+
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+vector<int> vect {1, 10, 2, 10, 3, 4, 5, 10, 6, 7};
+
+auto r = remove(vect.begin(), vect.end(), 10);
+// vect = [1, 2, 3, 4, 5, 6, 7, 10, 6, 7]
+
+vect.erase(r, vect.end()); // smazání prvků 10, 6, 7
+// vect = [1, 2, 3, 4, 5, 6, 7]
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\kapitola{Přehled algoritmů}
+
+
+\begin{frame}[fragile]
+\frametitle{Nemodifikující algoritmy}
+\begin{block}{}
+\centering
+\begin{tabular}{ll}
+\lstinline|all_of|\cpp{11} &  \\
+\lstinline|any_of|\cpp{11} & testuje splnění podmínky prvky \\
+\lstinline|none_of|\cpp{11} &  \\
+\hline
+\lstinline|for_each| & provede operaci nad každým prvkem \\
+\hline
+\lstinline|for_each_n|\cpp{17} & dtto + limit pro n prvků \\
+\hline
+\lstinline|count| & spočítá počet prvků \\
+\lstinline|count_if| & \\
+\hline
+\lstinline|mismatch| & vyhledá pozici neshody mezi dvěma množinami \\
+\hline
+\lstinline|equal| & testuje shodu dvou množin \\
+\hline
+\lstinline|find| & \\
+\lstinline|find_if| & najde první prvek podle hodnoty/podmínky \\
+\lstinline|find_if_not|\cpp{11} & \\
+\hline
+\lstinline|adjacent_find| & najde dva po sobě jdoucí shodné prvky \\
+\lstinline|| & (nebo dle podmínky) \\
+\hline
+\lstinline|search| & hledá rozsah prvků \\
+\lstinline|search_n| &  \\
+\end{tabular}
+\end{block}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Algoritmy modifikující}
+\begin{block}{}
+\centering
+\begin{tabular}{ll}
+\lstinline|copy| &  kopíruje prvky \\
+\lstinline|copy_if|\cpp{11} & \\
+\hline
+\lstinline|copy_n| & dtto + specifikovaný počet prvků \\
+\hline
+\lstinline|copy_backward| & dtto + otáčí pořadí \\
+\hline
+\lstinline|move|\cpp{11} & přesouvá prvky \\
+\lstinline|move_backward|\cpp{11} & \\
+\hline
+\lstinline|fill| & nastaví hodnotu prvků \\
+\hline
+\lstinline|fill_n| & dtto + specifikovaný počet prvků \\
+\hline
+\lstinline|transform| & transformuje prvky (aplikuje na ně funkci) \\
+\hline
+\lstinline|generate| & nastaví hodnotu prvků dle funkce \\
+\hline
+\lstinline|generate_n| & dtto + specifikovaný počet prvků \\
+\end{tabular}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Algoritmy modifikující\ldots}
+\begin{block}{}
+\centering
+\begin{tabular}{ll}
+\lstinline|remove| &  odebírá prvky \\
+\lstinline|remove_if| & \\
+\hline
+\lstinline|remove_copy| & kopíruje neodebrané prvky \\
+\lstinline|remove_copy_if| & \\
+\hline
+\lstinline|replace| & nahrazuje hodnoty \\
+\lstinline|replace_if| &  \\
+\hline
+\lstinline|replace_copy| & kopíruje a nahrazuje hodnoty \\
+\lstinline|replace_copy_if| & \\
+\hline
+\lstinline|swap_ranges| & prohodí prvky z dvou rozsahů \\
+\hline
+\lstinline|reverse| & otáčí pořadí prvků \\
+\hline
+\lstinline|reverse_copy| & dtto + výsledek kopíruje \\
+\hline
+\lstinline|rotate| & rotuje pořadí prvků \\
+\hline
+\lstinline|rotate_copy| & dtto + výsledek kopíruje \\
+\hline
+\lstinline|random_shuffle|\cpp{03,11,14,-} & náhodně zamíchá prvky \\
+\lstinline|shuffle|\cpp{17} &  \\
+\end{tabular}
+\end{block}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Algoritmy modifikující\ldots}
+\begin{block}{}
+\centering
+\begin{tabular}{ll}
+\lstinline|sample|\cpp{17} & vybere náhodný vzorek \\
+\hline
+\lstinline|unique| & maže sousedící duplicity \\
+\hline
+\lstinline|unique_copy| & dtto + výsledek kopíruje \\
+\end{tabular}
+\end{block}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Algoritmy dělící na skupiny}
+\begin{block}{}
+\centering
+\begin{tabular}{ll}
+\lstinline|is_partitioned|\cpp{11} & je skupinou dle podmínky \\
+\hline
+\lstinline|partition| & rozdělí prvky na dvě skupiny  \\
+\hline
+\lstinline|partition_copy|\cpp{11} & dtto + výsledek kopíruje \\
+\hline
+\lstinline|stable_partition| & dtto + zachovává relativní pořadí prvků \\
+\hline
+\lstinline|partition_point|\cpp{11} & vrací dělící místo v rozsahu \\
+\end{tabular}
+\end{block}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Algoritmy řadící}
+\begin{block}{}
+\centering
+\begin{tabular}{ll}
+\lstinline|is_sorted|\cpp{11} & testuje jestli je rozsah seřazený \\
+\hline
+\lstinline|is_sorted_until|\cpp{11} & vrací největší seřazený rozsah \\
+\hline
+\lstinline|sort| & řadí rozsah \\
+\hline
+\lstinline|partial_sort| & řadí N prvních prvků \\
+\hline
+\lstinline|partial_sort_copy| & dtto + výsledek kopíruje \\
+\hline
+\lstinline|stable_sort| & řadí rozsah, zachovává relativní pořadí prvků \\
+\hline
+\lstinline|nth_element| & částečně řadí rozsah dle spec. prvku \\
+\end{tabular}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Algoritmy vyhledávající na seřazeném rozsahu}
+\begin{block}{}
+\centering
+\begin{tabular}{ll}
+\lstinline|lower_bound| & \\
+\hline
+\lstinline|upper_bound| &  \\
+\hline
+\lstinline|binary_search| &  \\
+\hline
+\lstinline|equal_range| &  \\
+\end{tabular}
+\end{block}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Množinové operace (na seřazeném rozsahu)}
+\begin{block}{}
+\centering
+\begin{tabular}{ll}
+\lstinline|merge| &  \\
+\hline
+\lstinline|inplace_merge| &  \\
+\hline
+\lstinline|includes| &  \\
+\hline
+\lstinline|set_difference| &  \\
+\hline
+\lstinline|set_intersection| &  \\
+\hline
+\lstinline|set_symmetric_difference| &  \\
+\hline
+\lstinline|set_union| & \\
+\end{tabular}
+\end{block}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Haldové operace}
+\begin{block}{}
+\centering
+\begin{tabular}{ll}
+\lstinline|is_heap| &  \\
+\hline
+\lstinline|is_heap_until| &  \\
+\hline
+\lstinline|make_heap| & \\
+\hline
+\lstinline|push_heap| &  \\
+\hline
+\lstinline|pop_heap| & \\
+\hline
+\lstinline|sort_heap| & \\
+\end{tabular}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Operace pro minimum/maximum}
+\begin{block}{}
+\centering
+\begin{tabular}{ll}
+\lstinline|max| &  \\
+\hline
+\lstinline|max_element| &  \\
+\hline
+\lstinline|min| & \\
+\hline
+\lstinline|min_element| &  \\
+\hline
+\lstinline|minmax|\cpp{11} & \\
+\hline
+\lstinline|minmax_element|\cpp{11} & \\
+\hline
+\lstinline|clamp|\cpp{17} & \\
+\hline
+\lstinline|lexicographical_compare| &  \\
+\hline
+\lstinline|is_permutation|\cpp{11} & \\
+\hline
+\lstinline|next_permutation| &  \\
+\hline
+\lstinline|prev_permutation| &  \\
+\end{tabular}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Numerické operace}
+\begin{block}{}
+\centering
+\begin{tabular}{ll}
+\lstinline|iota|\cpp{11} &  \\
+\hline
+\lstinline|accumulate| &  \\
+\hline
+\lstinline|inner_product| & \\
+\hline
+\lstinline|adjacent_difference| &  \\
+\hline
+\lstinline|partial_sum| & \\
+\hline
+\lstinline|reduce|\cpp{17} & \\
+\hline
+\ldots \\
+\end{tabular}
+\end{block}
+\end{frame}

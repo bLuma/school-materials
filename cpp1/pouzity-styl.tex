@@ -1,0 +1,109 @@
+\hkapitola{Použitý styl v přednáškách}
+
+
+\begin{frame}[fragile]
+%\frametitle{Styly}
+\begin{block}{Základní informace} 
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+\end{block}
+
+\begin{exampleblock}{Příklad}
+Nullam mattis efficitur aliquam.
+\end{exampleblock}
+
+\begin{alertblock}{Chyba / příklad s chybou / nekorektní použití} 
+Sed aliquam iaculis massa, vel tincidunt lacus tincidunt eget.
+\end{alertblock}
+
+\begin{noteblock}{Poznámka (teorie, vhodné k zapamatování)}
+Proin porta urna ut ipsum ornare, a ultricies elit dictum.
+\end{noteblock}
+
+\begin{deprecatedblock}{Deprecated (staré, už nepoužívané)} 
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames. 
+\end{deprecatedblock}
+
+\begin{bonusblock}{Bonus (nepotřebujete ke zkoušce, ale souvisí s tématem)}
+Sed imperdiet pharetra est, sed ullamcorper neque. 
+\end{bonusblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Ukázka}
+\begin{block}{Ukazatele a dynamická paměť}
+Ukázky korektní a nekorektní práce s ukazateli a dynamicky alokovanou pamětí:
+\end{block}
+
+\begin{twocols}
+
+\begin{exampleblock}{\YES\,Good}
+\begin{lstlisting}
+int* pointer = nullptr;
+pointer = new int;
+*pointer = 123;
+\end{lstlisting}
+\end{exampleblock}
+\twocolssep
+\begin{alertblock}{\NO\,Bad}
+\begin{lstlisting}
+int* pointer = 0xdeadbeef;
+*pointer = 123;
+\end{lstlisting}
+\end{alertblock}
+
+\end{twocols}
+
+
+\begin{deprecatedblock}{\WARNING\,deprecated}
+\begin{lstlisting}
+int* pointer = (int*)malloc(sizeof(int));
+*pointer = 123;
+\end{lstlisting}
+\end{deprecatedblock}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Definice kódu}
+
+\begin{noteblock}{}
+\begin{lstlisting}[basicstyle=\small]
+struct|class nazevDatovehoTypu [final] [dědičnost] {
+  [složky - atributy, metody, vnořené typy]...
+} [objekty];
+
+[dědičnost]:
+  : [viditelnost] [virtual] předek1, ...
+\end{lstlisting}
+\end{noteblock}
+
+\begin{block}{Definuje:}
+\begin{itemize}
+\item Začínáme klíčovým slovem \lstinline|struct| nebo \lstinline|class|
+\item dále uvedeme název datového typu (\lstinline|Pes|, \lstinline|Kocka|, \lstinline|Student|, \ldots)
+\item dále může být (ale nemusí) klíčové slovo \lstinline|final|
+\item dále může být definováno dědění z předků
+\item[]
+\item Uvnitř třídy je možné definovat větší množství složek (\ldots)
+\end{itemize}
+
+\end{block}
+\end{frame}
+
+
+
+
+
+
+
+
+\nezkouskove
+\begin{frame}[fragile]
+\begin{center}
+\large Slidy označené fialovými pruhy obsahují téma, které není vyžadováno u zkoušky a zápočtu.
+\end{center}
+\end{frame}
+\zkouskove

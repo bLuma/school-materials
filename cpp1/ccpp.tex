@@ -1,0 +1,740 @@
+\hkapitola{Rozdíly mezi C a C++}
+
+\begin{frame}[fragile]
+\frametitle{Základní rozdíly}
+\begin{bitemize}
+\item znakové literály jsou typu \lstinline|char|
+\item proměnné je možné deklarovat \uv{kdekoliv}
+\item silnější typová kontrola
+\begin{itemize}
+\item \lstinline|void func();| -- v C++ funkce bez parametrů
+\item \lstinline|void* prom| -- nelze přiřadit bez konverze typu
+\end{itemize}
+\item ukazatel nikam není \lstinline|NULL|, ale \lstinline|nullptr|\cpp{11} (rvalue, nelze přiřadit do neukazatele)
+\item funkce je nutné deklarovat před jejich zavoláním
+\item nový logický typ \lstinline|bool| (\lstinline|true| nebo \lstinline|false|)
+\item při použití datového typu struktury se uvádí pouze název struktury (nikoliv \lstinline|struct NazevStruktury| jako v C)
+\end{bitemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Dynamická alokace paměti}
+
+\begin{oldblock}
+\begin{itemize}
+\item funkce \lstinline|malloc|, \lstinline|free|, \lstinline|calloc| a \lstinline|realloc| jsou nahrazeny
+\begin{itemize}
+\item neumí pracovat s objekty
+\end{itemize}
+\end{itemize}
+\end{oldblock}
+\begin{bitemize}
+\item nové operátory \lstinline|new|, \lstinline|new[]|, \lstinline|delete| a \lstinline|delete[]|
+\begin{itemize}
+\item umí pracovat s objekty
+\item realokaci je nutné řešit ručně (\lstinline|new, memcpy(), delete)|
+\end{itemize}
+\end{bitemize}
+\end{frame}
+
+
+\kapitola{Reference}
+
+\begin{frame}[fragile]
+\frametitle{L-value reference}
+
+\begin{bitemize}
+\item L-value reference představují ukazatele na \uv{pojmenované} proměnné
+\begin{itemize}
+\item ne na dočasné objekty
+\end{itemize}
+\item kompilátor referencování a dereferencování řeší za nás (odpadá starost s operátory * a \&)
+\item po vytvoření reference nejde změnit kam ukazuje
+\item veškerá manipulace je pak automaticky přeposlána na referencovaný objekt
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+int alfa = 100;
+int& refAlfa = alfa; // není potřeba &
+
+refAlfa++; // alfa = 101
+cout << (&alfa == &refAlfa); // == true
+refAlfa = 0; // alfa = 0;
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{L-value reference\ldots}
+\begin{bitemize}
+\item lze je použít jako
+\begin{itemize}
+\item lokální proměnné
+\item atributy tříd
+\item parametry metod
+\item návratové hodnoty
+\end{itemize}
+\end{bitemize}
+
+\begin{twocols}
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\scriptsize]
+// předávání hodnotou
+// = kopie objektu
+void nakrmKocku(Kocka k) {
+  k.nakrmena(RYBA);
+  // nakrmili jsme kopii micky, micka zatím chcípe hlady  
+}
+
+Kocka micka;
+nakrmKocku(micka);
+\end{lstlisting}
+\end{yesblock}
+
+\twocolssep
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\scriptsize]
+// předávání odkazem
+// = stejný objekt
+void nakrmKocku(Kocka& k) {
+  k.nakrmena(RYBA);
+  // nakrmili jsme micku
+}
+
+Kocka micka;
+nakrmKocku(micka);
+\end{lstlisting}
+\end{yesblock}
+
+\end{twocols}
+\end{frame}
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{L-value reference\ldots}
+
+\begin{bitemize}
+\item reference je možné vytvořit na libovolný datový typ (i ukazatele)
+\begin{itemize}
+\item ale nelze vytvořit ukazatel na referenci
+\end{itemize}
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}
+int i = 10;
+int* ui = &i;
+
+int*& refui = ui; // ok
+//int&* urefi; // ne - ukazatel na referenci
+
+// následující dva řádky jsou totožné
+*ui = 100;
+*refui = 100;
+// i == *ui == *refui == 100
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{L-value reference\ldots}
+
+\begin{bitemize}
+\item konstatní reference
+\begin{itemize}
+\item nelze přiřadit jinou hodnotu (pomocí operátoru =)
+\item s objekty lze omezeně manipulovat
+\item \lstinline|const type& ref;|
+\end{itemize}
+\item referenční funkce
+\begin{itemize}
+\item funkce, která vrací referenci
+\item za return musí být l-hodnota
+\end{itemize}
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\scriptsize]
+Kocka& mnoukej(Kocka& k) {
+  cout << "mnau ";
+  k.zamnoukano();
+  return k;
+}
+
+Kocka micka;
+mnoukej(mnoukej(mnoukej(micka)));
+// micka 3x zamňoukala
+
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+%\frametitle{R-value reference}
+
+\begin{bonusblock}{R-value reference\cpp{11}}
+\begin{itemize}
+\item představuje optimalizaci využití dočasných objektů
+\item zapisuje se jako: \lstinline|datovyTyp&& prom|
+\item přidává move sémantiku (konstruktor, operátor =)
+\begin{itemize}
+\item \lstinline|std::move()|
+\item \lstinline|std::forward()|
+\end{itemize}
+\end{itemize}
+\end{bonusblock}
+\end{frame}
+
+
+\kapitola{Ostatní\ldots}
+
+
+\begin{frame}[fragile]
+\frametitle{Standardní vstupy a výstupy (obrazovka, soubor, paměť)}
+
+\begin{bitemize}
+\item pro vstup a výstup vytvořeny objekty -- proudy
+\begin{itemize}
+\item hlavičkový soubor \lstinline|iostream|
+\item výstup na obrazovku pomocí \lstinline|std::cout << "data" << 123 << prom << ...;|
+\item vstup z klávesnice pomocí \lstinline|cin >> prom1 >> prom2 >> prom3 >> ...;|
+\end{itemize}
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+#include <iostream>
+
+void main() {
+  std::cout << "Zadej cislo: ";
+  int cislo;
+  std::cin >> cislo;
+  std::cout << "Zadal jsi " << cislo << std::endl;
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Prostory jmen (namespace)}
+\begin{bitemize}
+\item řeší konflikty jmen
+\item podobné balíčkům z Javy (ale vše uvnitř je veřejné)
+\item přístup k prvkům pomocí \lstinline|::| nebo zpřístupnění pomocí operátoru \lstinline|using|
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}
+namespace MojeKnihovna {
+  void knihovniFunkce() { ... }
+}
+
+void main() {
+  // knihovniFunkce(); // NE -> neexistuje
+  MojeKnihovna::knihovniFunkce();
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Prostory jmen (namespace)\ldots}
+\begin{bitemize}
+\item \lstinline|using| se nepoužívá v hlavičkových souborech!
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}
+namespace MojeKnihovna {
+  void knihovniFunkce() { ... }
+}
+
+// ... 
+
+using namespace MojeKnihovna;
+
+void main() {
+  knihovniFunkce();
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Výjimky}
+
+\begin{bitemize}
+\item ošetřování chyb pomocí výjimek
+\begin{itemize}
+\item blok \lstinline|try|
+\item blok \lstinline|catch|
+\item příkaz \lstinline|throw|
+\item modifikátor \lstinline|noexcept|\cpp{11}
+\end{itemize}
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\scriptsize]
+try {
+  pripravVlakna();
+  provedVypocet();
+  uklidVlakna();
+} catch (ThreadException& threadException) {
+  cerr << "Vlakna spadla" << endl;
+} catch (CalculationException& calculationException) {
+  cerr << "Vypocet spadl" << endl;
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Šablony (generické datové typy a funkce)}
+
+\begin{bitemize}
+\item genericita na steroidech
+\item \lstinline|template<typename T> ...|
+\item šablony
+\begin{itemize}
+\item funkcí
+\item metod
+\item datových typů
+\item šablon
+\end{itemize}
+\item specializace šablon
+\begin{itemize}
+\item parciální
+\item explicitní
+\end{itemize}
+\end{bitemize}
+\vskip -1ex
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\scriptsize]
+template<typename T, int Size>
+struct Array {
+  T& get(int index) { return _array[index]; }
+  T _array[Size];
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{RTTI -- run time type information}
+
+\begin{bitemize}
+\item obdoba reflexe z Javy
+\item podstatně jednodušší 
+\begin{itemize}
+\item v podstatě umí jen identifikovat typ a vypsat jeho jméno (tvar není standardizován)
+\end{itemize}
+\item definuje dva operátory
+\begin{itemize}
+\item \lstinline|typeid| -- vrací strukturu \lstinline|type_info| s informacemi o typu
+\item \lstinline|dynamic_cast| -- chytré přetypování v rámci hierarchie dědičnosti
+\end{itemize}
+\item využívá přítomnost VMT v objektech (vyžaduje virtuální metodu, viz později polymorfizmus)
+\end{bitemize}
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Nové operátory pro přetypování}
+
+\begin{bitemize}
+\item \lstinline|dynamic_cast|
+\begin{itemize}
+\item využítá RTTI (Run Time Type Information)
+\item užitečný, bezpečný, přetypování z předka na potomka (i naopak)
+\end{itemize}
+\end{bitemize}
+\vskip -2ex
+\begin{bonusblock}{}
+\begin{itemize}
+\item \lstinline|static_cast|
+\begin{itemize}
+\item běžné přetypování
+\end{itemize}
+\item \lstinline|const_cast|
+\begin{itemize}
+\item pro odstranění \lstinline|const| nebo \lstinline|volatile| modifikátorů
+\end{itemize}
+\item \lstinline|reinterpret_cast|
+\begin{itemize}
+\item nestandardní přetypování
+\end{itemize}
+\end{itemize}
+\end{bonusblock}
+\vskip -1ex
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\scriptsize]
+Object* obj = new Kocka("Micka");
+Kocka* kocka = dynamic_cast<Kocka*>(obj);
+if (kocka != nullptr)
+  kocka->mnoukej();
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+
+\nezkouskove
+
+
+\kapitola{C++11, C++14, C++17}
+
+\begin{frame}[fragile]
+\frametitle{constexpr\cpp{11}}
+
+\begin{bonusblock}{}
+\begin{itemize}
+\item definuje, že proměnná nebo funkce obsahuje/vrací konstatní výraz a může být využit na místě, kde se očekává konstatní výraz (definice statického pole, \ldots)
+\end{itemize}
+\end{bonusblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+constexpr int pocetBajtuVObrazu(int sirka, int vyska, int bpp) {
+  return sirka * vyska * (bpp / 8);
+}
+
+unsigned char obrazoveBity[pocetBajduVObrazu(800, 600, 32)];
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{auto\cpp{11}, decltype\cpp{11}}
+
+\begin{bonusblock}{}
+\begin{itemize}
+\item \lstinline|auto|\cpp{11} lze použít jako zástupný symbol pro libovolný datový typ
+\begin{itemize}
+\item konkrétní datový typ dohledá kompilátor v době kompilace
+\item stále se jedná o silně typovaný jazyk, nelze pak přiřadit jiný typ do takové proměnné
+\end{itemize}
+\item \lstinline|decltype|\cpp{11} slouží jako zástupný symbol datového typu definovaného podle výsledku výrazu
+\end{itemize}
+\end{bonusblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+std::map<KeyObject<Person>, Person> map;
+
+auto iterator = map.rbegin();
+// auto = std::map<KeyObject<Person>, Person>::reverse_iterator
+
+auto v = 1; // v = int
+decltype(v) w = v; // w = int
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{lambda výrazy\cpp{11}}
+
+\begin{bonusblock}{}
+\begin{itemize}
+\item lambda výrazy (anonymní funkce) představují možnost zapsat funkci prakticky kamkoliv do kódu
+\end{itemize}
+\end{bonusblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+auto function = [ ] (int p1, int p2) { return p1 + p2; }
+
+function(10, 20); // = 30
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{for-each\cpp{11}}
+\begin{bonusblock}{}
+\begin{itemize}
+\item \lstinline|for (definiceProměnné : kontejner) { ... }|
+\item umožňuje jednoduše procházet kontejnery/kolekce
+\item funguje nad statickým polem a objekty, které definují metody \lstinline|begin(), end()|
+\end{itemize}
+\end{bonusblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+std::vector<int> container;
+for (int value : container) {
+  ...
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{for-each\cpp{11}}
+\begin{noblock}
+\begin{lstlisting}
+// for-each podle C++/CLI použitelné v MSVC
+// není ve standardu C++ -> nepoužívat!
+for each (int value in container) {
+  ...
+}
+\end{lstlisting}
+\end{noblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+// neplést for-each cyklus s for_each algoritmem!
+for_each(
+  container.begin(), 
+  container.end(), 
+  [](int value) { ... });
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{for-each\cpp{11}}
+\begin{block}{}
+\begin{itemize}
+\item lze kombinovat s \lstinline|auto|
+\end{itemize}
+\end{block}
+
+\begin{yesblock}
+\begin{lstlisting}
+std::vector<Game::Map::Object<GUID, WorldType>> container;
+
+for (auto& object : container) {
+  ... 
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{tuple (N-tice)\cpp{11}}
+
+\begin{bonusblock}{}
+\begin{itemize}
+\item slouží pro předávání N hodnot bez nutnosti tvořit třídu
+\item využívá šablon s proměnným počtem parametrů
+\end{itemize}
+\end{bonusblock}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+std::tuple<double, char, std::string> get_student(int id)
+{
+  if (id == 0) 
+    return std::make_tuple(3.8, 'A', "Lisa Simpson");  
+  if (id == 1) 
+    return std::make_tuple(2.9, 'C', "Milhouse Van Houten");  
+  if (id == 2) 
+    return std::make_tuple(1.7, 'D', "Ralph Wiggum");
+  
+  throw std::invalid_argument("id");
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{tuple (N-tice)\cpp{11}}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+int main()
+{
+    auto student0 = get_student(0);
+    std::cout << "ID: 0, "
+              << "GPA: " << std::get<0>(student0) << ", "
+              << "grade: " << std::get<1>(student0) << ", "
+              << "name: " << std::get<2>(student0) << '\n';
+ 
+    double gpa1;
+    char grade1;
+    std::string name1;
+    std::tie(gpa1, grade1, name1) = get_student(1);
+    std::cout << "ID: 1, "
+              << "GPA: " << gpa1 << ", "
+              << "grade: " << grade1 << ", "
+              << "name: " << name1 << '\n';
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Další novinky z C++11, 14}
+\begin{bonusblock}{}
+\begin{itemize}
+\item silně typované výčty -- \lstinline|enum class NazevEnumu { ... }|
+\begin{itemize}
+\item jednotlivé výčtové konstanty nejsou dostupné z globálního prostoru, ale z \lstinline|NazevEnumu::konstanta|
+\end{itemize}
+\item nové řetězcové literály -- \lstinline|u8"Řetězec v UTF-8"|, \lstinline|u"UTF-16", U"UTF-32"|
+\item RAW řetězcové literály -- {\ttfamily{}R}{\ttfamily\color[rgb]{0.627,0.126,0.941}"(retezec~"~s~'~divnoznaky)\dq}
+\item uživatelské řetězcové literály
+\item \lstinline|static_assert|
+\item atributy -- \lstinline|[[atribut]]|
+\item \ldots
+\end{itemize}
+\end{bonusblock}
+\end{frame}
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Structured bindings\cpp{17}}
+
+\begin{bonusblock}{}
+\begin{itemize}
+\item umožňuje jednoduše rozdělit složitý typ na elementární proměnné 
+\item funguje na tuple interface, statické pole nebo pokud typ má pouze veřejné nestatické složky
+\end{itemize}
+\end{bonusblock}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+// C++14
+double gpa1;
+char grade1;
+std::string name1;
+std::tie(gpa1, grade1, name1) = get_student(1);
+...
+
+// C++17
+auto& [gpa2, grade2, name2] = get_student(2);
+...
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Structured bindings\cpp{17}}
+
+\begin{bonusblock}{}
+\begin{itemize}
+\item lze kombinovat i s for-each
+\end{itemize}
+\end{bonusblock}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+std::map<System::GUID, Game::Map::Object<GUID, WorldType>> container;
+
+for (const auto& [key, value] : container) {
+  ...
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Další novinky z C++17}
+\begin{bonusblock}{}
+\begin{itemize}
+\item \lstinline|constexpr if|
+\item init-statement pro if/switch
+\item automatické odvození typů pro šablony objektových typů
+\item fold expressions (... v šablonách s proměnným počtem parametrů)
+\item \ldots
+\end{itemize}
+\end{bonusblock}
+
+\begin{noblock}
+\begin{itemize}
+\item C++17 není prozatím široce podporováno (zejména v MSVC)
+\item Většina novinek bude dostupná nejdříve od MSVC 2017!
+\item Viz \url{https://blogs.msdn.microsoft.com/vcblog/2017/05/10/c17-features-in-vs-2017-3/}
+\end{itemize}
+\end{noblock}
+\end{frame}
+
+
+
+
+\zkouskove

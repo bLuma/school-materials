@@ -1,0 +1,239 @@
+\hkapitola{Dědičnost}
+
+\begin{frame}[fragile]
+\frametitle{Dědičnost v C++}
+
+\begin{bitemize}
+\item podporována vícenásobná dědičnost
+\begin{itemize}
+\item třída může dědit z několika tříd
+\end{itemize}
+\item neexistují rozhraní
+\begin{itemize}
+\item ale existují abstraktní třídy
+\item uzavřené (sealed/final) třídy
+\end{itemize}
+\item u zděděných složek (atributů a metod) lze ovlivnit viditelnost
+\begin{itemize}
+\item lze hromadně omezit přístup k těmto složkám
+\item lze individuálně obnovit nebo omezit přístup
+\end{itemize}
+\item metody lze přetížit/přepsat v potomcích
+\begin{itemize}
+\item C++ rozlišuje časnou a pozdní vazbu
+\end{itemize}
+\end{bitemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Dědičnost}
+\begin{noteblock}{}
+\begin{lstlisting}[basicstyle=\scriptsize]
+struct|class nazevDatovehoTypu [final] [dědičnost] {
+  [složky - atributy, metody, vnořené typy]
+} [objekty];
+\end{lstlisting}
+\end{noteblock}
+
+\begin{bitemize}
+\item{} [\lstinline|final|]\cpp{11} -- zakazuje dědit z této třídy
+\item{} [dědičnost] -- specifikace předků
+\begin{itemize}
+\item \lstinline|: [viditelnost] [virtual] předek1, ...|
+\end{itemize}
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}
+struct Pes : public virtual Zvire, public IIdentifikovatelny, IKopirovatelny {
+  ...
+};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Dědičnost\ldots}
+\begin{bitemize}
+\item pokud viditelnost není uvedena využije se výchozí dle typu
+\begin{itemize}
+\item \lstinline|class| -- \lstinline|private|
+\item \lstinline|struct| -- \lstinline|public|
+\end{itemize}
+\item viditelnost udává s jakou viditelností jsou zděděny složky z daného předka, pokud uvedeme
+\begin{itemize}
+\item \lstinline|public| -- nic se nemění
+\item \lstinline|protected| -- \lstinline|public| složky z předka jsou převedeny na \lstinline|protected|
+\item \lstinline|private| -- \lstinline|public| a \lstinline|protected| složky z předka jsou převedeny na \lstinline|private|
+\end{itemize}
+\end{bitemize}
+
+\begin{noteblock}{}
+Aby se to chovalo á la Java:
+\begin{itemize}
+\item používejte \lstinline|struct| a nic tam nepište
+\item používejte \lstinline|struct| i \lstinline|class| a vždy uvádějte viditelnost \lstinline|public|
+\end{itemize}
+\end{noteblock}
+\end{frame}
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Dědičnost\ldots}
+\begin{bonusblock}{Obnovení viditelnosti}
+\begin{itemize}
+\item viditelnost je možné obnovit uvedením složky předka ve tvaru \lstinline|TřídaPředka::složka| v bloku s danou viditelností (rovněž lze využít i \lstinline|using TřídaPředka::složka|)
+\end{itemize}
+\end{bonusblock}
+\vskip -2ex
+\begin{bonusblock}{}
+\begin{twocols}
+\begin{lstlisting}
+class TA {
+
+  protected:
+    int x, y;
+
+  public:
+    int GetX() const;
+    // ...
+};
+
+\end{lstlisting}
+\twocolssep
+\begin{lstlisting}
+class TB : private TA {
+
+  protected:
+    TA::x;
+
+  public:
+    TA::GetX;
+    // ...
+};
+\end{lstlisting}
+\end{twocols}
+\end{bonusblock}
+\end{frame}
+
+
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}
+\item potomek může zastoupit předka
+\begin{itemize}
+\item je korektní přiřadit ukazatel na potomka do ukazatele na předka
+\item je korektní přiřadit referenci na potomka do reference na předka
+\item NENÍ korektní přiřadit objekt potomka do objektu předka
+\begin{itemize}
+\item dojde k oříznutí objektu!
+\end{itemize}
+\end{itemize}
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}
+Potomek potomek{};
+
+Predek& ref = potomek;
+Predek* ptr = &potomek;
+...
+\end{lstlisting}
+\end{yesblock}
+
+\begin{noblock}
+\begin{lstlisting}
+Predek predek = potomek; // oříznutí objektu!!!
+\end{lstlisting}
+\end{noblock}
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Volání konstruktoru předka}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\scriptsize]
+struct Predek {
+  Predek() : _a(0) { }
+  Predek(int a) : _a(a) { }
+
+private:
+  int _a;
+}
+
+struct Potomek : Predek {
+  Potomek() : _b(0) {
+    // kompilátor implicitně volá Predek::Predek();
+  }
+
+  Potomek(int a, int b) : Predek(a), _b(0) {
+    // kompilátor explicitně volá Predek::Predek(int);
+  }
+
+private:
+  int _b;
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+%\frametitle{Volání konstruktoru předka\ldots}
+%\vskip -.99ex
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\scriptsize]
+struct Predek {
+  //Predek() : _a(0) { }
+  Predek(int a) : _a(a) { }
+
+private:
+  int _a;
+}
+\end{lstlisting}
+\end{yesblock}
+%\vskip -2.0ex
+\begin{noblock}
+\begin{lstlisting}[basicstyle=\scriptsize]
+struct Potomek : Predek {
+  Potomek() : _b(0) {
+    // kompilátor implicitně volá Predek::Predek();
+    // konstruktor neexistuje !!! chyba kompilace
+  }
+
+  Potomek(int a, int b) : Predek(a), _b(0) {
+    // kompilátor explicitně volá Predek::Predek(int);
+    // ok!
+  }
+
+private:
+  int _b;
+}
+\end{lstlisting}
+\end{noblock}
+\end{frame}
+
+
+
+
+% virtualni nevirtualni dedeni
+% using na konstruktory
+% volani konstruktoru predka
+% proces tvorby objektu?

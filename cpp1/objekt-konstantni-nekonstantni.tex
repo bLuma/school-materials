@@ -1,0 +1,244 @@
+\kapitola{Konstatní a nekonstantní objekty}
+
+\begin{frame}[fragile]
+\begin{bitemize}
+\item Nekonstantní objekt -- lze měnit jeho stav (atributy)
+\item Konstantní objekt -- nelze měnit jeho stav (atributy)
+\end{bitemize}
+
+
+\begin{bitemize}
+\item Nekonstantní metoda
+\begin{itemize}
+\item \lstinline|this| odpovídá typu \lstinline|Třída*|
+\item může měnit stav
+\end{itemize}
+
+\item Konstantní metoda (za názvem \lstinline|const|)
+\begin{itemize}
+\item \lstinline|this| odpovídá typu \lstinline|const Třída*|
+\item nemůže měnit stav
+\end{itemize}
+\end{bitemize}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}
+\item Nekonstantní objekt
+\begin{itemize}
+\item Umí všechno!
+\end{itemize}
+\end{bitemize}
+
+\begin{twocols}
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+struct Pes {
+
+  void stekej() { 
+    cout << "Haf"; 
+    _stekano = true; 
+  };
+
+  bool byloStekano() const { 
+    return _stekano; 
+  }
+
+private:
+  bool _stekano = false;
+}
+\end{lstlisting}
+\end{yesblock}
+
+\twocolssep
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+Pes pes{};
+
+pes.stekej();
+cout << pes.byloStekano();
+\end{lstlisting}
+\end{yesblock}
+
+\end{twocols}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}
+\item Konstantní objekt -- neměnný
+\begin{itemize}
+\item Lze volat jen const metody!
+\end{itemize}
+\end{bitemize}
+
+\begin{twocols}
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+struct Pes {
+
+  void stekej() { 
+    cout << "Haf"; 
+    _stekano = true; 
+  };
+
+  bool byloStekano() const { 
+    return _stekano; 
+  }
+
+private:
+  bool _stekano = false;
+}
+\end{lstlisting}
+\end{yesblock}
+
+\twocolssep
+
+\begin{noblock}
+\begin{lstlisting}[basicstyle=\small]
+const Pes pes{};
+
+pes.stekej(); // nejde
+\end{lstlisting}
+\end{noblock}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+const Pes pes{};
+
+//pes.stekej(); - nejde
+cout << pes.byloStekano();
+\end{lstlisting}
+\end{yesblock}
+
+\end{twocols}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Více pohledů na jeden objekt\ldots}
+
+\begin{yesblock}
+\begin{lstlisting}
+Pes pes{};
+
+Pes& nekonstRefPes = pes;
+nekonstRefPes.stekej();
+
+const Pes& konstRefPes = pes;
+// konstRefPes.stekej(); - nejde
+
+Pes* nekonstPtrPes = &pes;
+nekonstPtrPes->stekej();
+
+const Pes* konstPtrPes = &pes;
+// konstPtrPes->stekej(); - nejde
+\end{lstlisting}
+\end{yesblock}
+
+\end{frame}
+
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Není const jako const\ldots}
+\begin{yesblock}
+\begin{lstlisting}
+struct Pes {
+
+  // nekonstatní metoda, vrací int
+  int stekej1();
+
+  // nekonstatní metoda, vrací const int
+  const int stekej2();
+
+  // konstatní metoda, vrací int
+  int stekej3() const;
+
+  // konstatní metoda, vrací const int
+  const int stekej4() const;
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+%\frametitle{Není const jako const (pokračování)\ldots}
+\begin{bonusblock}{konstantní ukazatel}
+\begin{itemize}
+\item \lstinline|const| u ukazatele může značit konstantní ukazatel (neplést s~konstantním objektem)
+\end{itemize}
+\end{bonusblock}
+
+\begin{bonusblock}{}
+\begin{lstlisting}[basicstyle=\small]
+// ukazatel na konstantní objekt
+const Pes* pes1 = &pes;
+// pes1->stekej() // NE
+pes1 = nullptr; // OK
+
+// konstantní ukazatel na nekonstantní objekt
+Pes* const pes2 = &pes;
+pes2->stekej() // OK
+// pes2 = nullptr; // NE
+
+// konstantní ukazatel na konstantní objekt
+const Pes* const pes3 = &pes;
+// pes3->stekej() // NE
+// pes3 = nullptr; // NE
+\end{lstlisting}
+\end{bonusblock}
+\end{frame}
+
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{bonusblock}{mutable, volatile, constexpr, const\_cast}
+\begin{itemize}
+\item modifikátor \lstinline|mutable| (pro atributy)
+\begin{itemize}
+\item umožňuje měnit stav této proměnné i v konstantním objektu
+\item odporuje obvyklé logice -- nebudeme používat
+\end{itemize}
+
+\item modifikátor \lstinline|volatile| (pro proměnné, atributy)
+\begin{itemize}
+\item \uv{nestálé instance} -- zakazuje optimalizace
+\item stejný efekt jako konstantní-nekonstantní objekty
+\end{itemize}
+
+\item modifikátor \lstinline|constexpr| (pro funkce, metody)
+\begin{itemize}
+\item C++11
+\item označuje metody a funkce jako \uv{compile time constant}
+\item lze je pak použít pro definici velikosti pole, šablonového parametru, \ldots
+\end{itemize}
+
+\item operátor \lstinline|const_cast|
+\begin{itemize}
+\item umožňuje odstraňovat \lstinline|const| a \lstinline|volatile| modifikátory
+\item nehlídá, jestli je to korektní!
+\end{itemize}
+\end{itemize}
+\end{bonusblock}
+\end{frame}

@@ -1,0 +1,164 @@
+\hkapitola{Objektové typy}
+
+\begin{frame}[fragile]
+\frametitle{Objektové typy}
+\begin{bitemize}
+\item \lstinline|class| -- plnohodnotný objektový typ
+\item \lstinline|struct| -- plnohodnotný objektový typ
+\item \lstinline|union| -- omezený objektový typ (neumí dědičnost, polymorfizmus)
+\end{bitemize}
+
+\begin{block}{}
+Základní vlastnosti:
+\begin{itemize}
+\item vícenásobná dědičnost
+\begin{itemize}
+\item neexistují rozhraní
+\end{itemize}
+
+\item polymorfizmus
+\item H x CPP soubor
+\begin{itemize}
+\item H -- deklarace (celý typ, atributy, prototypy metod)
+\item CPP -- definice (pouze těla metod, statické atributy)
+\end{itemize}
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{struct x class}
+\begin{bitemize}
+\item \lstinline|struct| i \lstinline|class| jsou zaměnitelné
+\item \lstinline|struct| může dědit z \lstinline|class| a naopak
+\item liší se pouze ve výchozí úrovni viditelnosti složek (\lstinline|public| x \lstinline|private|)
+\end{bitemize}
+\end{frame}
+
+
+\kapitola{Základní syntaxe objektových typů}
+
+\begin{frame}[fragile]
+\frametitle{Definice struct a class}
+\begin{noteblock}{}
+\begin{lstlisting}
+struct|class nazevDatovehoTypu [final] [dědičnost] {
+  [složky - atributy, metody, vnořené typy]
+} [objekty];
+\end{lstlisting}
+\end{noteblock}
+
+
+\begin{twocols}
+\begin{yesblock}
+\begin{lstlisting}
+struct Pes {
+  ...
+};
+\end{lstlisting}
+\end{yesblock}
+
+\twocolssep
+
+\begin{yesblock}
+\begin{lstlisting}
+class Pes {
+  ...
+};
+\end{lstlisting}
+\end{yesblock}
+\end{twocols}
+
+\begin{block}{dopředná deklarace}
+\begin{itemize}
+\item pokud potřebujeme pracovat s typem, ale ne s jeho vnitřkem
+\item \lstinline!struct|class nazevDatovehoTypu;!
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{noteblock}{}
+\begin{lstlisting}[basicstyle=\scriptsize]
+struct|class nazevDatovehoTypu [final] [dědičnost] {
+  [složky - atributy, metody, vnořené typy]
+} [objekty];
+\end{lstlisting}
+\end{noteblock}
+
+\begin{bitemize}
+\item{} [objekty] -- umožňuje vytvořit staticky alokované objekty od dané třídy v~globálním prostoru
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}
+struct Pes {
+  ...
+} punta, rafan;
+
+void main() { 
+  punta.stekej(); 
+  rafan.stekej(); 
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{noteblock}{}
+\begin{lstlisting}[basicstyle=\scriptsize]
+struct|class nazevDatovehoTypu [final] [dědičnost] {
+  [složky - atributy, metody, vnořené typy]
+} [objekty];
+\end{lstlisting}
+\end{noteblock}
+
+\begin{bitemize}
+\item{} [\lstinline|final|]\cpp{11} -- zakazuje dědit z této třídy
+\item{} [dědičnost] -- specifikace předků
+\begin{itemize}
+\item \lstinline|: [viditelnost] [virtual] předek1, ...|
+\end{itemize}
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}
+struct Pes : public virtual Zvire, public IIdentifikovatelny, IKopirovatelny {
+  ...
+};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{noteblock}{}
+\begin{lstlisting}[basicstyle=\scriptsize]
+struct|class nazevDatovehoTypu [final] [dědičnost] {
+  [složky - atributy, metody, vnořené typy]
+} [objekty];
+\end{lstlisting}
+\end{noteblock}
+
+\begin{bitemize}
+\item{} [složky] -- dále dle typu atribut, metoda, vnořený typ
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}
+struct Pes {
+
+  void stekej() { ... }
+
+  string jmeno;
+
+};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+

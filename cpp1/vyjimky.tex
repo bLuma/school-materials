@@ -1,0 +1,345 @@
+\hkapitola{Výjimky}
+
+
+\begin{frame}[fragile]
+\frametitle{Ošetřování chybových stavů}
+
+\begin{bitemize}
+\item \lstinline|abort()|
+\item návratová hodnota funkce
+\item technika dlouhých skoků (long jumps) v jazyce C
+\item \lstinline|goto|
+\end{bitemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Výjimky}
+
+\begin{bitemize}
+\item výjimky slouží pro řešení chybových stavů v průběhu programu
+\begin{itemize}
+\item pokusný blok \lstinline|try|, kde může vzniknout výjimka
+\item zachycující bloky \lstinline|catch|, které ošetřují výjimky
+\item příkaz \lstinline|throw| vyvolávající výjimku
+\end{itemize}
+\item výjimkou v C++ může být prakticky cokoliv (int, char, string, objekt, dynamicky alokovaný objekt, \ldots)
+\begin{itemize}
+\item obecně se nedoporučuje používat dynamickou alokaci paměti pro objekt výjimky; je pak nutné řešit jeho dealokaci
+\end{itemize}
+\item pokud výjimka není zachycena na úrovni kde vznikla šíří se postupně dále
+\begin{itemize}
+\item neošetřená výjimka způsobí pád programu
+\end{itemize}
+\item v C++ není obdoba bloku {\ttfamily finally} z Javy/C\#
+\item C++ podporuje označování funkcí, kde výjimka nevzniká (\lstinline|noexcept|\cpp{11})
+\begin{itemize}
+\item původní systém označoval konkrétní druhy výjimek, které mohly vznikat; jeho špatná definice a implementace způsobily jeho zrušení
+\end{itemize}
+\end{bitemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Základní použití výjimek}
+\begin{noteblock}{}
+\begin{lstlisting}[basicstyle=\small]
+try {
+  [kód, kde může vzniknout výjimka]
+} catchHandler...
+
+catchHandler:
+  catch(datovýTypVýjimky názevProměnné) { [blok příkazů handleru] }
+  catch(...) { [blok příkazů handleru] }
+\end{lstlisting}
+\end{noteblock}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+try {
+  ...
+  throw 100;
+  ...
+
+} catch (int i) {
+  cout << "Zachyceno " << i;
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Základní použití výjimek\ldots}
+\begin{bitemize}
+\item \lstinline|catch| handlerů může následovat více za sebou
+\begin{itemize}
+\item záleží na pořadí!
+\item výjimka je zachycena do prvního vyhovujícího handleru
+\end{itemize}
+\end{bitemize}
+\begin{yesblock}
+\begin{lstlisting}
+try {
+  ...
+  throw 3.14;
+  ...
+
+} catch (int i) {
+  cout << "Zachyceno int " << i;
+} catch (double d) {
+  cout << "Zachyceno double " << d;
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Základní použití výjimek\ldots}
+\vskip -1ex
+\begin{bitemize}
+\item lze vytvořit univerzální \lstinline|catch| handler
+\begin{itemize}
+\item nelze pak pracovat s vlastní hodnotou výjimky
+\end{itemize}
+\end{bitemize}
+\vskip -1ex
+\begin{yesblock}
+\begin{lstlisting}
+try {
+  ...
+  throw 'E';
+  ...
+
+} catch (int i) {
+  cout << "Zachyceno int " << i;
+} catch (double d) {
+  cout << "Zachyceno double " << d;
+} catch (...) {
+  cou << "Zachyceno vše ostatní";
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Základní použití výjimek\ldots}
+\begin{bitemize}
+\item neošetřená výjimka se šíří dále
+\end{bitemize}
+\begin{yesblock}
+\begin{lstlisting}
+void funkce() {
+  throw "Vyjimka";
+}
+
+try {
+  ...
+  funkce();
+  ...
+
+} catch (const char* str) {
+  cout << "Zachyceno " << str;
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Základní použití výjimek\ldots}
+\begin{bitemize}
+\item dynamicky alokované objekty výjimky jsou možné
+\begin{itemize}
+\item ale nevhodné
+\item alokace je další místo, kde může vzniknout výjimka!
+\end{itemize}
+\end{bitemize}
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+try {
+  ...
+  throw new int(-99);
+  ...
+
+} catch (int* i) {
+  cout << "Zachyceno " << *i;
+  delete i;
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Základní použití výjimek\ldots}
+\begin{bitemize}
+\item objekt výjimky je při vyvolání nakopírován někam do paměti
+\item \lstinline|catch| handler přijímá kopii objektu výjimky
+\begin{itemize}
+\item pokud není použita reference!
+\end{itemize}
+\end{bitemize}
+\begin{yesblock}
+\begin{lstlisting}
+try {
+  ...
+  throw error_object{"My error"};
+  ...
+
+} catch (error_object& errobj) {
+  cout << "Zachyceno " << errobj.getMessage();
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{throw()}
+\begin{oldblock}
+\begin{itemize}
+\item \lstinline|throw| také sloužilo k definici, jaké výjimky může funkce vyvolat
+\begin{itemize}
+\item obdoba {\ttfamily throws} z Javy
+\item nikdy to pořádně nefungovalo, kompilátory to ignorovaly
+\item deprecated v C++11
+\item zcela odstraněno v C++17
+\end{itemize}
+\end{itemize}
+\end{oldblock}
+\vskip -2ex
+\begin{deprecatedblock}{}
+\begin{lstlisting}
+void func1() throw() { ... } // nevyvolává výjimky
+void func2() throw(int) { ... } // vyvolává int
+void func3() throw(int, char) { ... } // vyvolává int i char 
+\end{lstlisting}
+\end{deprecatedblock}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{noexcept\cpp{11}}
+
+\begin{bitemize}
+\item \lstinline|noexcept|\cpp{11} -- nově zjednodušuje předchozí systém a slouží k označení funkcí a metod, které nevyvolávají výjimky
+\begin{itemize}
+\item vyvolání výjimky z označené funkce by vedlo k vyvolání \lstinline|terminate| a ukončení programu
+\end{itemize}
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}
+void func() noexcept { ... }
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\kapitola{Výjimky v C++ knihovně}
+
+\begin{frame}[fragile]
+\frametitle{std::exception}
+\begin{bitemize}
+\item \lstinline|std::exception| je třída ze které dědí všechny standardní výjimky definované v knihovně C++
+\item objekt výjimky obsahuje pouze textovou informaci o druhu chyby (\lstinline|virtual const char* what() const|)
+\item definováno v hl. s. \lstinline|<exception>|
+\begin{itemize}
+\item potomci definováni v hl. s. \lstinline|<stdexcept>|
+\end{itemize}
+\end{bitemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Potomci std::exception}
+
+\begin{bitemize}
+\item \lstinline|logic_error|
+\begin{itemize}
+\item \lstinline|invalid_argument|
+\item \lstinline|domain_error|
+\item \lstinline|length_error|
+\item \lstinline|out_of_range|
+\item \lstinline|future_error|\cpp{11}
+\item \lstinline|bad_optional_access|\cpp{17}
+\end{itemize}
+
+\item \lstinline|runtime_error|
+\begin{itemize}
+\item \lstinline|range_error|
+\item \lstinline|overflow_error|
+\item \lstinline|underflow_error|
+\item \lstinline|regex_error|\cpp{11}
+\item \lstinline|system_error|\cpp{11}
+\begin{itemize}
+\item \lstinline|ios_base::failure|\cpp{11}
+\item \lstinline|filesystem::filesystem_error|\cpp{17}
+\end{itemize}
+\end{itemize}
+\end{bitemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Potomci std::exception\ldots}
+
+\begin{bitemize}
+\item \lstinline[keywordstyle={\ttfamily}]|bad_typeid|
+\item \lstinline[keywordstyle={\ttfamily}]|bad_cast|
+\begin{itemize}
+\item \lstinline|bad_any_cast|\cpp{17}
+\end{itemize}
+\item \lstinline|bad_weak_ptr|\cpp{11}
+\item \lstinline|bad_function_call|\cpp{11}
+\item \lstinline|bad_alloc|
+\begin{itemize}
+\item \lstinline|bad_array_new_length|\cpp{11}
+\end{itemize}
+\item \lstinline|bad_exception|
+\item \lstinline|bad_variant_access|\cpp{17}
+\end{bitemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{bonusblock}{Function try}
+\begin{itemize}
+\item celé tělo funkce nebo metody lze zabalit do bloku try
+\begin{itemize}
+\item funguje i na konstruktory a inicializační část
+\end{itemize}
+\end{itemize}
+\end{bonusblock}
+\vskip -2ex
+\begin{bonusblock}{}
+\begin{lstlisting}
+struct Trida {
+
+  Trida(const std::string& atr) try : _atr(atr) {
+    // ...
+  } catch (const std::exception& ex) {
+    std::cerr << "oops";
+  }
+
+  std::string _atr;
+}
+\end{lstlisting}
+\end{bonusblock}
+\end{frame}

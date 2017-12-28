@@ -1,0 +1,716 @@
+\nezkouskove
+\section{Implementace dědičnosti v C++}
+
+\begin{frame}[fragile]
+\vskip 3cm
+\begin{bonusblock}{}
+\vskip 2ex
+\Large \centering
+Implementace dědičnosti v C++
+\vskip 2ex
+\end{bonusblock}
+\vskip 1.5cm
+\begin{center}
+{\small Následující část přednášky obsahuje informace k bližšímu pochopení, jak interně funguje vícenásobná dědičnost a polymorfizmus. \\ Podrobně viz \url{ https://www.usenix.org/legacy/publications/compsystems/1989/fall_stroustrup.pdf}} \\ \textbf{Nejedná se o téma potřebné do zkoušky/zápočtu!}
+\end{center}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{bonusblock}{Objekt}
+\begin{itemize}
+\item objekt je spojitá část paměti, kde jsou uloženy atributy daného objektu
+\item atributy jsou uloženy v pořadí dle pořadí definování
+\item pokud třída dědí z jiné třídy $\rightarrow$ v paměti jsou v souvislém bloku uloženy hodnoty atributů ze všech předků i z dané třídy
+\item[]
+\item metoda je realizována jako vylepšená funkce
+\begin{itemize}
+\item na pozadí od kompilátoru obdrží ukazatel \lstinline|this|
+\end{itemize}
+
+\end{itemize}
+
+\end{bonusblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{bonusblock}{}
+\vskip 2ex
+\large \centering
+Varianta A) Jednoduchá dědičnost
+\vskip 2ex
+\end{bonusblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{noteblock}{}
+\begin{twocols}
+\begin{lstlisting}[basicstyle=\scriptsize]
+struct A {
+  int a = 0xaaaaaaaa;
+  int b = 0xbbbbbbbb;
+
+  int getA() const { return a; }
+  int getB() const { return b; }
+};
+\end{lstlisting}
+\twocolssep
+\begin{lstlisting}[basicstyle=\scriptsize]
+struct B : A {
+  int c = 0xcccccccc;
+  int d = 0xdddddddd;
+
+  int getC() const { return c; }
+  int getD() const { return d; }
+};
+\end{lstlisting}
+\end{twocols}
+\end{noteblock}
+
+
+\begin{overlayarea}{\textwidth}{3cm}
+
+\begin{threecols}
+
+\begin{yesblock}<2->
+\begin{lstlisting}
+A objA{};
+B objB{};
+\end{lstlisting}
+\end{yesblock}
+
+\threecolssep
+
+\centering
+\only<3,4>{
+\begin{tabular}{r|c|}
+\hline
+&	objA \\
+\hline 
+0x00 & \ttfamily 0xaaaaaaaa \\
+\hline
+0x04 & \ttfamily 0xbbbbbbbb \\
+\hline
+\end{tabular}
+}\only<5>{
+\begin{tabular}{r|cccc|}
+\hline
+\thisse & \multicolumn{4}{c|}{objA} \\
+\hline 
+\bc 0x00 & \bc aa & \bc aa & \bc aa & \bc aa \\
+\hline
+0x04 & bb & bb & bb & bb \\
+\hline
+\end{tabular}
+}\only<6>{
+\begin{tabular}{r|cccc|}
+\hline
+\thisse & \multicolumn{4}{c|}{objA} \\
+\hline 
+\gc 0x00 & \gc aa & \gc aa & \gc aa & \gc aa \\
+\hline
+\bc 0x04 & \bc bb & \bc bb & \bc bb & \bc bb \\
+\hline
+\end{tabular}
+}\only<7>{
+\begin{tabular}{r|cccc|}
+\hline
+\thisse & \multicolumn{4}{c|}{objB} \\
+\hline 
+\gc 0x00 & \gc aa & \gc aa & \gc aa & \gc aa \\
+\hline
+\gc 0x04 & \gc bb & \gc bb & \gc bb & \gc bb \\
+\hline 
+\bc 0x08 & \bc cc & \bc cc & \bc cc & \bc cc \\
+\hline
+0x0c & dd & dd & dd & dd \\
+\hline
+\end{tabular}
+}\only<8>{
+\begin{tabular}{r|cccc|}
+\hline
+\thisse & \multicolumn{4}{c|}{objB} \\
+\hline 
+\gc 0x00 & \gc aa & \gc aa & \gc aa & \gc aa \\
+\hline
+\gc 0x04 & \gc bb & \gc bb & \gc bb & \gc bb \\
+\hline 
+\gc 0x08 & \gc cc & \gc cc & \gc cc & \gc cc \\
+\hline
+\bc 0x0c & \bc dd & \bc dd & \bc dd & \bc dd \\
+\hline
+\end{tabular}
+}
+
+\threecolssep
+
+\begin{overlayarea}{\textwidth}{3cm}
+\centering
+\only<4>{
+\begin{tabular}{r|c|}
+\hline
+& objB \\
+\hline 
+0x00 & \ttfamily 0xaaaaaaaa \\
+\hline
+0x04 & \ttfamily 0xbbbbbbbb \\
+\hline 
+0x08 & \ttfamily 0xcccccccc \\
+\hline
+0x0c & \ttfamily 0xdddddddd \\
+\hline
+\end{tabular}
+}
+\end{overlayarea}
+
+\end{threecols}
+\end{overlayarea}
+
+
+\begin{overlayarea}{\textwidth}{3cm}
+\begin{onlyenv}<5>
+\begin{yesblock}
+\begin{lstlisting}
+int get<@\color{red}A@>() const {
+  return * (int*) ( ((char*)this) + <@\color{red}0x00@>);
+}
+\end{lstlisting}
+\end{yesblock}
+\end{onlyenv}
+
+\begin{onlyenv}<6>
+\begin{yesblock}
+\begin{lstlisting}
+int get<@\color{red}B@>() const {
+  return * (int*) ( ((char*)this) + <@\color{red}0x04@>);
+}
+\end{lstlisting}
+\end{yesblock}
+\end{onlyenv}
+
+\begin{onlyenv}<7>
+\begin{yesblock}
+\begin{lstlisting}
+int get<@\color{red}C@>() const {
+  return * (int*) ( ((char*)this) + <@\color{red}0x08@>);
+}
+\end{lstlisting}
+\end{yesblock}
+\end{onlyenv}
+
+\begin{onlyenv}<8>
+\begin{yesblock}
+\begin{lstlisting}
+int get<@\color{red}D@>() const {
+  return * (int*) ( ((char*)this) + <@\color{red}0x0c@>);
+}
+\end{lstlisting}
+\end{yesblock}
+\end{onlyenv}
+\end{overlayarea}
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{bonusblock}{}
+\vskip 2ex
+\large \centering
+Varianta B) Vícenásobná dědičnost
+\vskip 2ex
+\end{bonusblock}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+
+\begin{noteblock}{}
+\begin{threecols}
+\begin{lstlisting}[basicstyle=\scriptsize]
+struct A {
+  int a = 0xaaaaaaaa;
+  int b = 0xbbbbbbbb;
+  ...
+};
+\end{lstlisting}
+\threecolssep
+\begin{lstlisting}[basicstyle=\scriptsize]
+struct B {
+  int c = 0xcccccccc;
+  int d = 0xdddddddd;
+  ...
+};
+\end{lstlisting}
+\threecolssep
+\begin{lstlisting}[basicstyle=\scriptsize]
+struct C : A, B {
+  int e = 0xeeeeeeee;
+  int f = 0xffffffff;
+  ...
+};
+\end{lstlisting}
+\end{threecols}
+\end{noteblock}
+
+\begin{overlayarea}{\textwidth}{4cm}
+\begin{onlyenv}<2-7>
+\begin{twocols}
+\begin{yesblock}<2->
+\begin{lstlisting}
+C objC{};
+\end{lstlisting}
+\end{yesblock}
+
+\twocolssep
+\begin{overlayarea}{\textwidth}{4cm}
+\begin{onlyenv}<3>
+\begin{tabular}{r|c|l}
+\hline
+& objC & \\
+\hline 
+0x00 & \ttfamily 0xaaaaaaaa & $\leftarrow$ A \\
+\hline
+0x04 & \ttfamily 0xbbbbbbbb & \\
+\hline 
+0x08 & \ttfamily 0xcccccccc & $\leftarrow$ B \\
+\hline
+0x0c & \ttfamily 0xdddddddd & \\
+\hline
+0x10 & \ttfamily 0xeeeeeeee & $\leftarrow$ C \\
+\hline
+0x14 & \ttfamily 0xffffffff & \\
+\hline
+\end{tabular}
+\end{onlyenv}\begin{onlyenv}<4>
+\begin{tabular}{r|cccc|}
+\hline
+& \multicolumn{4}{c|}{objC} \\
+\hline 
+0x00 & aa & aa & aa & aa \\
+\hline
+0x04 & bb & bb & bb & bb \\
+\hline 
+0x08 & cc & cc & cc & cc \\
+\hline
+0x0c & dd & dd & dd & dd\\
+\hline
+0x10 & ee & ee & ee & ee\\
+\hline
+0x14 & ff & ff & ff & ff\\
+\hline
+\end{tabular}
+\end{onlyenv}\begin{onlyenv}<5>
+\begin{tabular}{r|cccc|}
+\hline
+\thisse & \multicolumn{4}{c|}{objC} \\
+\hline 
+\bc 0x00 & \bc aa & \bc aa & \bc aa & \bc aa \\
+\hline
+\bc 0x04 & \bc bb & \bc bb & \bc bb & \bc bb \\
+\hline 
+0x08 & cc & cc & cc & cc \\
+\hline
+0x0c & dd & dd & dd & dd\\
+\hline
+0x10 & ee & ee & ee & ee\\
+\hline
+0x14 & ff & ff & ff & ff\\
+\hline
+\end{tabular}
+\end{onlyenv}\begin{onlyenv}<6>
+\begin{tabular}{r|cccc|}
+\hline
+\thisse & \multicolumn{4}{c|}{objC} \\
+\hline 
+\rc 0x00 & \rc aa & \rc aa & \rc aa & \rc aa \\
+\hline
+\rc 0x04 & \rc bb & \rc bb & \rc bb & \rc bb \\
+\hline 
+0x08 & cc & cc & cc & cc \\
+\hline
+0x0c & dd & dd & dd & dd\\
+\hline
+0x10 & ee & ee & ee & ee\\
+\hline
+0x14 & ff & ff & ff & ff\\
+\hline
+\end{tabular}
+\end{onlyenv}\begin{onlyenv}<7>
+\begin{tabular}{r|cccc|}
+\hline
+\thisse & \multicolumn{4}{c|}{objC} \\
+\hline 
+0x00 & aa & aa & aa & aa \\
+\hline
+0x04 & bb & bb & bb & bb \\
+\hline 
+0x08 & cc & cc & cc & cc \\
+\hline
+0x0c & dd & dd & dd & dd\\
+\hline
+\bc 0x10 & \bc ee & \bc ee & \bc ee & \bc ee \\
+\hline
+\bc 0x14 & \bc ff & \bc ff & \bc ff & \bc ff \\
+\hline
+\end{tabular}
+\end{onlyenv}
+\end{overlayarea}
+\end{twocols}
+\end{onlyenv}\begin{onlyenv}<8>
+\begin{block}{}
+Původní předpoklad selhal u druhého předka v objektu objC\ldots
+\begin{itemize}
+\item reálná implementace ale funguje
+\item kompilátor umí transformovat začátek objektu dle potřeby
+\item \lstinline|(C*)&objC == (B*)&objC|
+\item \lstinline|(char*)((C*)&objC) != (char*)((B*)&objC)|
+
+\end{itemize}
+Ve skutečnosti tedy\ldots
+\end{block}
+\end{onlyenv}\begin{onlyenv}<9>
+\begin{center}
+\vskip -5mm
+\begin{tabular}{r|cccc|}
+\hline
+& \multicolumn{4}{c|}{objC} \\
+\hline 
+0x00 & aa & aa & aa & aa \\
+\hline
+0x04 & bb & bb & bb & bb \\
+\hline 
+\bc 0x08 \thise & \bc cc & \bc cc & \bc cc & \bc cc \\
+\hline
+\bc 0x0c & \bc dd & \bc dd & \bc dd & \bc dd\\
+\hline
+0x10 & ee & ee & ee & ee\\
+\hline
+0x14 & ff & ff & ff & ff\\
+\hline
+\end{tabular}
+\end{center}
+\end{onlyenv}
+\end{overlayarea}
+
+\begin{overlayarea}{\textwidth}{4cm}
+\begin{onlyenv}<9>
+\vskip -5mm
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+int impl_getC_classC(C* object) {
+  B* temporary = (B*)((char*)object + 0x08);
+  return temporary->getC();
+}
+\end{lstlisting}
+\end{yesblock}
+\end{onlyenv}\begin{onlyenv}<5-7>
+\begin{yesblock}
+\begin{onlyenv}<5>
+\begin{lstlisting}
+get<@\color{red}A@>() -> * (int*) (((char*)this) + 0x00)
+get<@\color{red}B@>() -> * (int*) (((char*)this) + 0x04)
+\end{lstlisting}
+\end{onlyenv}
+
+\begin{onlyenv}<6>
+\begin{lstlisting}
+get<@\color{red}C@>() -> * (int*) (((char*)this) + 0x00)
+get<@\color{red}D@>() -> * (int*) (((char*)this) + 0x04)
+\end{lstlisting}
+\end{onlyenv}
+
+\begin{onlyenv}<7>
+\begin{lstlisting}
+get<@\color{red}E@>() -> * (int*) (((char*)this) + 0x10)
+get<@\color{red}F@>() -> * (int*) (((char*)this) + 0x14)
+\end{lstlisting}
+\end{onlyenv}
+
+\end{yesblock}
+\end{onlyenv}
+\end{overlayarea}
+
+
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{bonusblock}{}
+\vskip 2ex
+\large \centering
+Varianta C) Diamond problem -- virtuální dědičnost
+\vskip 2ex
+\end{bonusblock}
+\end{frame}
+
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{noteblock}{}
+\begin{lstlisting}
+struct A {
+  int a = 0xaaaaaaaa;
+  int b = 0xbbbbbbbb;
+};
+\end{lstlisting}
+\end{noteblock}
+
+\begin{twocols}
+\begin{noteblock}{}
+\begin{lstlisting}
+struct B : A {
+  int c = 0xcccccccc;
+  int d = 0xdddddddd;
+}
+\end{lstlisting}
+\end{noteblock}
+\twocolssep
+\begin{noteblock}{}
+\begin{lstlisting}
+struct C : A {
+  int e = 0xeeeeeeee;
+  int f = 0xffffffff;
+}
+\end{lstlisting}
+\end{noteblock}
+\end{twocols}
+
+\begin{noteblock}{}
+\begin{lstlisting}
+struct D : B, C {
+  int x = 0x99999999;
+}
+\end{lstlisting}
+\end{noteblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+D objD{};
+\end{lstlisting}
+\end{yesblock}
+
+\vskip 1ex
+\begin{center}
+\begin{onlyenv}<1>
+\begin{tabular}{c|c|l}
+& objD & \\
+\hline
+0x00 & \ttfamily 0xaaaaaaaa & $\leftarrow B, A_B$ \\
+\hline
+0x04 & \ttfamily 0xbbbbbbbb & \\
+\hline
+0x08 & \ttfamily 0xcccccccc & $\leftarrow B\ldots$ \\
+\hline
+0x0c & \ttfamily 0xdddddddd &  \\
+\hline
+0x10 & \ttfamily 0xaaaaaaaa & $\leftarrow C, A_C$ \\
+\hline
+0x14 & \ttfamily 0xbbbbbbbb & \\
+\hline
+0x18 & \ttfamily 0xeeeeeeee & $\leftarrow C\ldots$ \\
+\hline
+0x1c & \ttfamily 0xffffffff &  \\
+\hline
+0x20 & \ttfamily 0x99999999 & $\leftarrow D$ \\
+\hline
+\end{tabular}
+\end{onlyenv}\begin{onlyenv}<2>
+\begin{tabular}{c|c|l}
+& objD & \\
+\hline
+0x00 & \ttfamily \bc 0xaaaaaaaa & $\leftarrow B, A_B$ \\
+\hline
+0x04 & \ttfamily \bc 0xbbbbbbbb & \\
+\hline
+0x08 & \ttfamily 0xcccccccc & $\leftarrow B\ldots$ \\
+\hline
+0x0c & \ttfamily 0xdddddddd &  \\
+\hline
+0x10 & \ttfamily \bc 0xaaaaaaaa & $\leftarrow C, A_C$ \\
+\hline
+0x14 & \ttfamily \bc 0xbbbbbbbb & \\
+\hline
+0x18 & \ttfamily 0xeeeeeeee & $\leftarrow C\ldots$ \\
+\hline
+0x1c & \ttfamily 0xffffffff &  \\
+\hline
+0x20 & \ttfamily 0x99999999 & $\leftarrow D$ \\
+\hline
+\end{tabular}
+\end{onlyenv}
+\end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+D objD{};
+D* d = &objD;
+\end{lstlisting}
+\end{yesblock}
+
+\begin{noblock}
+\begin{lstlisting}
+A* a = (A*)d; // nelze - které A?
+\end{lstlisting}
+\end{noblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+A* a = (A*)(B*)d; // lze
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{noteblock}{}
+\begin{lstlisting}
+struct A {
+  int a = 0xaaaaaaaa;
+  int b = 0xbbbbbbbb;
+};
+\end{lstlisting}
+\end{noteblock}
+
+\begin{twocols}
+\begin{noteblock}{}
+\begin{lstlisting}
+struct B : virtual A {
+  int c = 0xcccccccc;
+  int d = 0xdddddddd;
+}
+\end{lstlisting}
+\end{noteblock}
+\twocolssep
+\begin{noteblock}{}
+\begin{lstlisting}
+struct C : virtual A {
+  int e = 0xeeeeeeee;
+  int f = 0xffffffff;
+}
+\end{lstlisting}
+\end{noteblock}
+\end{twocols}
+
+\begin{noteblock}{}
+\begin{lstlisting}
+struct D : B, C {
+  int x = 0x99999999;
+}
+\end{lstlisting}
+\end{noteblock}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+D objD{};
+\end{lstlisting}
+\end{yesblock}
+
+\vskip 1ex
+\begin{center}
+\begin{onlyenv}<1>
+\begin{tabular}{c|c|l}
+& objD & \\
+\hline
+0x00 & \ttfamily 0x1c & $\leftarrow B$ \\
+\hline
+0x04 & \ttfamily 0xcccccccc & \\
+\hline
+0x08 & \ttfamily 0xdddddddd &  \\
+\hline
+0x0c & \ttfamily 0x1c & $\leftarrow C$ \\
+\hline
+0x10 & \ttfamily 0xeeeeeeee & \\
+\hline
+0x14 & \ttfamily 0xffffffff &  \\
+\hline
+0x18 & \ttfamily 0x99999999 & $\leftarrow D$ \\
+\hline
+0x1c & \ttfamily 0xaaaaaaaa & $\leftarrow A$ \\
+\hline
+0x20 & \ttfamily 0xbbbbbbbb & \\
+\hline
+\end{tabular}
+\end{onlyenv}\begin{onlyenv}<2>
+\begin{tabular}{c|c|l}
+& objD & \\
+\hline
+0x00 & \ttfamily \grc 0x1c ($ptr_{B\rightarrow{}A}$)  & $\leftarrow B$ \\
+\hline
+0x04 & \ttfamily 0xcccccccc & \\
+\hline
+0x08 & \ttfamily 0xdddddddd &  \\
+\hline
+0x0c & \ttfamily \grc 0x1c ($ptr_{C\rightarrow{}A}$) & $\leftarrow C$ \\
+\hline
+0x10 & \ttfamily 0xeeeeeeee & \\
+\hline
+0x14 & \ttfamily 0xffffffff &  \\
+\hline
+0x18 & \ttfamily 0x99999999 & $\leftarrow D$ \\
+\hline
+0x1c & \ttfamily \bc 0xaaaaaaaa & $\leftarrow A$ \\
+\hline
+0x20 & \ttfamily \bc 0xbbbbbbbb & \\
+\hline
+
+\end{tabular}
+\end{onlyenv}
+\end{center}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{bonusblock}{Dědičnost}
+\begin{itemize}
+\item vícenásobná dědičnost využívá automatické transformace počátku objektu
+\begin{itemize}
+\item kód metody neřeší s jakým typem objektu pracuje a prostě přistupuje k~atributům
+\item pokud je objekt složitý je potřeba přepočítat jeho počátek před voláním metody předka
+\item provádí kompilátor automaticky na pozadí
+\end{itemize}
+
+\item virtuální dědičnost využívá odkazu na předka na začátku každého objektu
+\begin{itemize}
+\item tak je možné vložit společného předka pouze jednou
+\item metody využijí odkazu k dohledání předka a poté mohou pracovat s~jeho atributy
+\end{itemize}
+
+\end{itemize}
+\end{bonusblock}
+\end{frame}

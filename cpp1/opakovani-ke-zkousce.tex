@@ -1,0 +1,1304 @@
+\begin{frame}[fragile]
+\begin{exampleblock}{Reference}
+\begin{lstlisting}
+int& vratReferenci() {
+	static int i = 0;
+	return i;
+}
+
+// ...
+int& reference = vratReferenci();
+reference++;     // zmeni "static int i"
+int neniReference = vratReferenci();
+neniReference++; // nezmeni "static int i"
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Reference}
+\begin{lstlisting}
+int& vratReferenci(int& ref) {
+	return ref;
+}
+
+// ...
+int i = 0;
+int& reference = vratReferenci(i);
+reference++;     // zmeni "int i"
+int neniReference = vratReferenci(i);
+neniReference++; // nezmeni "int i"
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Reference}
+\begin{lstlisting}
+int vratReferenci(int& ref) {
+	return ref;
+}
+
+// ...
+int i = 0;
+int& reference = vratReferenci(i);
+reference++;     // nezmeni "int i"
+int neniReference = vratReferenci(i);
+neniReference++; // nezmeni "int i"
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{block}{Dynamická alokace paměti}
+\begin{itemize}
+\item Nové operátory new, new[], delete, delete[]
+\item Staré funkce malloc, calloc, realloc, free
+ \begin{itemize}
+ \item Neinicializují objekty pomocí konstruktoru/nevolají destruktor $\rightarrow$ potenciální zdroj problémů
+ \end{itemize}
+\end{itemize}
+\end{block}
+\begin{exampleblock}{}
+\begin{lstlisting}
+// vytvoreni 1 objektu Object
+Object* object = new Object;
+delete object;
+
+// vytvoreni pole 100 objektu Object
+object = new Object[100];
+delete[] object;
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Dynamická alokace paměti}
+\begin{lstlisting}
+// vytvoreni pole 100 ukazatelu na objekt Object
+Object** object = new Object*[100];
+for (int i = 0; i < 100; i++)
+	object[i] = new Object;
+
+
+for (int i = 0; i < 100; i++)
+	delete object[i];
+delete[] object;
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{block}{Přetypování}
+\begin{itemize}
+\item Nové operátory: static\_cast, dynamic\_cast, const\_cast, reinterpret\_cast 
+\item Starý operátor: (typ)
+\end{itemize}
+\end{block}
+\begin{exampleblock}{}
+\begin{lstlisting}
+int a = static_cast<int>(12.123);
+
+ParentClass* b = static_cast<ParentClass*>(new SubClass);
+SubClass* c = dynamic_cast<SubClass*>(b);
+
+int d = reinterpret_cast<int>(c);
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+\section{Objektové typy}
+
+\begin{frame}
+\begin{block}{}
+\begin{center}
+\Huge
+Objektové typy
+\end{center}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{block}{Objektové typy}
+\begin{itemize}
+\item struct
+\item class
+\end{itemize}
+\end{block}
+\begin{exampleblock}{}
+\begin{lstlisting}
+struct Struct {
+	int _i; // _i je public
+};
+
+class Clazz {
+	int _i; // _i je private
+};
+
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- viditelnost} 
+\begin{lstlisting}
+class Clazz {
+public:
+	int _public;
+	
+protected:
+	int _protected;
+	
+private:
+	int _private;
+	
+public:
+	int _publicAgain;
+};
+
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- statické atributy/metody} 
+\begin{lstlisting}
+class Clazz {
+	static int _staticAttribute;
+	
+public:	
+	static int getStaticAttribute();
+};
+
+// inicializace statického atributu
+int Clazz::_staticAttribute = 123;
+
+// definice metody
+int Clazz::getStaticAttribute() {
+	return _staticAttribute;
+}
+
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- ukazatel this} 
+\begin{lstlisting}
+class Clazz {
+	
+	void method() {
+		// this je typu Clazz*
+		_i = 123;
+		this->_i = 123;
+		(*this)._i = 123;
+	}
+	
+	int _i;
+}
+
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+\newcommand{\errorcolor}{\color[rgb]{1.0,0.0,0.0}}
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- konstantní metody/objekty} 
+\begin{lstlisting}
+class Clazz {
+	void method() {
+		// this je typu Clazz*
+		_i = 123;
+	}
+	void methodConst() const {
+		// this je typu const Clazz*
+		// _i = 123; <@\errorcolor $\errorcolor\leftarrow$ NELZE - atribut je konstatni@>
+	}
+	int _i;
+}
+// ...
+Clazz clazz;
+clazz.method();
+clazz.methodConst();
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- konstantní metody/objekty} 
+\begin{lstlisting}
+class Clazz {
+	void method() {
+		// this je typu Clazz*
+		_i = 123;
+	}
+	void methodConst() const {
+		// this je typu const Clazz*
+		// _i = 123; $\commentcolor\leftarrow$ NELZE - atribut je konstatni
+	}
+	int _i;
+}
+// ...
+const Clazz clazz;
+// clazz.method(); $\commentcolor\leftarrow$ NELZE
+clazz.methodConst();
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- konstantní metody/objekty} 
+\begin{lstlisting}
+class Clazz {
+	void method() {
+		_i = 123;
+	}
+	void method() const {
+		cout << _i << endl;
+	}
+	
+	int _i;
+}
+// ...
+Clazz clazz;
+clazz.method(); // nastavi _i na 123
+const Clazz& clazzConst = clazz;
+clazzConst.method(); // vypise _i na cout\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{block}{Objektové typy -- život objektu} 
+\begin{itemize}
+\item konstrukce
+\begin{itemize}
+\item konstruktor praprapředka
+\item konstruktor prapředka
+\item konstruktor předka
+\item konstruktor třídy
+\end{itemize}
+\item objekt žije!
+\item destrukce
+\begin{itemize}
+\item destruktor třídy
+\item destruktor předka
+\item destruktor prapředka
+\item destruktor praprapředka
+\end{itemize}
+\end{itemize}
+
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{block}{Objektové typy -- konstruktor} 
+Kompilátor v základu vyrobí:
+\begin{itemize}
+\item bezparametrický konstruktor,
+\item kopírovací konstruktor,
+\item operátor=.
+\end{itemize}
+
+Kopírovací konstruktor a operátor = vytvářejí mělkou (bitovou) kopii.
+
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- konstruktor} 
+\begin{lstlisting}
+class Clazz {
+	Clazz(); // konstruktor
+	Clazz(int i); // parametricky konstruktor
+	Clazz(int i, int j); // parametricky konstruktor
+	Clazz(const Clazz& clazz); // kopirovaci konstruktor
+	Clazz(Clazz&& clazz); // move konstruktor (C++11)
+	
+	Clazz& operator=(const Clazz& clazz); // operator=
+	Clazz& operator=(Clazz&& clazz); // move assignment op. (C++11)
+};
+
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- konstruktor} 
+\begin{lstlisting}
+class Clazz {
+	Clazz(); // konstruktor
+};
+
+Clazz clazz;
+Clazz clazz2 = Clazz(); // nevhodne - konstr., kop. konstr., destruktor
+Clazz* clazz3 = new Clazz;
+Clazz* clazz4 = malloc(sizeof(Clazz)); // Nevola konstruktor
+new(clazz4) Clazz;
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- konstruktor} 
+\begin{lstlisting}
+class Clazz {
+	Clazz(int i); // parametricky konstruktor
+};
+
+Clazz clazz(123);
+Clazz clazz2 = Clazz(123); // nevhodne - konstr., kop. konstr., destruktor
+Clazz* clazz3 = new Clazz(123);
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- konstruktor} 
+\begin{lstlisting}
+class Clazz {
+	Clazz(int i, int j); // parametricky konstruktor
+};
+
+Clazz clazz(123, 456);
+Clazz* clazz2 = new Clazz(123, 456);
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- konstruktor} 
+\begin{lstlisting}
+class Clazz {
+	Clazz(const Clazz& clazz); // kopirovaci konstruktor
+};
+
+Clazz clazz; // Volani jineho konstruktoru
+Clazz clazz2(clazz);
+Clazz clazz3 = clazz;
+Clazz clazz4 = Clazz(clazz); // nevhodne - kop. konstr., kop. konstr., destruktor
+
+void funkce(Clazz clazz) { cout << clazz }
+funkce(clazz); // !!! Tady taky !!!
+
+void funkce2(Clazz& clazz) { cout << clazz }
+funkce2(clazz); // Tady se nekopiruje! Je predan puvodni objekt
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- konstruktor} 
+\begin{lstlisting}
+class Clazz {
+	Clazz& operator=(const Clazz& clazz); // operator=
+};
+
+Clazz clazz; // Volani jineho konstruktoru
+Clazz clazz2; // Volani jineho konstruktoru
+Clazz* clazz3 = new Clazz; // Volani jineho konstruktoru
+
+clazz2 = clazz;
+*clazz3 = clazz;
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- inicializační část konstruktoru} 
+\begin{lstlisting}
+class Clazz {
+	Clazz() : _i(123), _j(456) { }
+	Clazz(int i) : _i(i), _j(456) { }
+	Clazz(int i, int j) : _i(i), _j(j) { }
+
+	int _i;
+	int _j;
+};
+
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- delegování konstruktoru} 
+\begin{lstlisting}
+class Clazz {
+	Clazz() : Clazz(123) { }; 
+	
+	Clazz(int i) { ... } 
+};
+
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{block}{Objektové typy -- destruktor} 
+\begin{itemize}
+\item Uvolňuje paměťové prostředky.
+\item
+Pokud třída obsahuje virtuální metody, pak by měl být destruktor virtuální.
+\end{itemize}
+\end{block}
+\begin{exampleblock}{}
+\begin{lstlisting}
+class Clazz {
+	~Clazz();
+};
+
+{ 
+	Clazz clazz;
+} // destruktor clazz
+
+Clazz* clazz2 = new Clazz; 
+delete clazz2; // destruktor clazz2
+
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{block}{Objektové typy -- dědičnost} 
+\begin{itemize}
+\item Vícenásobná dědičnost -- možnost dědit z libovolného množství předků.
+\item Struct i class jsou ekvivalentní objektové typy.
+\item Problém diamantu -- virtuální dědění.
+\item Specifikace viditelnosti -- ovlivní viditelnost u zděděných složek (atributů a metod).
+\end{itemize}
+\end{block}
+\begin{exampleblock}{}
+\begin{lstlisting}
+class Clazz { };
+class SubClazz : public Clazz { };
+class SubSubClazz : protected SubClazz { };
+class SubSubSubClazz : private SubSubClazz { };
+
+class OhCrap : Clazz, SubClazz, SubSubClazz, SubSubSubClazz { };
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- dědičnost} 
+\begin{lstlisting}
+class Clazz { };
+class SubClazz : public Clazz { };
+\end{lstlisting}
+\end{exampleblock}
+\begin{block}{}
+
+Co vidím uvnitř SubClazz?
+\begin{itemize}
+\item private, protected i public složky ze SubClazz
+\item protected a public složky z Clazz
+\end{itemize}
+
+Co vidím vně SubClazz?
+\begin{itemize}
+\item public složky SubClazz
+\item public složky Clazz
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- dědičnost} 
+\begin{lstlisting}
+class Clazz { };
+class SubClazz : protected Clazz { };
+\end{lstlisting}
+\end{exampleblock}
+\begin{block}{}
+Co vidím uvnitř SubClazz?
+\begin{itemize}
+\item private, protected i public složky ze SubClazz
+\item protected a public složky z Clazz
+\end{itemize}
+
+Co vidím vně SubClazz?
+\begin{itemize}
+\item public složky SubClazz
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- dědičnost -- konstruktor předka} 
+\begin{lstlisting}
+class Clazz { 
+	Clazz();
+	Clazz(int i);
+};
+
+class SubClazz : public Clazz { 
+	SubClazz(); // vola Clazz::Clazz()
+	SubClazz(int i); // vola Clazz::Clazz()
+};
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- dědičnost -- konstruktor předka} 
+\begin{lstlisting}
+class Clazz { 
+	//Clazz(); // definovanim parametrickeho konstruktoru kompilator tento sam nevytvori
+	Clazz(int i);
+};
+
+class SubClazz : public Clazz { 
+	SubClazz(); // error, parametr volat neumim!
+	SubClazz(int i); // error, parametr volat neumim!
+};
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- dědičnost -- konstruktor předka} 
+\begin{lstlisting}
+class Clazz { 
+	//Clazz(); // definovanim parametrickeho konstruktoru kompilator tento sam nevytvori
+	Clazz(int i);
+};
+
+class SubClazz : public Clazz { 
+	SubClazz() : Clazz(123) { }
+	SubClazz(int i) : Clazz(i) { }
+};
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- dědičnost -- konstruktor předka} 
+\begin{lstlisting}
+class Clazz { 
+	//Clazz(); // definovanim parametrickeho konstruktoru kompilator tento sam nevytvori
+	Clazz(int i);
+};
+
+class SubClazz : public Clazz { 
+	SubClazz() : Clazz(123), _i(456), _j(789) { }
+	SubClazz(int i) : Clazz(i), _i(i), _j(789) { }
+	
+	int _i;
+	int _j;
+};
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- dědičnost -- virtuální dědičnost} 
+\begin{lstlisting}
+class Clazz {
+	int _a;
+};
+
+class SubClazz1 : public virtual Clazz { 
+};
+
+class SubClazz2 : public virtual Clazz {
+};
+
+class DiamondIsNotAProblemClazz : public SubClazz1, public SubClazz2 { 
+};
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{block}{Objektové typy -- polymorfizmus -- volání metod}
+Metody:
+\begin{itemize}
+\item časná vazba (výchozí),
+\item pozdní vazba.
+\end{itemize} 
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- polymorfizmus -- časná vazba} 
+\begin{lstlisting}
+class Clazz {
+	void method() { cout << "Clazz"; }
+};
+
+class SubClazz : public Clazz { 
+	void method() { cout << "SubClazz"; }
+};
+
+Clazz clazz;
+clazz.method(); // "Clazz"
+SubClazz subclazz;
+subclazz.method(); // "SubClazz"
+
+Clazz& clazzRef = subclazz;
+clazzRef.method(); // "Clazz" !!!
+Clazz* clazzPtr = &subclazz;
+clazzPtr->method(); // "Clazz" !!!
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- polymorfizmus -- pozdní vazba} 
+\begin{lstlisting}
+class Clazz {
+	virtual void method() { cout << "Clazz"; }
+};
+
+class SubClazz : public Clazz { 
+	virtual void method() override { cout << "SubClazz"; }
+};
+
+Clazz clazz;
+clazz.method(); // "Clazz"
+SubClazz subclazz;
+subclazz.method(); // "SubClazz"
+
+Clazz& clazzRef = subclazz;
+clazzRef.method(); // "SubClazz"
+Clazz* clazzPtr = &subclazz;
+clazzPtr->method(); // "SubClazz"
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- polymorfizmus -- pozdní vazba} 
+\begin{lstlisting}
+class Clazz {
+	virtual void method() { cout << "Clazz"; }
+};
+
+class SubClazz : public Clazz { 
+	virtual void method() override { cout << "SubClazz"; }
+};
+
+Clazz clazz;
+clazz.method(); // "Clazz"
+SubClazz subclazz;
+subclazz.method(); // "SubClazz"
+
+clazz = subclazz;
+clazz.method(); // "Clazz" !!! Dochazi k oriznuti objektu
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Objektové typy -- polymorfizmus -- čistě virtuální metody} 
+\begin{lstlisting}
+class Clazz {
+	virtual void method() = 0;
+};
+
+class SubClazz : public Clazz { 
+	virtual void method() override { cout << "SubClazz"; }
+};
+
+//Clazz clazz; // error - nelze vytvorit objekt od abstraktni tridy
+//clazz.method(); // error
+SubClazz subclazz;
+subclazz.method(); // "SubClazz"
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+\section{Přetěžování operátorů}
+
+\begin{frame}
+\begin{block}{}
+\begin{center}
+\Huge
+Přetěžování operátorů
+\end{center}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{block}{Přetěžování operátorů} 
+\begin{itemize}
+\item Definování jak se bude daný operátor chovat pro náš objektový typ.
+\item 4 skupiny operátorů:
+\begin{itemize}
+\item nejdou přetížit,
+\item jdou metodou,
+\item jdou metodou i funkcí,
+\item jdou funkcí/statickou metodou.
+\end{itemize}
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{block}{Přetěžování operátorů} 
+Nejdou:
+\begin{itemize}
+\item tečkové operátory -- ., .*, ::
+\item ternární operátor -- ? :
+\item přetypovací operátory -- static\_cast, \ldots
+\item další -- typeof, sizeof
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{block}{Přetěžování operátorů} 
+Metodou:
+\begin{itemize}
+\item =
+\item ->
+\item ->*
+\item $[$\,$]$
+\item ()
+\item op. přetypování (typ)
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{block}{Přetěžování operátorů} 
+Metodou i funkcí: \\
++ - * / ++ -\,- > < >= <= == >\,> <\,< \& | $\tilde{}$ += -= *= /= $\ldots$
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{block}{Přetěžování operátorů} 
+Funkcí/statickou metodou:
+\begin{itemize}
+\item new
+\item new$[$\,$]$
+\item delete
+\item delete$[$\,$]$
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]
+\begin{block}{Přetěžování operátorů} 
+Operátory se přetěžují jako:
+\begin{lstlisting}
+navratovyTyp operator@(parametry)
+\end{lstlisting}
+
+Uvažujte výraz:
+\begin{lstlisting}
+int a = 5, b = 10;
+int c = a + b;
+\end{lstlisting}
+\end{block}
+\begin{block}{}
+Platí:
+\begin{itemize}
+\item operátor + je binární operátor
+\item operandy jsou \emph{a}, \emph{b}
+\item změní se proměnná \emph{a}? NE -> konstanta
+\item změní se proměnná \emph{b}? NE -> konstanta
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{block}{Přetěžování operátorů} 
+Operátory se přetěžují jako:
+\begin{lstlisting}
+navratovyTyp operator@(parametry)
+\end{lstlisting}
+
+Uvažujte výraz:
+\begin{lstlisting}
+int a = 5, b = 10;
+int c = a + b;
+\end{lstlisting}
+\end{block}
+\begin{exampleblock}{}
+
+\begin{lstlisting}
+int operator+(int a, int b) {
+	return int(a->state + b->state);
+}
+
+struct int {
+	int operator+(int b) {
+		return int(this->state + b->state);
+	}
+};
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{block}{Přetěžování operátorů} 
+Operátory se přetěžují jako:
+\begin{lstlisting}
+navratovyTyp operator@(parametry)
+\end{lstlisting}
+
+Uvažujte výraz:
+\begin{lstlisting}
+int a = 5, b = 10;
+int c = a + b;
+\end{lstlisting}
+\end{block}
+\begin{exampleblock}{}
+
+\begin{lstlisting}
+int operator+(const int& a, const int& b) {
+	return int(a->state + b->state);
+}
+
+struct int {
+	int operator+(const int& b) const {
+		return int(this->state + b->state);
+	}
+};
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Přetěžování operátorů} 
+\begin{lstlisting}
+Komplex a = 5, b = 10;
+Komplex c = a + b;
+
+Komplex operator+(const Komplex& a, const Komplex& b) {
+	return Komplex(a->re + b->re, a->im + b->im);
+}
+
+struct Komplex {
+	Komplex operator+(const Komplex& b) const {
+		return Komplex(this->re + b->re, this->im + b->im);
+	}
+};
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Přetěžování operátorů} 
+\begin{lstlisting}
+struct Komplex {
+	friend Komplex operator+(const Komplex& a, const Komplex& b) {
+		return Komplex(a->re + b->re, a->im + b->im);
+	}
+};
+\end{lstlisting}
+\end{exampleblock}
+\begin{block}{}
+Friend + definice v těle způsobí:
+\begin{itemize}
+\item nejedná se o metodu, ale o funkci!
+\item má přístup k privátním a chráněným složkám
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{block}{Přetěžování operátorů} 
+Mění některé operátory stav objektu (operandu)?
+\begin{itemize}
+\item ++, -\/-
+\item =, +=, -=, *=, /=, $\ldots$
+\item $[$\,$]$ -- pokud vrací referenci/ukazatel na stav objektu
+\item () -- pokud mění stav objektu
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{block}{Přetěžování operátorů} 
+Proč vracet statický objekt? Možnosti:
+\begin{itemize}
+\item statický objekt -- dochází ke kopírování, vytvoření dočasného objektu a jeho následné destrukci (pokud nedojde k optimalizaci od kompilátoru)
+\item reference
+\begin{itemize}
+\item ale kde ji vezmu?
+\item obyčejná proměnná zanikne s koncem bloku -- nelze
+\item statická (nebo globální) proměnná bude existovat dál, ale nebude to fungovat ve vícevláknových aplikacích -- nelze
+\item dynamicky alokovaná proměnná -- ztratím ukazatel a informaci o alokaci a do konce programu bude paměť zabraná -- nelze
+\end{itemize}
+\item ukazatel (dyn. alokovaná paměť) -- změna sémantiky operátoru -- nelze
+\end{itemize}
+Lépe to udělat prostě nejde.
+\end{block}
+\end{frame}
+
+\section{Šablony}
+
+\begin{frame}
+\begin{block}{} 
+\begin{center}
+\Huge
+Šablony
+\end{center}
+\end{block}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{block}{Šablony} 
+Šablony představují způsob generického (obecného) programování. Šablonou může být objektový typ, metoda, funkce.
+\\~\\
+Princip funkce (v případě objektového typu):
+\begin{itemize}
+\item šablona třídy (to co já napíšu -- Sablona<T, U>)
+\item instance šablony třídy -- kompilátor narazí na konkrétní použití šablony (zná jaké parametry bude dosazovat) a vytvoří konkrétní datový typ (Sablona<int, string>)
+\item objekt od instance šablony třídy -- konkrétní objekt -- Sablona<int, string> objekt;
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Šablony} 
+\begin{lstlisting}
+// zakladni syntax:
+template<definiceParametruSablony>
+definiceTypuNeboMetodyNeboFunkce;
+
+// template/class oznacuji obecny typ
+// jde o ekvivalentni klicova slova, class je starsi zpusob zapisu
+template<typename T, class U, typename V>
+struct TemplateStruct {
+	T _t;
+	U _u;
+	V _v;
+};
+
+TemplateStruct<int, int, double> objekt;
+objekt._t = 123;
+objekt._u = 456;
+objekt._v = 78.9;
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Šablony} 
+\begin{lstlisting}
+// parametry mohou byt typove/hodnotove
+template<typename T, int Hodnota, double X>
+struct TemplateStruct {
+	
+	void method() { cout << X; }
+	
+	T _t = Hodnota;
+};
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Šablony} 
+\begin{lstlisting}
+// parametry mohou mit vychozi hodnoty
+template<typename T = int, int Hodnota = 15, double X = 2.34>
+struct TemplateStruct {
+	
+	void method() { cout << X; }
+	
+	T _t = Hodnota;
+};
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Šablony} 
+\begin{lstlisting}
+template<typename T>
+struct TemplateStruct {
+	void method();
+	
+	T _t;
+};
+
+template<typename T>
+void TemplateStruct<T>::method() {
+	_t = 123;
+}
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Šablony -- nested templates} 
+\begin{lstlisting}
+template<typename T>
+struct TemplateStruct {
+
+	template<typename U>
+	void method(U u);
+	
+	T _t;
+};
+
+template<typename T>
+template<typename U>
+void TemplateStruct<T>::method(U u) {
+	cout << u;
+	_t = 123;
+}
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Šablony -- dependent names} 
+\begin{lstlisting}
+struct Concrete { struct Nested { }; };
+
+template<typename T>
+struct TemplateStruct {
+	typename T::Nested _usageOfDependentTypeRequiresTypename;
+};
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Šablony -- dependent names} 
+\begin{lstlisting}
+template<typename T>
+struct S {
+    template<typename U> void foo(){}
+};
+ 
+template<typename T>
+void bar()
+{
+    S<T> s;
+    s.foo<T>(); // error: < parsed as less than operator
+    s.template foo<T>(); // OK
+}
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Šablony -- explicit specialization (function)} 
+\begin{lstlisting}
+template<typename T>
+void function(T param) { /* ... */ }
+
+template<>
+void function(int param) { /* ... */ }
+
+template<>
+void function(double param) { /* ... */ }
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Šablony -- explicit specialization (class)} 
+\begin{lstlisting}
+template<typename T>
+class Clazz { 
+	T method() { /* ... */ }
+	
+	T _attribute;
+};
+
+template<>
+class Clazz<int> {
+	int method() { /* ... */ }
+	
+	int _attribute;
+	int _anotherAttribute;
+};
+
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Šablony -- partial specialization (class)} 
+\begin{lstlisting}
+template<typename T, typename U, int V>
+class Clazz { };
+
+template<typename T, int V>
+class Clazz<T, T, V> { };
+
+template<typename T, typename U, int V>
+class Clazz<T*, U, V> { };
+
+template<typename T>
+class Clazz<T, int, 10> { };
+
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+\section{Poprava tupým mečem za neznalost\ldots}
+
+
+\begin{frame}
+	\begin{block}{} 
+		\begin{center}
+			\Huge
+			Poprava tupým mečem za neznalost\ldots
+		\end{center}
+	\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{alertblock}{Dynamická alokace paměti -- C funkce} 
+\begin{itemize}
+	\item malloc, calloc, realloc -- nevolají konstruktor
+	\item free -- nevolá destruktor
+	\item používejte new / delete
+\end{itemize}
+\end{alertblock}
+
+\begin{exampleblock}{Dynamická alokace paměti -- C++ operátory} 
+	\begin{itemize}
+		\item new -- delete, new[] -- delete[]
+\begin{itemize}		\item vždy musí tvořit pár!\end{itemize}
+		\item \textbf{není} korektní volat new -- delete[] nebo new[] -- delete
+	\end{itemize}
+\end{exampleblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{alertblock}{Nikdy nevoláme ručně destruktor!}
+\begin{lstlisting}
+{
+	Clazz* clazz = new Clazz;
+	clazz->~Clazz(); // NE!
+	delete clazz; // vola znovu destruktor nad jiz rozbitou instanci
+}
+
+Clazz& operator=(const Clazz& ref) {
+	if (this != &ref) {
+		this->~Clazz();  // znici take tabulku VMT!
+		...
+	}
+	
+	return *this;
+}
+\end{lstlisting}
+\end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Operator= hlídá přiřazení "obj = obj"}
+\begin{lstlisting}
+Clazz& operator=(const Clazz& ref) {
+	if (this != &ref) {
+		...
+	}
+	
+	return *this;
+}
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Přetížené operátory korektně mění/nemění objekt}
+\begin{lstlisting}
+class Clazz {
+	bool operator==(const Clazz& ref) const;
+	bool operator!=(const Clazz& ref) const;	
+	bool operator>=(const Clazz& ref) const;
+	bool operator<=(const Clazz& ref) const;
+	
+	Clazz operator+(const Clazz& ref) const;
+	Clazz operator-(const Clazz& ref) const;	
+
+	Clazz& operator=(const Clazz& ref);	
+	Clazz& operator+=(const Clazz& ref);
+	Clazz& operator-=(const Clazz& ref);	
+\end{lstlisting}
+\ldots
+
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Přetížené operátory korektně mění/nemění objekt}
+
+\ldots
+\begin{lstlisting}
+	Clazz operator[ ](int i) const;	
+	Clazz& operator[ ](int i);	
+	
+	template<typename T>
+	T operator()(T t) const;
+		
+	template<typename T>	
+	T operator()(T t);		
+};
+\end{lstlisting}
+
+\end{exampleblock}
+\end{frame}

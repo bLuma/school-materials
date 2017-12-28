@@ -1,0 +1,262 @@
+\hkapitola{Jmenné prostory}
+
+\begin{frame}[fragile]
+\frametitle{Jmenné prostory}
+
+\begin{block}{}
+\begin{itemize}
+\item řeší konflikty jmen
+\begin{itemize}
+\item v C existuje jediný globální prostor
+\item knihovní funkce se prefixují, aby nedošlo ke shodě (\lstinline|glutCreateWindow, png_image_begin_read_from_file|)
+\end{itemize}
+
+\item jmenné prostory jsou pouze balíkem funkcí, typů, proměnných, \ldots
+\begin{itemize}
+\item neřeší se zde viditelnost (neexistuje obdoba package-private)
+\item lze vytvořit anonymní jmenný prostor pro ukrytí členů jen v rámci jednoho souboru
+\end{itemize}
+
+\item není definováno striktní fyzické uspořádání souborů
+\begin{itemize}
+\item Java -- balíček = složka, obsahuje pouze soubory v této složce
+\item C++ -- jmenný prostor může být použit kdekoliv
+\item C++ -- do existujícího jmenného prostoru je možno kdykoliv cokoliv přidat
+\end{itemize}
+
+\item jmenné prostory je možné vnořovat
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Vytvoření jmenného prostoru}
+\begin{noteblock}{}
+\begin{lstlisting}
+namespace názevJmennéhoProstoru {
+  [deklarace/definice složek přidávaných <@do@> jm. prostoru] 
+}
+\end{lstlisting}
+\end{noteblock}
+
+\begin{block}{}
+\begin{itemize}
+\item jm. p. je možné vytvořit na globální úrovni nebo ve jmenném prostoru
+\item jm. p. je možné opakovaně definovat -- vždy se přidají nové prvky do prostoru
+\item přístup k prvkům jm. p. je pomocí operátoru \lstinline|::|
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Přístup k prvkům jmenného prostoru z vnitřku}
+\begin{yesblock}
+\begin{lstlisting}
+namespace System {
+
+  void vymazKonzoli() { ... }
+
+  void ukonciProgram() { 
+    vymazKonzoli();
+  }
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Přístup k prvkům jmenného prostoru zvenčí}
+\begin{yesblock}
+\begin{lstlisting}
+namespace System {
+
+  void vymazKonzoli() { ... }
+
+  void ukonciProgram() { ... }
+}
+\end{lstlisting}
+\end{yesblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+System::vymazKonzoli();
+System::ukonciProgram();
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Přístup k prvkům jmenného prostoru zvenčí -- direktiva using}
+\begin{yesblock}
+\begin{lstlisting}
+namespace System {
+
+  void vymazKonzoli() { ... }
+
+  void ukonciProgram() { ... }
+}
+\end{lstlisting}
+\end{yesblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+using namespace System;
+
+vymazKonzoli();
+ukonciProgram();
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Přístup k prvkům jmenného prostoru zvenčí -- deklarace using}
+\begin{yesblock}
+\begin{lstlisting}
+namespace System {
+
+  void vymazKonzoli() { ... }
+
+  void ukonciProgram() { ... }
+}
+\end{lstlisting}
+\end{yesblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+using System::vymazKonzoli;
+
+vymazKonzoli();
+System::ukonciProgram(); // nelze "ukonciProgram()"!
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{noblock}
+\begin{itemize}
+\item deklarace/direktiva \lstinline|using| by neměla být používána v hlavičkových souborech!!!
+\begin{itemize}
+\item každý, kdo provede \lstinline|#include| na daný soubor bude ovlivněn usingy
+\begin{itemize}
+\item pozor na řetězení závislostí (hrac.h $\rightarrow$ pohyblivy\_objekt.h $\rightarrow$ objekt.h)
+\end{itemize}
+\item může způsobit opět konflikty jmen
+\end{itemize}
+\end{itemize}
+\end{noblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Otevřenost jmenných prostorů}
+\begin{block}{}
+\begin{itemize}
+\item do jmenného prostoru jde vždy přidávat nové složky
+\end{itemize}
+\end{block}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+namespace Objekty {
+  Kocka micka;
+}
+
+// ...
+
+namespace Objekty {
+  Kocka mourek;
+}
+
+Objekty::micka.mnoukni();
+Objekty::mourek.mnoukni();
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Vnořování jmenných prostorů}
+\begin{block}{}
+\begin{itemize}
+\item jmenné prostory lze libovolně vnořovat
+\end{itemize}
+\end{block}
+
+\begin{yesblock}
+\begin{lstlisting}
+namespace Hra {
+  namespace Objekty {
+    namespace ZiveObjekty {
+      struct NPC { ... };
+    }
+  }
+}
+\end{lstlisting}
+\end{yesblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+Hra::Objekty::ZiveObjekty::NPC obchodnik{};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Vnořování jmenných prostorů\ldots}
+\begin{block}{}
+\begin{itemize}
+\item od C++17 podpora pro zkrácený zápis vnořených jm. p.
+\end{itemize}
+\end{block}
+
+\begin{yesblock}
+\begin{lstlisting}
+namespace Hra::Objekty::ZiveObjekty {
+  struct NPC { ... };
+}
+\end{lstlisting}
+\end{yesblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+Hra::Objekty::ZiveObjekty::NPC obchodnik{};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{bonusblock}{Anonymní jmenné prostory}
+\begin{itemize}
+\item lze použít pro skrytí jeho složek jen pro daný soubor .cpp
+\end{itemize}
+\end{bonusblock}
+
+\begin{bonusblock}{}
+\begin{lstlisting}
+namespace {
+  int _anonymous = 123;
+}
+
+// dále ve stejném souboru
+cout << _anonymous;
+\end{lstlisting}
+\end{bonusblock}
+\end{frame}
+
+

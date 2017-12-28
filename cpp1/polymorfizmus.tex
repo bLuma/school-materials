@@ -1,0 +1,377 @@
+\hkapitola{Polymorfizmus}
+
+\begin{frame}[fragile]
+\begin{bitemize}
+\item jedna funkce/metoda může nabývat více různých podob
+\item metoda \lstinline|pracuj()| z rozhraní \lstinline|IPracujici|
+\begin{itemize}
+\item sekačka -- seká
+\item policista -- uděluje pokuty
+\item pes -- štěká
+\end{itemize}
+\end{bitemize}
+
+\begin{noteblock}{Způsoby volání metod v C++}
+\begin{itemize}
+\item časná vazba -- výchozí, kompilátor řeší v době překladu
+\item pozdní vazba -- na vyžádání (\lstinline|virtual|), řeší se v době vykonávání programu
+\item []
+\item Java -- automaticky vždy uplatňuje pozdní vazbu! chování v C++ a C\# je tedy odlišné
+\end{itemize}
+\end{noteblock}
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Časná vazba}
+
+\begin{yesblock}
+\begin{twocols}
+\begin{lstlisting}
+struct Zvire {
+  void vydejZvuk() {
+    cout << "err";
+  }
+};
+\end{lstlisting}
+
+\twocolssep
+
+\begin{lstlisting}
+struct Kralik : Zvire {
+  void vydejZvuk() {
+    cout << "Bzzzm!";
+  }
+};
+\end{lstlisting}
+\end{twocols}
+\end{yesblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+Zvire z{};
+z.vydejZvuk(); // err
+
+Kralik k{};
+k.vydejZvuk(); // Bzzzm!
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Časná vazba\ldots}
+
+\begin{yesblock}
+\begin{twocols}
+\begin{lstlisting}
+struct Zvire {
+  void vydejZvuk() {
+    cout << "err";
+  }
+};
+\end{lstlisting}
+
+\twocolssep
+
+\begin{lstlisting}
+struct Kralik : Zvire {
+  void vydejZvuk() {
+    cout << "Bzzzm!";
+  }
+};
+\end{lstlisting}
+\end{twocols}
+\end{yesblock}
+
+\begin{noblock}
+\begin{lstlisting}
+Zvire& refz = k;
+refz.vydejZvuk(); // err
+
+Zvire* ptrz = &k;
+ptrz->vydejZvuk(); // err
+\end{lstlisting}
+\end{noblock}
+\end{frame}
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Pozdní vazba}
+
+\begin{yesblock}
+\begin{twocols}
+\begin{lstlisting}
+struct Zvire {
+  virtual void vydejZvuk() {
+    cout << "err";
+  }
+};
+\end{lstlisting}
+
+\twocolssep
+
+\begin{lstlisting}
+struct Kralik : Zvire {
+  void vydejZvuk() {
+    cout << "Bzzzm!";
+  }
+};
+\end{lstlisting}
+\end{twocols}
+\end{yesblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+Zvire& refz = k;
+refz.vydejZvuk(); // Bzzzm!
+
+Zvire* ptrz = &k;
+ptrz->vydejZvuk(); // Bzzzm!
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Pozdní vazba\ldots}
+
+\begin{bitemize}
+\item metoda musí být označena \lstinline|virtual| v předkovi
+\item reference a ukazatele poté za běhu dohledají správnou metodu
+\item využívá se VMT (virtual method table), kompilátor ji automaticky vytváří a vkládá na ni ukazatel do každého objektu
+\end{bitemize}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Pozdní vazba\ldots}
+
+
+\begin{yesblock}
+\begin{twocols}
+\begin{lstlisting}[basicstyle=\scriptsize]
+struct Zvire {
+  virtual void vydejZvuk() {
+    cout << "err";
+  }
+};
+\end{lstlisting}
+
+\twocolssep
+
+\begin{lstlisting}[basicstyle=\scriptsize]
+struct Kralik : Zvire {
+  void vydejZvuk() {
+    cout << "Bzzzm!";
+  }
+};
+\end{lstlisting}
+\end{twocols}
+\end{yesblock}
+
+\vskip -3ex
+\begin{yesblock}
+\begin{twocols}
+\begin{lstlisting}[basicstyle=\scriptsize]
+struct Zvire {
+  virtual void vydejZvuk() {
+    cout << "err";
+  }
+};
+\end{lstlisting}
+
+\twocolssep
+
+\begin{lstlisting}[basicstyle=\scriptsize]
+struct Kralik : Zvire {
+  virtual void vydejZvuk() {
+    cout << "Bzzzm!";
+  }
+};
+\end{lstlisting}
+\end{twocols}
+\end{yesblock}
+
+\vskip -3ex
+\begin{yesblock}
+\begin{twocols}
+\begin{lstlisting}[basicstyle=\small]
+struct Zvire {
+  virtual void vydejZvuk() {
+    cout << "err";
+  }
+};
+\end{lstlisting}
+
+\twocolssep
+
+\begin{lstlisting}[basicstyle=\small]
+struct Kralik : Zvire {
+  virtual void vydejZvuk() override {
+    cout << "Bzzzm!";
+  }
+};
+\end{lstlisting}
+\end{twocols}
+\end{yesblock}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Pozdní vazba\ldots}
+
+\begin{block}{}
+Doporučené použití:
+\begin{itemize}
+\item předek -- \lstinline|virtual|
+\begin{itemize}
+\item povinné, jinak nebude fungovat!
+\end{itemize}
+\item potomek -- \lstinline|virtual + override|
+\begin{itemize}
+\item \lstinline|virtual| -- pro přehlednost, že se jedná o virtuální metodu
+\item \lstinline|override|\cpp{11} -- zajistí kontrolu kompilátorem, že předpis odpovídá virtuální metodě z předka
+\end{itemize}
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Pozdní vazba\ldots}
+
+\begin{block}{}
+Destruktor:
+\begin{itemize}
+\item časná/pozdní vazba se uplatňuje stejným způsobem na destruktor!
+\begin{itemize}
+\item aby bylo zajištěno, že se zavolá správný destruktor, musí být v předkovi virtuální destruktor
+\item \textbf{každá třída ze které se dědí by měla mít virtuální destruktor}
+\end{itemize}
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Čistě virtuální metody}
+
+\begin{bitemize}
+\item virtuální metoda (\lstinline|virtual|) -- uplatnění pozdní vazby
+\item čistě virtuální metoda (abstraktní, \lstinline|virtual ... = 0;|) -- pozdní vazba + chybí tělo (nutno doplnit v potomkovi)
+\begin{itemize}
+\item nelze vytvářet objekty od třídy obsahující čistě virtuální metody!
+\end{itemize}
+\end{bitemize}
+
+
+\begin{yesblock}
+\begin{lstlisting}
+struct Zvire {
+  virtual void vydejZvuk() = 0; // čistě virtuální / pure virtual
+};
+
+struct Kralik : Zvire {
+  virtual void vydejZvuk() override {
+    cout << "Bzzzm!";
+  }
+};
+
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Čistě virtuální metody\ldots}
+
+
+\begin{noblock}
+\begin{lstlisting}
+struct Zvire {
+  virtual void vydejZvuk() = 0; // čistě virtuální / pure virtual
+};
+
+Zvire z{}; // nelze - Zvire je abstraktní třída
+\end{lstlisting}
+\end{noblock}
+
+\begin{bonusblock}{}
+\begin{itemize}
+\item čistě virtuální metoda může mít i tělo (definici)
+\begin{itemize}
+\item stále je pak čistě virtuální (abstraktní)
+\item tělo lze explicitně volat z potomka \lstinline|Predek::cisteVirtualniMetoda()|
+\end{itemize}
+\end{itemize}
+\end{bonusblock}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Rozhraní}
+
+\begin{bitemize}
+\item čistě virtuální metody lze použít pro realizaci typu \uv{rozhraní}
+\begin{itemize}
+\item nezapomínejte na virtuální destruktor!
+\end{itemize}
+\end{bitemize}
+
+
+\begin{yesblock}
+\begin{lstlisting}
+struct IZvire {
+
+  virtual ~IZvire() { }
+
+  virtual void vydejZvuk() = 0;
+  virtual void nakrm(Potravina* potravina) = 0;
+  virtual void zautoc(IZvire* zvire) = 0;
+};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+
+
+
+

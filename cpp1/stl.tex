@@ -1,0 +1,301 @@
+\hkapitola{STL}
+
+\begin{frame}[fragile]
+\begin{block}{STL -- Standard Template Library}
+\begin{itemize}
+\item představuje generickou knihovnu pro správu a zpracování dat
+\item jednotlivé komponenty jsou šablony
+\item základní komponenty jsou
+\begin{itemize}
+\item kontejnery -- slouží pro ukládání a organizaci dat
+\item algoritmy -- obecné algoritmy pro zpracování dat
+\item iterátory -- obecné \uv{rozhraní} mezi kontejnery a algoritmy
+\item pomocné funkční objekty, adaptéry, bindery, \ldots
+\end{itemize}
+\end{itemize}
+\end{block}
+
+
+\begin{block}{Funkční objekt}
+\begin{itemize}
+\item vylepšení obyčejné funkce
+\item objekt s přetíženým operátorem \lstinline|()|
+\begin{itemize}
+\item lze volat jako funkci
+\item má atributy (stav)
+\end{itemize}
+\item od C++11 lze výhodně využívat lambda výrazy
+\item v STL existuje řada univerzálních funkčních objektů a adaptérů
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Kontejnery}
+
+\begin{block}{}
+\begin{itemize}
+\item slouží pro ukládání dat
+\item standard definuje rozhraní a složitost operací (není definována konkrétní fyzická datová struktura)
+\end{itemize}
+\end{block}
+\vskip -1.5ex
+\begin{block}{}
+\begin{itemize}
+\item posloupnosti -- data nemají vlastní identifikátor (klíč)
+\begin{itemize}
+\item \lstinline|array|\cpp{11}
+\item \lstinline|vector|
+\item \lstinline|deque|
+\item \lstinline|list|, \lstinline|forward_list|\cpp{11}
+\item adaptéry -- \lstinline|stack|, \lstinline|queue|, \lstinline|priority_queue|
+\end{itemize}
+\item asociativní kontejnery -- data mají vlastní identifikátor (klíč)
+\begin{itemize}
+\item \lstinline|set|, \lstinline|multiset|
+\item \lstinline|map|, \lstinline|multimap|
+\item hashovací kontejnery\cpp{11} (\lstinline|unordered_{set,map,multiset,multimap}|)
+\end{itemize}
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Iterátory}
+\begin{block}{}
+\begin{itemize}
+\item představují jednotné rozhraní pro procházení dat v libovolném kontejneru
+\item vycházejí z ukazatelů a logiky jejich použití (ukazatel na pole je v~zásadě iterátor)
+\item obvykle realizovány jako objekty s přetíženými operátory
+\item definováno několik kategorií iterátorů dle požadovaných operací
+\end{itemize}
+\end{block}
+
+\begin{block}{}
+\begin{itemize}
+\item \lstinline|InputIterator| -- čtou data z kontejneru
+\begin{itemize}
+\item \lstinline|ForwardIterator|
+\item \lstinline|BidirectionalIterator|
+\item \lstinline|RandomAccessIterator|
+\item \lstinline|ContiguousIterator|\cpp{17}
+\end{itemize}
+\item \lstinline|OutputIterator| -- zapisují data do kontejneru
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Algoritmy}
+\begin{block}{}
+\begin{itemize}
+\item zpracovávají data
+\begin{itemize}
+\item vyhledávají
+\item mažou
+\item upravují
+\item obecně zpracovávají prvky
+\item řadí
+\item \ldots
+\end{itemize}
+\item pracují s obecnými daty a s obecnými zdrojy dat
+\begin{itemize}
+\item tvar dat je libovolný (int, string, složitý objekt)
+\item zdroj dat je libovolný (používají se iterátory)
+\item konkrétní zpracování dat je definováno pomocí operátorů nebo funkčních objektů
+\end{itemize}
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+\kapitola{C++11 a STL, kontejnery, iterátory, algoritmy}
+
+\begin{frame}[fragile]
+\frametitle{auto}
+\begin{block}{}
+\begin{itemize}
+\item \lstinline|auto| umožňuje místo psaní konkrétního datového typu nechat typ odvodit kompilátor. 
+\item stále se jedná o silné typování, typ proměnné není možné později změnit
+\item lze s výhodou využít v mnoha situacích v následující práci s STL
+\item \lstinline|auto| je možné dále specifikovat modifikátory
+\end{itemize}
+\end{block}	
+
+\begin{yesblock}
+\lstinline|Object obj;|
+\begin{itemize}
+\item \lstinline|auto v = obj; // Object v|
+\item \lstinline|const auto v = obj; // const Object v|
+\item \lstinline|auto& v = obj; // Object& v|
+\item \lstinline|const auto& v = obj; // const Object& v|
+\end{itemize}
+\end{yesblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{initializer\_list}
+\begin{block}{}
+\begin{itemize}
+\item kontejnery je možné inicializovat výčtem hodnot pomocí inicializačních seznamů
+\item jde o rozšíření syntaxe uniform initialization
+\end{itemize}
+\end{block}
+
+\begin{yesblock}
+\begin{itemize}
+\item  \lstinline|vector<int> vect {10, 15, 20, 25, 30};|
+\item  \lstinline|vector<int> vect = {10, 15, 20, 25, 30};|
+\end{itemize}
+\end{yesblock}	
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Lambda výrazy -- anonymní funkce}
+\begin{noteblock}{}
+\begin{center}
+[] () \{\}
+\end{center}
+\end{noteblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Lambda výrazy -- anonymní funkce}
+\begin{noteblock}{}
+\begin{center}
+[ zachycení vnějších proměnných ] ( parametry funkce ) \{ tělo funkce \}
+\end{center}
+\end{noteblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Lambda výrazy -- zachycení vnějších proměnných}
+\begin{yesblock}
+\begin{lstlisting}
+int x = 10;
+
+// auto lambda0 = []() { return x; }; // nejde - x není definováno v anonymní funkci
+
+// zachycení hodnotou
+auto lambda1 = [x]() { return x; }; // ++x - nejde (je read only)
+cout << lambda1(); // x = 10; out = 10;
+
+// zachycení referencí (odkazem)
+auto lambda2 = [&x]() { return ++x; };
+cout << lambda2(); // x = 11; out = 11;
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Lambda výrazy -- parametry funkce}
+\begin{yesblock}
+\begin{lstlisting}
+auto lambda0 = []() { return 1; };
+cout << lambda0() << endl; // 1
+
+auto lambda1 = [](int x) { return 2 * x; };
+cout << lambda1(10) << endl; // 20
+
+auto lambda2 = [](int x, int y, double t) { return x + y; };
+cout << lambda2(10, 20, 3.1415) << endl; // 30
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{noteblock}{specifikace návratového typu}
+\begin{center}
+[ ] ( ) -> návratový\_typ \{ \}
+\end{center}
+\end{noteblock}
+
+\begin{noteblock}{mutable}
+\begin{center}
+[ ] ( ) \textit{mutable} -> návratový\_typ \{ \}
+\end{center}
+
+Umožňuje měnit vnější hodnoty zachycené hodnotou (změna se projeví pouze v těle lambdy).
+\end{noteblock}
+
+\begin{block}{zachycení vnejších hodnot}
+\begin{itemize}
+\item \lstinline |[=]| -- vše hodnotou
+\item \lstinline |[&]| -- vše odkazem
+\item \lstinline |[x, &]| -- x hodnotou, zbytek odkazem
+\item \lstinline |[this]| -- zachycení this v objektu 
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Předávání / uchování anonymních funkcí}
+\begin{yesblock}
+\begin{lstlisting}
+// použitím auto
+auto lambda1 = [](int value){ return value = 1; }
+
+// použitím std::function<>
+std::function<int(int)> = [](int value){ return value = 1;}
+\end{lstlisting}
+\end{yesblock}
+
+\begin{block}{std::function<>}
+\begin{itemize}
+\item šablona s proměnným počtem parametrů
+\item parametry ve tvaru \lstinline|result(param1, param2, ...)|
+\begin{itemize}
+\item \lstinline|function<int()>| -- funkce bez parametrů, vrací int
+\item \lstinline|function<void(int)>| -- funkce s jedním int parametrem, vrací void
+\item \lstinline|function<int(int)>| -- funkce s jedním int parametrem, vrací int
+\item \lstinline|function<int(int, int)>| -- funkce se dvěma int parametry, vrací int
+\end{itemize}
+
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+%\frametitle{std::function}
+\begin{block}{std::function<>}
+\begin{itemize}
+\item umožňuje uchovávat i ukazatel na libovolnou funkci nebo metodu
+\end{itemize}
+\end{block}
+
+\begin{yesblock}
+\begin{lstlisting}
+std::function<void(Citac&, int)> fptr = &Citac::nastavAtribut;
+	
+Citac citac{};
+fptr(citac, 10);
+
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+

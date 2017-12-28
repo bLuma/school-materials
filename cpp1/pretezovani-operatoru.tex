@@ -1,0 +1,362 @@
+\nezkouskove
+\hkapitola{Přetěžování operátorů}
+
+
+\begin{frame}[fragile]
+\frametitle{Přetěžování operátorů}
+\begin{block}{}
+\begin{itemize}
+\item lze přetížit operátory nad uživatelskými objektovými typy
+\begin{itemize}
+\item použití daného operátoru nad objektem vyvolá uživatelem definovanou metodu/funkci
+\item lze přetížit pouze vybrané existující operátory
+\end{itemize}
+\item je to pouze syntax-sugar pro volání funkcí/metod
+\begin{itemize}
+\item operátor + lze volat jako \lstinline|a + b|, ale i jako metodu \lstinline|a.operator+(b)|
+\item v kombinaci s STL slouží k definování některých základních chování objektů
+\end{itemize}
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{block}{Přetěžování operátorů} 
+\begin{itemize}
+\item definování, jak se bude daný operátor chovat pro náš objektový typ
+\item 4 skupiny operátorů:
+\begin{itemize}
+\item nelze přetížit
+\item lze metodou
+\item lze metodou i funkcí
+\item lze funkcí/statickou metodou
+\end{itemize}
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{alertblock}{{\NO}~Nelze přetížit}
+
+\begin{itemize}
+\item tečkové operátory -- ., .*, ::
+\item ternární operátor -- ? :
+\item přetypovací operátory -- static\_cast, \ldots
+\item další -- typeof, sizeof
+\end{itemize}
+\end{alertblock}
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Přetížitelné operátory}
+\begin{block}{Metodou} 
+\begin{center}
+\lstinline|= -> ->* [ ] ()| \lstinline|op. přetypování (typ)|
+\end{center}
+\end{block}
+
+\begin{block}{Metodou i funkcí} 
+\begin{center}
+\lstinline|+ - * / ++ -- > < >= <= == >> << & || \lstinline|~ += -= *= /=| $\ldots$
+\end{center}
+\end{block}
+
+\begin{block}{Funkcí/statickou metodou} 
+\begin{center}
+\lstinline|new new[ ] delete delete[ ]|
+\end{center}
+\end{block}
+
+\end{frame}
+
+
+
+\begin{frame}[t,fragile]
+\begin{noteblock}{} 
+\begin{lstlisting}[basicstyle=\small]
+návratovýTyp operator@([parametryOperátoru])
+\end{lstlisting}
+\end{noteblock}
+\vskip -1ex
+\begin{block}{}
+uvažujte výraz:
+\begin{lstlisting}
+int a = 5, b = 10;
+int c = a + b;
+\end{lstlisting}
+\end{block}
+\begin{block}{}
+platí:
+\begin{itemize}
+\item operátor + je binární operátor
+\item operandy jsou \emph{a}, \emph{b}
+\item změní se proměnná \emph{a}? NE $\rightarrow$ konstanta
+\item změní se proměnná \emph{b}? NE $\rightarrow$ konstanta
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{noteblock}{} 
+\begin{lstlisting}[basicstyle=\small]
+návratovýTyp operator@([parametryOperátoru])
+\end{lstlisting}
+\end{noteblock}
+\vskip -1ex
+\begin{block}{}
+uvažujte výraz:
+\begin{lstlisting}
+int a = 5, b = 10;
+int c = a + b;
+\end{lstlisting}
+\end{block}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+int operator+(int a, int b) {
+	return {a->state + b->state};
+}
+\end{lstlisting}
+\end{yesblock}
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+struct int {
+	int operator+(int b) {
+		return {this->state + b->state};
+	}
+};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{noteblock}{} 
+\begin{lstlisting}[basicstyle=\small]
+návratovýTyp operator@([parametryOperátoru])
+\end{lstlisting}
+\end{noteblock}
+\vskip -1ex
+\begin{block}{}
+uvažujte výraz:
+\begin{lstlisting}
+int a = 5, b = 10;
+int c = a + b;
+\end{lstlisting}
+\end{block}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+int operator+(const int& a, const int& b) {
+	return {a->state + b->state};
+}
+\end{lstlisting}
+\end{yesblock}
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+struct int {
+	int operator+(const int& b) const {
+		return {this->state + b->state};
+	}
+};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Reálný příklad -- komplexní číslo}
+\begin{yesblock} 
+\begin{lstlisting}
+Komplex a = 5, b = 10;
+Komplex c = a + b;
+
+Komplex operator+(const Komplex& a, const Komplex& b) {
+	return {a->re + b->re, a->im + b->im};
+}
+
+struct Komplex {
+	Komplex operator+(const Komplex& b) const {
+		return {this->re + b->re, this->im + b->im};
+	}
+};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Kombinace funkce + definice friend}
+\begin{yesblock} 
+\begin{lstlisting}[basicstyle=\small]
+struct Komplex {
+	friend Komplex operator+(const Komplex& a, const Komplex& b) {
+		return {a->re + b->re, a->im + b->im};
+	}
+};
+\end{lstlisting}
+\end{yesblock}
+\begin{block}{}
+friend + definice v těle způsobí:
+\begin{itemize}
+\item nejedná se o metodu, ale o funkci!
+\item má přístup k privátním a chráněným složkám
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Operátorové metody -- konstantnost}
+\begin{block}{}
+\begin{itemize}
+\item konstatní metoda operátoru může být vyvolána i nad konstatním objektem!
+\item nekonstatní metoda operátoru může být vyvolána pouze nad nekonstatním objektem!
+\end{itemize}
+\end{block}
+
+\begin{block}{}
+Většina operátorů nemění stav objektu
+\begin{itemize}
+\item \lstinline|+ - * / |
+\item \lstinline|<< >> & | | \~{}
+\item \lstinline|< > >= <= == !=|
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Operátorové metody -- konstantnost\ldots}
+\begin{block}{} 
+Operátory (potenciálně) měnící stav objektu
+\begin{itemize}
+\item ++, -\/-
+\item =, +=, -=, *=, /=, $\ldots$
+\item $[$\,$]$ -- pokud vrací referenci/ukazatel na stav objektu
+\item () -- pokud mění stav objektu
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Typ návratové hodnoty}
+\begin{block}{}
+\begin{itemize}
+\item operátory porovnání -- \lstinline|bool|
+\item ostatní -- typ objektu nebo jiný libovolný typ
+\end{itemize}
+\end{block}
+
+\begin{block}{} 
+Proč vracet staticky alokovaný objekt? Možnosti:
+\begin{itemize}
+\item statický objekt -- dochází ke kopírování, vytvoření dočasného objektu a jeho následné destrukci (pokud nedojde k optimalizaci od kompilátoru)
+\item reference
+\begin{itemize}
+\item ale kde ji vezmu?
+\item obyčejná proměnná zanikne s koncem bloku -- nelze
+\item statická (nebo globální) proměnná bude existovat dál, ale nebude to fungovat ve vícevláknových aplikacích -- nelze
+\item dynamicky alokovaná proměnná -- ztratím ukazatel a informaci o~alokaci a do konce programu bude paměť zabraná -- nelze
+\end{itemize}
+\item ukazatel (dyn. alokovaná paměť) -- změna sémantiky operátoru -- nelze
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Využití přetížených operátorů}
+\begin{block}{}
+\begin{itemize}
+\item \lstinline|< > <= >= == !=|
+\begin{itemize}
+\item řazení hodnot, asociativní kontejnery, jednoduché porovnávání
+\end{itemize}
+
+\item \lstinline|[ ]|
+\begin{itemize}
+\item přístup k prvkům kontejneru
+\end{itemize}
+
+\item \lstinline|()|
+\begin{itemize}
+\item funkční objekty (objekty určující chování algoritmů)
+\end{itemize}
+
+\item \lstinline|++ -- * -> ->*|
+\begin{itemize}
+\item realizace iterátoru
+\end{itemize}
+
+\item \lstinline|++ -- + - * /|
+\begin{itemize}
+\item matematické struktury (matice, komplexní čísla, ntice, \ldots), měnitelné hodnoty
+\end{itemize}
+
+
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{center}
+další příklady k nalezení např. v knize Thinking in C++ \\ ~ \\
+\url{http://www.drbio.cornell.edu/pl47/programming/TICPP-2nd-ed-Vol-one-html/Chapter12.html} \\
+~ \\
+další zdroje \\
+~ \\
+\url{http://en.cppreference.com/w/cpp/language/operators} \\
+~ \\
+\end{center}
+\end{frame}
+
+
+
+
+
+
+
+\zkouskove
