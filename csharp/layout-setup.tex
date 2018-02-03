@@ -1,0 +1,348 @@
+\usepackage[czech]{babel} 
+%\usepackage[IL2,T1,T2A]{fontenc} 
+\usepackage[T1]{fontenc} 
+
+%\usetheme{JuanLesPins}
+\usetheme{Boadilla}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setbeamertemplate{footline}[frame number]{}
+\setbeamertemplate{navigation symbols}{}
+%\setbeamertemplate{blocks}[rounded][shadow=false]
+\setbeamertemplate{blocks}[default]
+%\setbeamertemplate{background canvas}[vertical shading][bottom=white,top=structure.fg!5]
+
+
+% pro vkládání obrázků
+\usepackage{graphicx} 
+% pro použití víceřádkových komentářů
+\usepackage{verbatim} 
+% H modifikátor figure
+\usepackage{float}
+% barvičky
+\usepackage{xcolor,colortbl}
+\usepackage{subfig}
+
+
+\newcommand{\rc}{\cellcolor{red!25}}
+\newcommand{\bc}{\cellcolor{blue!25}}
+\newcommand{\gc}{\cellcolor{gray!25}}
+\newcommand{\grc}{\cellcolor{green!25}}
+
+\newcommand{\cpp}[1]{{\footnotesize$^{C++#1}$}}
+
+\newcommand{\thisse}{\color{blue}\textbf{{\tiny this}}$\searrow$}
+\newcommand{\thise}{\color{blue}\textbf{{\tiny this}}$\rightarrow$}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows,shapes}
+\newcommand{\tikzmark}[1]{\tikz[remember picture] \node[coordinate] (#1) {#1};}
+
+% listingy
+\usepackage{listings}
+
+\newcommand{\commentcolor}{\color[rgb]{0.133,0.545,0.133}}
+\lstset{
+  tabsize=2,
+  language=matlab,
+  basicstyle=\listingssize,% \ttfamily,
+  %upquote=true,
+  mathescape=false,
+  aboveskip=0pt, %{1.5\baselineskip},
+  columns=fullflexible,
+  showstringspaces=false,,
+  breaklines=true,
+  prebreak = \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+  frame=none,
+  showtabs=false,
+  showspaces=false,
+  showstringspaces=false,
+  identifierstyle=\ttfamily,
+  keywordstyle=\color[rgb]{0,0,1}\bfseries,
+  commentstyle=\color[rgb]{0.133,0.545,0.133},
+  stringstyle=\color[rgb]{0.627,0.126,0.941},
+  language=Java,
+  inputencoding=utf8,
+  extendedchars=true,
+%  literate={á}{{\'a}}1 {ã}{{\~a}}1 {é}{{\'e}}1
+  literate={á}{{\'a}}1 {ã}{{\~a}}1 {é}{{\'e}}1 {ž}{{\v{z}}}1 {ý}{{\'y}}1 {ě}{{\v{e}}}1 {ř}{{\v{r}}}1 {í}{{\'i}}1 {ů}{{\r{u}}}1 {č}{{\v{c}}}1 {ú}{{\'u}}1 {š}{{\v{s}}}1 {ť}{{\v{t}}}1 {Č}{{\v{C}}}1 {Š}{{\v{S}}}1 {ň}{{\v{n}}}1 {Ř}{{\v{R}}}1 {ó}{{\'o}}1 %{\$}{{\$}}1
+}
+
+	
+%\lstloadlanguages{[11]C++}
+%\lstset{language=[11]C++}
+\lstset{language=[Sharp]C}
+\lstset{morekeywords={var,when}}
+\lstset{escapeinside={<@}{@>}}
+
+%\usepackage{pxfonts}
+% odkazy v pdf
+\usepackage{hyperref}
+
+\author{\autor}
+\title{\titulek}
+\institute{UPCE/FEI/KST}
+\date{}
+
+\hypersetup{
+pdftitle={\titulek},
+pdfsubject={\predmet},
+pdfauthor={\autor}
+}
+
+
+
+
+
+
+
+
+
+\mode<handout>
+{
+  \usepackage{pgf}
+  \usepackage{pgfpages}
+
+\pgfpagesdeclarelayout{4 on 1 boxed}
+{
+  \edef\pgfpageoptionheight{\the\paperheight} 
+  \edef\pgfpageoptionwidth{\the\paperwidth}
+  \edef\pgfpageoptionborder{0pt}
+}
+{
+  \pgfpagesphysicalpageoptions
+  {%
+    logical pages=4,%
+    physical height=\pgfpageoptionheight,%
+    physical width=\pgfpageoptionwidth%
+  }
+  \pgfpageslogicalpageoptions{1}
+  {%
+    border code=\pgfsetlinewidth{2pt}\pgfstroke,%
+    border shrink=\pgfpageoptionborder,%
+    resized width=.5\pgfphysicalwidth,%
+    resized height=.5\pgfphysicalheight,%
+    center=\pgfpoint{.25\pgfphysicalwidth}{.75\pgfphysicalheight}%
+  }%
+  \pgfpageslogicalpageoptions{2}
+  {%
+    border code=\pgfsetlinewidth{2pt}\pgfstroke,%
+    border shrink=\pgfpageoptionborder,%
+    resized width=.5\pgfphysicalwidth,%
+    resized height=.5\pgfphysicalheight,%
+    center=\pgfpoint{.75\pgfphysicalwidth}{.75\pgfphysicalheight}%
+  }%
+  \pgfpageslogicalpageoptions{3}
+  {%
+    border code=\pgfsetlinewidth{2pt}\pgfstroke,%
+    border shrink=\pgfpageoptionborder,%
+    resized width=.5\pgfphysicalwidth,%
+    resized height=.5\pgfphysicalheight,%
+    center=\pgfpoint{.25\pgfphysicalwidth}{.25\pgfphysicalheight}%
+  }%
+  \pgfpageslogicalpageoptions{4}
+  {%
+    border code=\pgfsetlinewidth{2pt}\pgfstroke,%
+    border shrink=\pgfpageoptionborder,%
+    resized width=.5\pgfphysicalwidth,%
+    resized height=.5\pgfphysicalheight,%
+    center=\pgfpoint{.75\pgfphysicalwidth}{.25\pgfphysicalheight}%
+  }%
+}
+
+
+\pgfpagesdeclarelayout{4 on 1 b}
+{
+  \edef\pgfpageoptionheight{\the\paperheight} 
+  \edef\pgfpageoptionwidth{\the\paperwidth}
+  \edef\pgfpageoptionborder{0pt}
+}
+{
+  \pgfpagesphysicalpageoptions
+  {%
+    logical pages=4,%
+    physical height=\pgfpageoptionheight,%
+    physical width=\pgfpageoptionwidth%
+  }
+  \pgfpageslogicalpageoptions{1}
+  {%
+%    border code=\pgfsetlinewidth{2pt}\pgfstroke,%
+%    border shrink=\pgfpageoptionborder,%
+    resized width=.5\pgfphysicalwidth,%
+    resized height=.5\pgfphysicalheight,%
+    center=\pgfpoint{.25\pgfphysicalwidth}{.75\pgfphysicalheight}%
+  }%
+  \pgfpageslogicalpageoptions{2}
+  {%
+%   border code=\pgfsetlinewidth{2pt}\pgfstroke,%
+%    border shrink=\pgfpageoptionborder,%
+    resized width=.5\pgfphysicalwidth,%
+    resized height=.5\pgfphysicalheight,%
+    center=\pgfpoint{.75\pgfphysicalwidth}{.75\pgfphysicalheight}%
+  }%
+  \pgfpageslogicalpageoptions{3}
+  {%
+%    border code=\pgfsetlinewidth{2pt}\pgfstroke,%
+%    border shrink=\pgfpageoptionborder,%
+    resized width=.5\pgfphysicalwidth,%
+    resized height=.5\pgfphysicalheight,%
+    center=\pgfpoint{.25\pgfphysicalwidth}{.25\pgfphysicalheight}%
+  }%
+  \pgfpageslogicalpageoptions{4}
+  {%
+%    border code=\pgfsetlinewidth{2pt}\pgfstroke,%
+%    border shrink=\pgfpageoptionborder,%
+    resized width=.5\pgfphysicalwidth,%
+    resized height=.5\pgfphysicalheight,%
+    center=\pgfpoint{.75\pgfphysicalwidth}{.25\pgfphysicalheight}%
+  }%
+}
+
+
+  \pgfpagesuselayout{4 on 1 b}[a4paper, border shrink=5mm, landscape]
+  \nofiles
+}
+
+
+
+
+
+\newcommand{\hkapitola}[1]{
+\section{#1}
+\begin{frame}
+\begin{block}{}
+\Huge
+\centering
+#1
+\end{block}
+\end{frame}
+}
+
+
+
+\newcommand{\kapitola}[1]{
+\subsection{#1}
+\begin{frame}
+\begin{block}{}
+\Large
+\centering
+#1
+\end{block}
+\end{frame}
+}
+
+
+
+\newcommand{\pkapitola}[1]{
+\subsubsection{#1}
+\begin{frame}
+\begin{block}{}
+\large
+\centering
+#1
+\end{block}
+\end{frame}
+}
+
+
+\newcommand{\pulsirkycol}{.45\textwidth}
+\newcommand{\tretinasirkycol}{.275\textwidth}
+
+\newcommand{\raisesym}[1]{\raisebox{0.5\depth}{#1}}
+
+\newcommand{\no}{\raisesym{$\times$}}
+\newcommand{\yes}{\raisesym{\checkmark}}
+\newcommand{\warning}{\raisesym{\fontencoding{U}\fontfamily{futs}\selectfont\char 66\relax}}
+
+
+\newcommand{\NO}{\scriptsize\raisesym{$\times$}}
+\newcommand{\YES}{\scriptsize\raisesym{\checkmark}}
+\newcommand{\WARNING}{\scriptsize\raisesym{\fontencoding{U}\fontfamily{futs}\selectfont\char 66\relax}}
+
+\newcommand{\dcc}{\color[rgb]{0.35,0.35,0.35}}
+
+\newcommand{\nezkouskove}{%\setbeamertemplate{background canvas}[vertical shading][bottom=violet!5,top=violet!5]
+\setbeamertemplate{background canvas}{%
+\begin{tikzpicture}
+    \clip (0,0) rectangle (\paperwidth,\paperheight);
+    \fill[color=violet] (0,\paperheight) rectangle (\paperwidth,\paperheight-5pt);
+    \fill[color=violet] (0,0) rectangle (\paperwidth,5pt);
+
+	\fill[color=white] (.90\paperwidth,0) rectangle (\paperwidth,10pt);
+\end{tikzpicture}
+}
+}
+%\newcommand{\zkouskove}{\setbeamertemplate{background canvas}[vertical shading][bottom=white,top=structure.fg!5]}
+\newcommand{\zkouskove}{\setbeamertemplate{background canvas}[vertical shading][bottom=white,top=white]}
+
+\newenvironment<>{deprecatedblock}[1]{
+  \begin{actionenv}#2
+    \def\insertblocktitle{#1}
+    \par
+    \mode<presentation>{
+      \setbeamercolor{block title}{fg=white,bg=gray!90!white}
+      \setbeamercolor{block body}{fg=black,bg=gray!30}
+      \setbeamercolor{itemize item}{fg=gray!20!white}
+      \setbeamertemplate{itemize item}[triangle]
+    }
+    \usebeamertemplate{block begin}}
+    {\par\usebeamertemplate{block end}\end{actionenv}}
+
+\newenvironment<>{noteblock}[1]{
+  \begin{actionenv}#2
+    \def\insertblocktitle{#1}
+    \par
+    \mode<presentation>{
+      \setbeamercolor{block title}{fg=orange!60!black,bg=yellow!60!white}
+      \setbeamercolor{block body}{fg=black,bg=yellow!10}
+      \setbeamercolor{itemize item}{fg=gray!20!black}
+      \setbeamertemplate{itemize item}[triangle]
+    }
+    \usebeamertemplate{block begin}}
+    {\par\usebeamertemplate{block end}\end{actionenv}}
+
+\newenvironment<>{bonusblock}[1]{
+  \begin{actionenv}#2
+    \def\insertblocktitle{#1}
+    \par
+    \mode<presentation>{
+      \setbeamercolor{block title}{fg=yellow,bg=violet!80!black}
+      \setbeamercolor{block body}{fg=black,bg=lime!10!white}
+      \setbeamercolor{itemize item}{fg=gray!20!black}
+      \setbeamertemplate{itemize item}[triangle]
+    }
+    \usebeamertemplate{block begin}}
+    {\par\usebeamertemplate{block end}\end{actionenv}}
+
+
+
+\newenvironment{yesblock}{\begin{exampleblock}{\YES}}{\end{exampleblock}}
+\newenvironment{noblock}{\begin{alertblock}{\NO}}{\end{alertblock}}
+\newenvironment{oldblock}{\begin{deprecatedblock}{\WARNING}}{\end{deprecatedblock}}
+
+%[totalwidth=\textwidth]
+\newenvironment{twocols}{\begin{columns}\begin{column}{\pulsirkycol}}{\end{column}\end{columns}}
+\newcommand{\twocolssep}{\end{column}\begin{column}{\pulsirkycol}}
+
+\newenvironment{threecols}{\begin{columns}\begin{column}{\tretinasirkycol}}{\end{column}\end{columns}}
+\newcommand{\threecolssep}{\end{column}\begin{column}{\tretinasirkycol}}
+
+\newenvironment{bitemize}[1]{\begin{block}{#1}\begin{itemize}}{\end{itemize}\end{block}}
+
+
+
+%%\setbeamercolor{background canvas}{bg=violet}
+
+
+% Blocks:
+% block
+% exampleblock <- yesblock
+% alertblock <- noblock
+% noteblock
+% deprecatedblock <- oldblock
+% bonusblock
+% twocols + cmd twocolssep
+% threecols + cmd threecolssep
+% bitemize - block + itemize
+% Commands:
+% \NO \YES \WARNING \pulsirkycol

@@ -1,0 +1,581 @@
+
+\kapitola{Struktury}
+
+\begin{frame}[fragile]
+\frametitle{Struktura -- struct}
+\begin{bitemize}{struct}
+\item hodnotový typ (předává se hodnota - nikoliv reference)
+\item může obsahovat parametrické konstruktory, atributy, vlastnosti, metody, operátory, \ldots
+\item nemůže definovat bezparametrický konstruktor, finalizér (destruktor)
+\item nemůže dědit z předka
+\begin{itemize}
+\item vždy dědí z \lstinline|System.ValueType|, dědící z \lstinline|System.Object|
+\end{itemize}
+\item může realizovat rozhraní
+\item instanci je možné vytvořit bez \lstinline|new|
+\end{bitemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Struktura -- struct}
+\begin{yesblock}
+\begin{lstlisting}
+struct Student
+{
+    public string FirstName;
+    public string LastName;
+
+    public Student(string firstName, string lastName)
+    {
+        FirstName = firstName;
+        LastName = lastName;
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Struktura -- struct}
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+static void TestStudent()
+{
+    Student stPetraKratka = new Student("Petra", "Kratka");
+
+    Student stJitkaMlada = new Student()
+    {
+        FirstName = "Jitka",
+        LastName = "Mlada"
+    };
+
+    Student stPetrMaly = new Student();
+    stPetrMaly.FirstName = "Petr";
+    stPetrMaly.LastName = "Maly";
+
+    Student stJanVelky; // pouze u struktur, nelze u tříd
+    stJanVelky.FirstName = "Jan";
+    stJanVelky.LastName = "Velky";
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\kapitola{Třídy}
+
+\begin{frame}[fragile]
+\frametitle{Třídy -- class}
+\begin{bitemize}{class}
+\item referenční typ (předává se reference)
+\item jednoduchá dědičnost
+\begin{itemize}
+\item může dědit z jednoho předka
+\item rozlišuje se časná a pozdní vazba u metod
+\end{itemize}
+\item může realizovat rozhraní
+\begin{itemize}
+\item libovolný počet
+\item implicitní/explicitní realizace rozhraní
+\end{itemize}
+\item může obsahovat konstruktory, finalizér, atributy, vlastnosti, události, metody, operátory, vnořené typy, \ldots
+\item objekty jsou vytvářeny na haldě
+\item paměť spravuje garbage collector
+\end{bitemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Třídy -- porovnání s Javou/C++}
+\begin{bitemize}{}
+\item jednoduchá dědičnost
+\begin{itemize}
+\item logika dle javy, syntaxe dle C++
+\end{itemize}
+\item polymorfizmus
+\begin{itemize}
+\item v C++ je nutné řešit časnou/pozdní vazbu (\lstinline|virtual|), v C\# také (\lstinline|virtual, override|), Java toto zjednodušuje -- vše použije pozdní vazbu automaticky
+\item systém v C\# je v zásadě složitější, umožňuje přerušit řetězec pozdní vazby \lstinline|new virtual|
+\end{itemize}
+\item rozhraní
+\begin{itemize}
+\item neřeší se viditelnost složek v rozhraní
+\item dva způsoby realizace -- implicitní (standardní), explicitní (objekt je nutné přetypovat na typ rozhraní)
+\end{itemize}
+\end{bitemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Třídy -- porovnání s Javou/C++}
+\begin{bitemize}{}
+\item atributy a gettery/settery
+\begin{itemize}
+\item C\# zavádí pojem \textbf{vlastnost (property)} a speciální syntax nahrazující gettery, settery
+\end{itemize}
+\end{bitemize}
+\end{frame}
+
+
+
+
+\pkapitola{Třída -- Class}
+
+
+\begin{frame}[fragile]
+\begin{noteblock}{}
+\begin{lstlisting}
+[viditelnost] [modifikátory] class NazevTridy [dedicnostARozhrani] { 
+	[složkyTřídy]...
+}
+\end{lstlisting}
+\end{noteblock}
+\vskip -3mm
+\begin{bitemize}{Viditelnost třídy}
+\item \lstinline|internal| (výchozí) -- viditelná v rámci assembly
+\item \lstinline|public| -- viditelná z ostatních assembly
+\end{bitemize}
+\vskip -3mm
+\begin{bitemize}{Modifikátory}
+\item \lstinline|abstract| -- abstraktní třída (nelze vytvořit instanci, obsahuje abstraktní složky)
+\item \lstinline|static| -- statická třída (nelze vytvořit instanci, pouze statické složky)
+\item \lstinline|sealed| -- zapečetěná třída (nelze z ní dědit)
+\item \lstinline|partial| -- třída rozdělená do více souborů
+\end{bitemize}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Složky třídy}
+\item konstruktory
+\item konstanty
+\item atributy
+\item finalizéry
+\item metody
+\item vlastnosti
+\item indexery
+\item operátory
+\item události
+\item delegáty
+\item třídy
+\item rozhraní
+\item struktury
+\end{bitemize}
+\end{frame}
+
+
+
+\pkapitola{Objekty}
+
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Objekt}
+\item vytvořen pomocí \lstinline|new|
+\item předáván referencí, paměť spravuje GC
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}
+Osoba neexistujiciOsoba = null;
+
+Osoba osobaVychozi = new Osoba();
+
+Osoba osobaParametricka = new Osoba("Franta", "Maly");
+
+Osoba osobaZvlastni = new Osoba() {
+	Jmeno = "Franta",
+	Prijmeni = "Maly"
+};
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Objekt -- porovnávání}
+\item \lstinline|==, Equals| -- porovnání referencí/obsahu (nezávisle přetížitelné)
+\item \lstinline|object.ReferenceEquals()| -- vždy porovná shodu referencí
+\end{bitemize}
+\vskip -3mm
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+Osoba mojeOsoba = new Osoba();
+Osoba ciziOsoba = mojeOsoba;
+
+//var wl = (Action<string>)Console.WriteLine;
+wl($"==: {mojeOsoba == ciziOsoba}");
+wl($"Equals: {mojeOsoba.Equals(ciziOsoba)}");
+wl($"ReferenceEquals: {object.ReferenceEquals(mojeOsoba, ciziOsoba)}");
+// True, True, True
+
+ciziOsoba = new Osoba();
+
+wl($"==: {mojeOsoba == ciziOsoba}");
+wl($"Equals: {mojeOsoba.Equals(ciziOsoba)}");
+wl($"ReferenceEquals: {object.ReferenceEquals(mojeOsoba, ciziOsoba)}");
+// True/False, True/False, False
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{bonusblock}{}
+\begin{lstlisting}[basicstyle=\small]
+class Osoba
+{
+	public string Jmeno { get; set; }
+	public string Prijmeni { get; set; }
+	
+	public override bool Equals(object obj)
+	{
+	    if (obj == null || GetType() != obj.GetType())
+	        return false;
+	
+	    Osoba osoba = (Osoba)obj;
+	    return Jmeno == osoba.Jmeno && Prijmeni == osoba.Prijmeni;
+	}
+	
+	public override int GetHashCode()
+	{
+		return Jmeno.GetHashCode() ^ Prijmeni.GetHashCode();
+	}
+\end{lstlisting}
+\end{bonusblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{bonusblock}{}
+\begin{lstlisting}[basicstyle=\small]
+	public static bool operator ==(Osoba osa, Osoba osb)
+	{
+	    return osa.Equals(osb);
+	}
+	
+	public static bool operator !=(Osoba osa, Osoba osb)
+	{
+	    return !(osa == osb);
+	}
+}
+\end{lstlisting}
+\end{bonusblock}
+\vskip -3mm
+\begin{bitemize}{Přetěžování Equals, ==, !=}
+\item pokud to má smysl přetižte \lstinline|Equals| (a \lstinline|GetHashCode|) u hodnotových i referenčních typů
+\item přetižte ==
+\begin{itemize}
+\item pokud se jedná o hodnový typ
+\item pokud se jedná o referenční \uv{základní} typ (\lstinline|Point|, \lstinline|string|, \lstinline|BigNumber|) nebo pokud přetěžujete operátory +, -, \ldots
+\end{itemize}
+\end{bitemize}
+\end{frame}
+
+
+
+\kapitola{Složky třídy}
+
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Viditelnost složek}
+\item \lstinline|public| -- veřejná (všude)
+\item \lstinline|private| -- privátní (pouze definující třída), výchozí pro složky tříd a struktur
+\item \lstinline|protected| -- chráněná (třída nebo její potomci)
+\item \lstinline|internal| -- interní (assembly)
+\item \lstinline|protected internal| -- sjednocení \lstinline|protected| a \lstinline|internal| (assembly a potomci (i z jiného assembly))
+\item \lstinline|private protected| -- \lstinline|protected|, ale pouze u potomků ve stejném assembly
+\end{bitemize}
+\end{frame}
+
+
+
+
+
+
+\pkapitola{Konstruktory, finalizér}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Konstruktory}
+\begin{noteblock}{}
+[viditelnost] [modifikátory] NázevTřídy([parametry]) [voláníJinéhoKonstruktoru]
+\end{noteblock}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+class Student
+{
+    // Bezparametrický konstruktor -- volá se při new Student()
+    public Student() { }
+
+    // Parametrický konstruktor -- volá se při new Student(string, string)
+    public Student(string jmeno, string prijmeni) { }
+
+    // Statický konstruktor -- volá se při zavedení typu do paměti
+    static Student() { }
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Finalizéry}
+\begin{bitemize}{}
+\item slouží k uvolnění prostředů
+\item implicitně volá metodu \lstinline|object.Finalize|
+\item používán spíše výjimečně, není zaručeno, kdy dojde k jeho zavolání
+\item pro řízené uvolnění prostředků existuje rozhraní \lstinline|IDisposable|
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}
+public class Auto 
+{
+    ~Auto() 
+    {
+        // ...
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+\pkapitola{Atributy, vlastnosti}
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{}
+\item Atribut (Attribute) -- Java, C++, C\#
+\begin{itemize}
+\item má identifikátor, datový typ, přístupová práva
+\item alokuje místo v paměti pro uložení hodnoty datového typu (představuje datovou složku)
+\item \lstinline|private string name;|
+\end{itemize}
+
+\item Vlastnost (Property) -- C\#
+\begin{itemize}
+\item má identifikátor, datový typ, přístupová práva
+\item definuje getter a setter, jak přistoupit k datové složce
+\item \lstinline|public string Name { get { return name;} set { name = value; } }|
+\end{itemize}
+\end{bitemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Atributy}
+
+\begin{noteblock}{}
+[viditelnost] [modifikátory] datovýTyp názevAtributu [inicializér];
+\end{noteblock}
+
+\begin{bitemize}{Modifikátor}
+\item \lstinline|static| -- statická složka (neváže se na instanci)
+\item \lstinline|const| -- konstanta, musí být nastavena v inicializéru
+\item \lstinline|readonly| -- konstanta, musí být nastavena v konstruktoru
+\end{bitemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Statické složky}
+\begin{yesblock}
+\begin{lstlisting}
+class Osoba
+{
+    public static int PocetInstanci;
+
+    public Osoba() 
+    { 
+        PocetInstanci++; 
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+
+\begin{yesblock}
+\begin{lstlisting}
+int pocet = Osoba.PocetInstanci;
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Statická třída}
+\begin{yesblock}
+\begin{lstlisting}
+static class Matematika
+{
+    public const double Pi = 3.141592;
+
+    public static double Odmocnina(double hodnota)
+    {
+        return Math.Sqrt(hodnota);
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\vskip -1.5mm
+\begin{yesblock}
+\begin{lstlisting}
+double pi = Matematika.Pi;
+double sqrt = Matematika.Odmocnina(72);
+\end{lstlisting}
+\end{yesblock}
+\vskip -1.5mm
+\begin{noblock}
+\begin{lstlisting}
+Matematika matematika = new Matematika();
+\end{lstlisting}
+\end{noblock}
+\end{frame}
+
+
+
+\pkapitola{Vlastnost -- Property}
+
+
+\begin{frame}[fragile]
+\frametitle{Vlastnosti}
+\begin{yesblock}
+\begin{lstlisting}
+class Student
+{
+    // atribut - uchovává hodnotu
+    private string firstName; 
+    // vlastnost - definuje pravidla pro přístup k atributu
+    public string FirstName 
+    {
+        get { return firstName; }
+        set { firstName = value; }
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Vlastnosti}
+\begin{yesblock}
+\begin{lstlisting}
+class Student
+{
+    private string netID;
+    public string NetID
+    {
+        get { return netID; }
+        set
+        {
+            if (value.StartsWith("st") && value.Length == 7)
+                netID = value;
+        }
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Vlastnosti -- zkrácený zápis}
+\begin{bitemize}{C\# 7}
+\item tělo metody/getteru/setteru lze zkrátit na výraz pomocí \textbf{=>}
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}
+private string firstName;
+public string FirstName
+{
+    get => firstName;
+    set => firstName = value;
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Vlastnosti -- viditelnost}
+\begin{bitemize}{}
+\item lze definovat viditelnost operací
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}
+private string firstName;
+public string FirstName
+{
+    private get => firstName;
+    protected set => firstName = value;
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Vlastnosti -- pouze setter/getter}
+\begin{bitemize}{}
+\item lze definovat pouze setter/getter
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}
+private List<Student> studenti;
+public int PocetStudentu
+{
+    get => studenti.Count;
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Vlastnosti -- automaticky implementované vlastnosti}
+\begin{bitemize}{}
+\item atribut (datová složka) je neviditelná a automaticky vytvořena kompilátorem
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}
+public string FirstName { get; set; }
+public string MiddleName { get; set; }
+public string LastName { get; set; }
+
+// od C# 6 - lze automaticky impl. vlastnosti rovnou inicializovat
+public string NetID { get; set; } = "st12345";
+// od C# 6 - lze definovat read-only auto prop. s inicializací v konstruktoru
+public uint StudentID { get; }
+//// konstruktor
+//// StudentID = 12345;
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
