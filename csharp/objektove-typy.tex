@@ -1,4 +1,6 @@
 
+\hkapitola{Objektové typy}
+
 \kapitola{Struktury}
 
 \begin{frame}[fragile]
@@ -310,7 +312,9 @@ class Osoba
 \begin{frame}[fragile]
 \frametitle{Konstruktory}
 \begin{noteblock}{}
+\begin{lstlisting}
 [viditelnost] [modifikátory] NázevTřídy([parametry]) [voláníJinéhoKonstruktoru]
+\end{lstlisting}
 \end{noteblock}
 
 \begin{yesblock}
@@ -385,7 +389,9 @@ public class Auto
 \frametitle{Atributy}
 
 \begin{noteblock}{}
+\begin{lstlisting}
 [viditelnost] [modifikátory] datovýTyp názevAtributu [inicializér];
+\end{lstlisting}
 \end{noteblock}
 
 \begin{bitemize}{Modifikátor}
@@ -574,6 +580,211 @@ public string NetID { get; set; } = "st12345";
 public uint StudentID { get; }
 //// konstruktor
 //// StudentID = 12345;
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\kapitola{Metody}
+
+
+\begin{frame}[fragile]
+\frametitle{Metody}
+
+\begin{noteblock}{}
+\begin{lstlisting}
+[viditelnost] [modifikátory] typNávratovéHodnoty názevMetody([parametry]) těloMetody
+
+těloMetody:
+	=> výraz
+	{ [příkazy] }
+\end{lstlisting}
+\end{noteblock}
+
+\begin{bitemize}{Modifikátory}
+\item \lstinline|static| -- statická metoda
+\item \lstinline|new| -- zakrývání metody z předka
+\item \lstinline|virtual| -- virtuální metoda (polymorfizmus)
+\item \lstinline|override| -- přetížená metoda (polymorfizmus)
+\item \lstinline|abstract| -- abstraktní metoda
+\item \lstinline|async| -- asynchronní metody
+\end{bitemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Metody -- příklad}
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+class Student
+{
+    public string Name { get; set; }
+
+    public void SayHello()
+    {
+        Console.WriteLine($"Hello, I'm {Name}");
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+Student peter = new Student()
+{
+    Name = "Peter"
+};
+
+peter.SayHello();
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Metody -- výchozí hodnota parametru}
+\begin{bitemize}{}
+\item parametry mohou mít uvedenou výchozí hodnotu
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+class MyMath
+{
+    public const double Pi = 3.141592;
+
+    public static double GetPowerOfPi(int power = 1)
+    {
+        return Math.Pow(Pi, power);
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+double pi = MyMath.GetPowerOfPi();
+double piSquare = MyMath.GetPowerOfPi(2);
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Metody -- ref}
+\begin{bitemize}{}
+\item parametr je možné předat odkazem (referencí)
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+class Toolkit
+{
+    public static void Increment(ref int value)
+    {
+	    value++;
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+int intValue = 0;
+Toolkit.Increment(ref intValue);
+Console.WriteLine($"{intValue}");
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Metody -- out}
+\begin{bitemize}{}
+\item parametr může být výstupní
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+class AuthenticationService
+{
+    public static bool Authentize(string password, out string username)
+    {
+        if (password == "secr3tP4ssw0rd!")
+        {
+            username = "admin";
+            return true;
+        }
+
+        username = null;
+        return false;
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Metody -- out}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+string username;
+if(AuthenticationService.Authentize("password", out username))
+{
+    Console.WriteLine($"Authenticated as {username}");
+}
+\end{lstlisting}
+\end{yesblock}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+// C# 7 - podporuje deklarovat proměnnou v místě volání
+if(AuthenticationService.Authentize("password", out string username))
+{
+    Console.WriteLine($"Authenticated as {username}");
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Metody -- params}
+\begin{bitemize}{}
+\item je možné volat metodu s libovolným počtem parametrů (stejného typu)
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+public static int SumArguments(params int[] arguments)
+{
+    int sum = 0;
+    foreach (var item in arguments)
+    {
+        sum += item;
+    }
+
+    return sum;
+}
+\end{lstlisting}
+\end{yesblock}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+int result = Summer.SumArguments(10, 20, 30, 40, 50, 60, 70);
 \end{lstlisting}
 \end{yesblock}
 \end{frame}
