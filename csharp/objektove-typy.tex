@@ -249,7 +249,7 @@ class Osoba
 	
 	public override int GetHashCode()
 	{
-		return Jmeno.GetHashCode() ^ Prijmeni.GetHashCode();
+		return 11 * Jmeno.GetHashCode() + Prijmeni.GetHashCode();
 	}
 \end{lstlisting}
 \end{bonusblock}
@@ -689,7 +689,7 @@ class Toolkit
 {
     public static void Increment(ref int value)
     {
-	    value++;
+        value++;
     }
 }
 \end{lstlisting}
@@ -759,7 +759,7 @@ if(AuthenticationService.Authentize("password", out string username))
 
 
 
-
+\nezkouskove
 
 \begin{frame}[fragile]
 \frametitle{Metody -- params}
@@ -781,7 +781,7 @@ public static int SumArguments(params int[] arguments)
 }
 \end{lstlisting}
 \end{yesblock}
-
+\vskip -2mm
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 int result = Summer.SumArguments(10, 20, 30, 40, 50, 60, 70);
@@ -790,3 +790,66 @@ int result = Summer.SumArguments(10, 20, 30, 40, 50, 60, 70);
 \end{frame}
 
 
+
+
+
+\begin{frame}[fragile]
+\frametitle{Metody -- pojmenované argumenty}
+\begin{bitemize}{}
+\item při volání metody je možné specifikovat argumenty v libovolném pořadí, pokud je uveden jejich název
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+public static void AddProduct(string productName, int count = 1, 
+    double weight = 0, string description = "")
+\end{lstlisting}
+\end{yesblock}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+AddProduct("Toy", 10, 1.2, "Kid's toy");
+AddProduct("Toy", count: 10, weight: 1.2);
+AddProduct("Toy", description: "Kid's toy", count: 10);
+// od C# 7.2:
+AddProduct(productName: "Toy", 10, description: "Kid's toy"); 
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Metody -- ref return}
+\vskip -2mm
+\begin{bitemize}{}
+\item z metody je možné vracet referenci (C\# 7)
+\end{bitemize}
+\vskip -2mm
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+public static ref int FindGreaterThan(int[] array, int condition)
+{
+    for (int i = 0; i < array.Length; i++)
+        if (array[i] > condition)
+            return ref array[i];
+
+    throw new Exception("Not found");
+}
+\end{lstlisting}
+\end{yesblock}
+\vskip -2mm
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+int[] array = { 1, 2, 5, 15, 32, 64 };
+Console.WriteLine($"{string.Join(" ", array)}");
+ref int value = ref FindGreaterThan(array, 10);
+value += 100;
+Console.WriteLine($"{string.Join(" ", array)}");
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\zkouskove
