@@ -134,12 +134,11 @@ static void TestStudent()
 }
 \end{lstlisting}
 \end{noteblock}
-\vskip -3mm
 \begin{bitemize}{Viditelnost třídy}
 \item \lstinline|internal| (výchozí) -- viditelná v rámci assembly
 \item \lstinline|public| -- viditelná z ostatních assembly
 \end{bitemize}
-\vskip -3mm
+
 \begin{bitemize}{Modifikátory}
 \item \lstinline|abstract| -- abstraktní třída (nelze vytvořit instanci, obsahuje abstraktní složky)
 \item \lstinline|static| -- statická třída (nelze vytvořit instanci, pouze statické složky)
@@ -205,7 +204,7 @@ Osoba osobaZvlastni = new Osoba() {
 \item \lstinline|==, Equals| -- porovnání referencí/obsahu (nezávisle přetížitelné)
 \item \lstinline|object.ReferenceEquals()| -- vždy porovná shodu referencí
 \end{bitemize}
-\vskip -3mm
+
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 Osoba mojeOsoba = new Osoba();
@@ -271,7 +270,7 @@ class Osoba
 }
 \end{lstlisting}
 \end{bonusblock}
-\vskip -3mm
+
 \begin{bitemize}{Přetěžování Equals, ==, !=}
 \item pokud to má smysl přetižte \lstinline|Equals| (a \lstinline|GetHashCode|) u hodnotových i referenčních typů
 \item přetižte ==
@@ -443,14 +442,14 @@ static class Matematika
 }
 \end{lstlisting}
 \end{yesblock}
-\vskip -1.5mm
+
 \begin{yesblock}
 \begin{lstlisting}
 double pi = Matematika.Pi;
 double sqrt = Matematika.Odmocnina(72);
 \end{lstlisting}
 \end{yesblock}
-\vskip -1.5mm
+
 \begin{noblock}
 \begin{lstlisting}
 Matematika matematika = new Matematika();
@@ -781,7 +780,7 @@ public static int SumArguments(params int[] arguments)
 }
 \end{lstlisting}
 \end{yesblock}
-\vskip -2mm
+
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 int result = Summer.SumArguments(10, 20, 30, 40, 50, 60, 70);
@@ -822,11 +821,11 @@ AddProduct(productName: "Toy", 10, description: "Kid's toy");
 
 \begin{frame}[fragile]
 \frametitle{Metody -- ref return}
-\vskip -2mm
+
 \begin{bitemize}{}
 \item z metody je možné vracet referenci (C\# 7)
 \end{bitemize}
-\vskip -2mm
+
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 public static ref int FindGreaterThan(int[] array, int condition)
@@ -839,7 +838,7 @@ public static ref int FindGreaterThan(int[] array, int condition)
 }
 \end{lstlisting}
 \end{yesblock}
-\vskip -2mm
+
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 int[] array = { 1, 2, 5, 15, 32, 64 };
@@ -857,12 +856,12 @@ Console.WriteLine($"{string.Join(" ", array)}");
 
 \begin{frame}[fragile]
 \frametitle{Metody -- rozšiřující (extension) metody}
-\vskip -2mm
+
 \begin{bitemize}{}
 \item (statická) metoda se tváří jako (instanční) metoda jiné třídy
 \item poprvé masivně použito pro realizaci LINQ
 \end{bitemize}
-\vskip -2mm
+
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 class Student

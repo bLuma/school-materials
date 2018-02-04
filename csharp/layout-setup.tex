@@ -8,10 +8,13 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \setbeamertemplate{footline}[frame number]{}
 \setbeamertemplate{navigation symbols}{}
-%\setbeamertemplate{blocks}[rounded][shadow=false]
-\setbeamertemplate{blocks}[default]
+\setbeamertemplate{blocks}[rounded][shadow=false]
+%\setbeamertemplate{blocks}[default]
 %\setbeamertemplate{background canvas}[vertical shading][bottom=white,top=structure.fg!5]
 
+% zrušení mezer mezi bloky
+\setlength{\medskipamount}{0pt}
+\setlength{\smallskipamount}{0pt}
 
 % pro vkládání obrázků
 \usepackage{graphicx} 
@@ -49,6 +52,7 @@
   %upquote=true,
   mathescape=false,
   aboveskip=0pt, %{1.5\baselineskip},
+  % zrušení nadbytečné mezery za posledním řádkem
   belowskip=0pt,
   columns=fullflexible,
   showstringspaces=false,,
@@ -65,7 +69,6 @@
   language=Java,
   inputencoding=utf8,
   extendedchars=true,
-%  literate={á}{{\'a}}1 {ã}{{\~a}}1 {é}{{\'e}}1
   literate={á}{{\'a}}1 {ã}{{\~a}}1 {é}{{\'e}}1 {ž}{{\v{z}}}1 {ý}{{\'y}}1 {ě}{{\v{e}}}1 {ř}{{\v{r}}}1 {í}{{\'i}}1 {ů}{{\r{u}}}1 {č}{{\v{c}}}1 {ú}{{\'u}}1 {š}{{\v{s}}}1 {ť}{{\v{t}}}1 {Č}{{\v{C}}}1 {Š}{{\v{S}}}1 {ň}{{\v{n}}}1 {Ř}{{\v{R}}}1 {ó}{{\'o}}1 %{\$}{{\$}}1
 }
 
