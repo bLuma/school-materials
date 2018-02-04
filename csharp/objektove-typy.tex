@@ -852,4 +852,49 @@ Console.WriteLine($"{string.Join(" ", array)}");
 \end{frame}
 
 
+
+
+
+\begin{frame}[fragile]
+\frametitle{Metody -- rozšiřující (extension) metody}
+\vskip -2mm
+\begin{bitemize}{}
+\item (statická) metoda se tváří jako (instanční) metoda jiné třídy
+\item poprvé masivně použito pro realizaci LINQ
+\end{bitemize}
+\vskip -2mm
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+class Student
+{
+    public string Name { get; set; }
+}
+
+static class StudentExtension
+{
+    public static void SayHello(this Student student, string weather)
+    {
+        Console.WriteLine($"Hello, I'm {student.Name} and it's {weather}");
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Metody -- rozšiřující (extension) metody}
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+Student student = new Student()
+{
+    Name = "Peter"
+};
+
+student.SayHello("sunny");
+//Hello, I'm Peter and it's sunny
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
 \zkouskove
