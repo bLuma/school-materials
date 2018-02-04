@@ -1,4 +1,6 @@
 
+\hkapitola{Datové typy, výrazy, základní konstrukce}
+
 \begin{frame}[fragile]
 %\footnotesize
 \begin{tabular}{ccc}
@@ -229,7 +231,7 @@ enum VyctovyTyp
 Console.WriteLine($"{VyctovyTyp.Prvni}");
 \end{lstlisting}
 \end{yesblock}
-\vskip -3mm
+
 \begin{yesblock}
 \begin{lstlisting}
 enum VyctovyTyp
@@ -316,29 +318,68 @@ int z = x & (y << 5);
 
 
 \begin{frame}[fragile]
-\begin{exampleblock}{Konverze datového typu}
+\begin{exampleblock}{Konverze datového typu -- kulaté závorky}
 \begin{lstlisting}[basicstyle=\small]
 double dbl = 123.45;
 int ine = (int)dbl;
-//////////////////////////////////////////////////////////////////
+\end{lstlisting}
+\end{exampleblock}
+
+\begin{exampleblock}{~}
+\begin{lstlisting}[basicstyle=\small]
 Parent parent = new Child();
 Child child;
 
-child = (Child)parent; // vyvolá InvalidCastException pokud objekt nebude typu Child
-child = parent as Child; // null pokud nebude daného typu
-Console.WriteLine($"{ine} {child}");
+// vyvolá InvalidCastException pokud objekt nebude typu Child
+child = (Child)parent; 
+\end{lstlisting}
+\end{exampleblock}
+\end{frame}
 
+
+
+
+
+\begin{frame}[fragile]
+\begin{exampleblock}{Konverze datového typu -- as, is}
+\begin{lstlisting}[basicstyle=\small]
+Parent parent = new Child();
+Child child;
+
+// null pokud nebude daného typu
+child = parent as Child; 
+
+// is - C# obdoba operátoru instanceof z Javy
 if (parent is Child)
 {
     Child cld = (Child)parent;
     cld.Action();
 }
+
+// C# 7 - umožňuje rovnou deklarovat proměnnou
 if (parent is Child chd)
 {
     chd.Action();
 }
 \end{lstlisting}
 \end{exampleblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{bonusblock}{Konverze datového typu -- reflexe + typeof}
+\begin{lstlisting}[basicstyle=\small]
+Parent parent = new Child();
+Child child;
+
+if (parent.GetType() == typeof(Child)) 
+{
+    child = (Child)parent;
+}
+\end{lstlisting}
+\end{bonusblock}
 \end{frame}
 
 

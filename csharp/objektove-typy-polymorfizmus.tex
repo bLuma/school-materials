@@ -1,0 +1,199 @@
+
+\hkapitola{Objektové typy -- dědičnost, polymorfizmus}
+
+\kapitola{Dědičnost}
+
+\begin{frame}[fragile]
+\begin{bitemize}{Dědičnost, polymorfizmus}
+\item jednoduchá dědičnost -- je možné dědit z jednoho předka (Java)
+\begin{itemize}
+\item syntaxe připomíná C++
+\item pokud není specifikován předek, třída automaticky dědí z~\lstinline|System.Object|
+\end{itemize}
+\item vícenásobná realizace rozhraní (Java)
+\item explicitní rozlišování polymorfních metod -- časná/pozdní vazba (C++)
+\end{bitemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Konstrukce objektu}
+\item \lstinline|new System.Windows.Forms.Form()|
+\item proces postupného volání konstruktorů
+\begin{itemize}
+\item \lstinline|System.Object|
+\item \lstinline|System.MarshalByRefObject|
+\item \lstinline|System.ComponentModel.Component|
+\item \lstinline|System.Windows.Forms.Control|
+\item \lstinline|System.Windows.Forms.ScrollableControl|
+\item \lstinline|System.Windows.Forms.ContainerControl|
+\item \lstinline|System.Windows.Forms.Form|
+\end{itemize}
+\item poté je objekt zkonstruován a lze jej používat
+\end{bitemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Dědičnost}
+\begin{noteblock}{}
+\begin{lstlisting}[basicstyle=\small]
+[viditelnost] [modifikátory] class NazevTridy [dědičnostARozhraní] { 
+	[složkyTřídy]...
+}
+
+dědičnostARozhraní:
+	: [názevPředkaNeboRozhraní], ...
+\end{lstlisting}
+\end{noteblock}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+class Person
+{
+    public string Name { get; set; }
+}
+
+class Student : Person
+{
+    public string StudentID { get; set; }
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Dědičnost -- příklady}
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+class Student : Person, IComparable, ICloneable { }
+class Student : IComparable { }
+class Student : ICloneable, IComparable { }
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\begin{noblock}
+\begin{lstlisting}[basicstyle=\small]
+class Student : Person, Object { }
+class Student : Person, LivingEntity { }
+\end{lstlisting}
+\end{noblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{}
+\item automaticky se volá konstruktor předka
+\begin{itemize}
+\item kompilátor umí volat pouze bezparametrický konstruktor
+\end{itemize}
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+class Person
+{
+  public Person() => Console.WriteLine("Person()");
+  public Person(string name) => Console.WriteLine("Person(string)");
+}
+
+class Student : Person
+{
+  public Student() => Console.WriteLine("Student()");
+  public Student(string netid) => Console.WriteLine("Student(string)")
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+Student student = new Student();
+// Person()
+// Student()
+
+Student studentWithParam = new Student("netid");
+// Person()
+// Student(string netid)
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{noblock}
+\begin{lstlisting}[basicstyle=\small]
+class Person
+{
+  //public Person() => Console.WriteLine("Person()");
+  public Person(string name) => Console.WriteLine("Person(string)");
+}
+
+// nelze zkompilovat - kompilátor neumí vytvořit objekt
+class Student : Person
+{
+  public Student() => Console.WriteLine("Student()");
+  public Student(string netid) => Console.WriteLine("Student(string)")
+}
+\end{lstlisting}
+\end{noblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{}
+\item konstruktor předka lze zavolat pomocí \lstinline|: base([parametry])|
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+class Person
+{
+    //public Person() => Console.WriteLine("Person()");
+    public Person(string name) => Console.WriteLine("Person(string name)");
+}
+
+class Student : Person
+{
+    public Student() : base("unknown") 
+    {
+        Console.WriteLine("Student()");
+    }
+
+    public Student(string name, string netid) : base(name) 
+        => Console.WriteLine("Student(string, string)");
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{}
+\item lze zavolat i jiný konstruktor z aktuální třídy \lstinline|: this([parametry])|
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+class Student : Person
+{
+    public Student() : this("unknown", "unidentified") 
+    { 
+    }
+
+    public Student(string name, string netid) : base(name) 
+        => Console.WriteLine("Student(string, string)");
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
