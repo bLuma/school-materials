@@ -197,3 +197,208 @@ class Student : Person
 \end{lstlisting}
 \end{yesblock}
 \end{frame}
+
+
+
+\kapitola{Polymorfizmus}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Polymorfizmus}
+
+\begin{bitemize}{Základní vlastnosti}
+\item potomek může zastoupit předka
+\begin{itemize}
+\item všude kde je očekáván předek je možné dosadit potomka
+\end{itemize}
+
+\item potomek může metody předka zakrýt nebo přepsat
+\begin{itemize}
+\item v javě je automaticky uplatňováno přepsání (tzv. pozdní vazba)
+\item v C++ je časná/pozdní vazba rozlišena modifikátorem u metody
+\item v C\# je uplatněn systém podobný C++
+\end{itemize}
+
+\end{bitemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{noblock}
+\begin{lstlisting}[basicstyle=\small]
+class Person
+{
+  public void DoWork() => Console.WriteLine("Person goes to job!");
+}
+
+class Student : Person
+{
+  // warning CS0108 - úmyslné zakrývání má být označeno new
+  public void DoWork() => Console.WriteLine("Student goes to school!");
+}
+\end{lstlisting}
+\end{noblock}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+Person person = new Person();
+person.DoWork(); // -> person goes to job
+
+Student student = new Student();
+student.DoWork(); // -> student goes to school
+
+person = student;
+@@person.DoWork();@@ // -> person goes to job 
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Zakrývání}
+\item zakrývání znamená vytvoření metody se stejným názvem jako v předkovi
+\begin{itemize}
+\item tato metoda, ale nemá polymorfní chování
+\item metodu je nutné volat přímo nad instancí potomka, jinak se její kód nepoužije
+\item kompilátor vyžaduje označování těchto metod klíčovým slovem \lstinline|new|
+\end{itemize}
+
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+class Person
+{
+  public void DoWork() => Console.WriteLine("Person goes to job!");
+}
+
+class Student : Person
+{
+  public new void DoWork() => Console.WriteLine("Student goes to school!");
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Polymorfizmus}
+\item polymorfizmus umožňuje přetížit metodu v potomkovi
+\begin{itemize}
+\item taková metoda je použita, pokud pracujeme s typem potomka i předka
+\item uplatňuje se tzv. pozdní vazba
+\item v předkovi je nutné metodu označit \lstinline|virtual|
+\end{itemize}
+
+\end{bitemize}
+
+\begin{noblock}
+\begin{lstlisting}[basicstyle=\small]
+class Person
+{
+  public virtual void DoWork() => Console.WriteLine("Person");
+}
+
+class Student : Person
+{
+  // warning CS0114 - zakrývání virtual metody
+  public void DoWork() => Console.WriteLine("Student");
+}
+
+// uvedený kód bude mít stejné chování jako předchozí dva slidy
+// uplatněno je zakrývání / časná vazba!
+\end{lstlisting}
+\end{noblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Polymorfizmus}
+\item polymorfizmus umožňuje přetížit metodu v potomkovi
+\begin{itemize}
+\item v předkovi je nutné metodu označit \lstinline|virtual|
+\item v potomkovi je nutné metodu označit \lstinline|override|
+\end{itemize}
+
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+class Person
+{
+  public virtual void DoWork() => Console.WriteLine("Person");
+}
+
+class Student : Person
+{
+  public override void DoWork() => Console.WriteLine("Student");
+}
+\end{lstlisting}
+\end{yesblock}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+Person person = new Student();
+person.DoWork(); // -> Student
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Rozpoznání typu objektu}
+\item operátory \lstinline|is|, \lstinline|as|, \lstinline|(přetypování)|
+\item metoda \lstinline|object.GetType()| a operátor \lstinline|typeof|
+\item pattern matching (\lstinline|switch|)
+\end{bitemize}
+\vfill
+\begin{bonusblock}{Polymorfizmus}
+\begin{itemize}
+\item C\# umožňuje hierarchii virtuálních metod přerušit a začít novou, je tak možné vytvořit metody
+\begin{itemize}
+\item prarodič -- \lstinline|virtual|
+\item rodič -- \lstinline|override|
+\item potomek -- \lstinline|new virtual|
+\item \ldots
+\end{itemize}
+
+\end{itemize}
+\end{bonusblock}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Abstraktní metody a třídy}
+\item abstraktní metoda (\lstinline|abstract|) = virtuální metoda + nemá definici (tělo)
+\begin{itemize}
+\item musí být definována v abstraktní třídě
+\end{itemize}
+\item z abstraktní třídy nejde vytvořit objekt
+\begin{itemize}
+\item je nutné v potomkovi doplnit definici metody a vytvářet objekt potomka
+\end{itemize}
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+abstract class Person
+{
+    public abstract void DoWork();
+}
+\end{lstlisting}
+\end{yesblock}
+
+\begin{noblock}
+\begin{lstlisting}[basicstyle=\small]
+Person person = new Person();
+\end{lstlisting}
+\end{noblock}
+\end{frame}
