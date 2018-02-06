@@ -87,13 +87,14 @@ class Student : Person, LivingEntity { }
 
 
 \begin{frame}[fragile]
+\vfill
 \begin{bitemize}{}
 \item automaticky se volá konstruktor předka
 \begin{itemize}
 \item kompilátor umí volat pouze bezparametrický konstruktor
 \end{itemize}
 \end{bitemize}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 class Person
@@ -109,6 +110,7 @@ class Student : Person
 }
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
@@ -152,7 +154,7 @@ class Student : Person
 \begin{bitemize}{}
 \item konstruktor předka lze zavolat pomocí \lstinline|: base([parametry])|
 \end{bitemize}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 class Person
@@ -182,7 +184,7 @@ class Student : Person
 \begin{bitemize}{}
 \item lze zavolat i jiný konstruktor z aktuální třídy \lstinline|: this([parametry])|
 \end{bitemize}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 class Student : Person
@@ -240,7 +242,7 @@ class Student : Person
 }
 \end{lstlisting}
 \end{noblock}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 Person person = new Person();
@@ -265,9 +267,8 @@ person = student;
 \item metodu je nutné volat přímo nad instancí potomka, jinak se její kód nepoužije
 \item kompilátor vyžaduje označování těchto metod klíčovým slovem \lstinline|new|
 \end{itemize}
-
 \end{bitemize}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 class Person
@@ -293,9 +294,8 @@ class Student : Person
 \item uplatňuje se tzv. pozdní vazba
 \item v předkovi je nutné metodu označit \lstinline|virtual|
 \end{itemize}
-
 \end{bitemize}
-
+\vfill
 \begin{noblock}
 \begin{lstlisting}[basicstyle=\small]
 class Person
@@ -324,9 +324,8 @@ class Student : Person
 \item v předkovi je nutné metodu označit \lstinline|virtual|
 \item v potomkovi je nutné metodu označit \lstinline|override|
 \end{itemize}
-
 \end{bitemize}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 class Person
@@ -340,7 +339,7 @@ class Student : Person
 }
 \end{lstlisting}
 \end{yesblock}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 Person person = new Student();
@@ -386,7 +385,7 @@ person.DoWork(); // -> Student
 \item je nutné v potomkovi doplnit definici metody a vytvářet objekt potomka
 \end{itemize}
 \end{bitemize}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 abstract class Person
@@ -395,7 +394,7 @@ abstract class Person
 }
 \end{lstlisting}
 \end{yesblock}
-
+\vfill
 \begin{noblock}
 \begin{lstlisting}[basicstyle=\small]
 Person person = new Person();
@@ -416,12 +415,11 @@ Person person = new Person();
 \item třída může realizovat i více rozhraní
 \item třída může rozhraní realizovat implicitně nebo explicitně
 \end{itemize}
-
 \item neobsahuje datové složky (atributy)
 \item rozhraní nemůže definovat viditelnost složek
 \item může obsahovat metody, vlastnosti, indexery, události
 \end{bitemize}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 interface IExample
@@ -443,9 +441,11 @@ interface IExample
 
 
 \begin{frame}[fragile]
+\vfill
 \begin{block}{}
 Implicitní realizace rozhraní
 \end{block}
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 interface IStringizable
@@ -464,15 +464,17 @@ class Student : IStringizable
 }
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
 \begin{frame}[fragile]
+\vfill
 \begin{bitemize}{Implicitní realizace rozhraní}
 \item obdobné chování jako v Javě
 \item metody rozhraní lze volat přímo nad objektem realizující třídy nebo po přetypování
 \end{bitemize}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 Student student = new Student();
@@ -482,6 +484,7 @@ IStringizable istringizable = student;
 var b = istringizable.Stringize();
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
@@ -491,9 +494,11 @@ var b = istringizable.Stringize();
 
 
 \begin{frame}[fragile]
+\vfill
 \begin{block}{}
 Explicitní realizace rozhraní
 \end{block}
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 interface IStringizable
@@ -512,6 +517,7 @@ class Student : IStringizable
 }
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
@@ -562,7 +568,7 @@ class Rectangle : IDrawable, ISurface
 }
 \end{lstlisting}
 \end{yesblock}
-
+\vfill
 \begin{bitemize}{}
 \item implicitní realizace
 \item obě rozhraní volají stejnou metodu \lstinline|Draw()|
@@ -590,7 +596,7 @@ class Rectangle : IDrawable, ISurface
 }
 \end{lstlisting}
 \end{yesblock}
-
+\vfill
 \begin{bitemize}{}
 \item kombinace implicitní a explicitní realizace
 \end{bitemize}
@@ -619,7 +625,7 @@ class Rectangle : IDrawable, ISurface
 }
 \end{lstlisting}
 \end{yesblock}
-
+\vfill
 \begin{bitemize}{}
 \item obě rozhraní používají explicitní realizaci
 \end{bitemize}

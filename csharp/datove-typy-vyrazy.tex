@@ -90,6 +90,7 @@ namespace ConsoleApplication1
 
 
 \begin{frame}[fragile]
+\vfill
 \begin{block}{Primitivní datové typy, proměnné}
 \begin{itemize}
 \item existují hodnotové a referenční datové typy
@@ -98,12 +99,13 @@ namespace ConsoleApplication1
 \item lokální proměnné se pojmenovávají dle camelCase (pocetZivotu, maximalniVykonMotoru)
 \end{itemize}
 \end{block}
-
+\vfill
 \begin{noteblock}{}
 \begin{lstlisting}
 nazevDatovehoTypu nazevPromenne [= inicializacniHodnota];
 \end{lstlisting}
 \end{noteblock}
+\vfill
 \end{frame}
 
 
@@ -139,13 +141,14 @@ Console.WriteLine($"{x}, {c}, {d}, {f}, {s}, {b}, {dec}");
 
 
 \begin{frame}[fragile]
+\vfill
 \begin{exampleblock}{Primitivní datové typy}
 \begin{lstlisting}
 // uint je 32 bitový bezznaménkový typ
 uint bezznamenkovyInteger;
 \end{lstlisting}
 \end{exampleblock}
-
+\vfill
 \begin{bonusblock}{}
 \begin{lstlisting}
 System.Int16 int16;
@@ -158,6 +161,7 @@ System.Single single; // float
 System.Double double; // double
 \end{lstlisting}
 \end{bonusblock}
+\vfill
 \end{frame}
 
 
@@ -174,6 +178,7 @@ System.Double double; // double
 \end{frame}
 
 \begin{frame}[fragile]
+\vfill
 \begin{block}{Nulovatelné datové typy}
 \begin{itemize}
 \item \lstinline|datovyTyp?|
@@ -181,7 +186,7 @@ System.Double double; // double
 \item objekt pak má vlastnosti \lstinline|HasValue, Value| a metodu \lstinline|GetValueOrDefault|
 \end{itemize}
 \end{block}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 // int může nabývat hodnot -2147483648 až 2147483647
@@ -193,12 +198,14 @@ nulovatelnyInt = null;
 
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
 
 
 \begin{frame}[fragile]
+\vfill
 \begin{block}{var -- automatické odvození datového typu}
 \begin{itemize}
 \item \lstinline|var| umožňuje nechat kompilátor odvodit datový typ
@@ -206,6 +213,7 @@ nulovatelnyInt = null;
 \item umožňuje použití anonymních (objektových) datových typů 
 \end{itemize}
 \end{block}
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 var varPromenna = 123;
@@ -214,11 +222,13 @@ varPromenna++;
 // nelze: varPromenna = "abcd";
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
 \begin{frame}[fragile]
 \frametitle{Výčtové typy}
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 enum VyctovyTyp
@@ -231,7 +241,7 @@ enum VyctovyTyp
 Console.WriteLine($"{VyctovyTyp.Prvni}");
 \end{lstlisting}
 \end{yesblock}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 enum VyctovyTyp
@@ -242,6 +252,7 @@ enum VyctovyTyp
 }
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
@@ -318,13 +329,14 @@ int z = x & (y << 5);
 
 
 \begin{frame}[fragile]
+\vfill
 \begin{exampleblock}{Konverze datového typu -- kulaté závorky}
 \begin{lstlisting}[basicstyle=\small]
 double dbl = 123.45;
 int ine = (int)dbl;
 \end{lstlisting}
 \end{exampleblock}
-
+\vfill
 \begin{exampleblock}{~}
 \begin{lstlisting}[basicstyle=\small]
 Parent parent = new Child();
@@ -334,6 +346,7 @@ Child child;
 child = (Child)parent; 
 \end{lstlisting}
 \end{exampleblock}
+\vfill
 \end{frame}
 
 
@@ -438,12 +451,14 @@ checked
 
 
 \begin{frame}[fragile]
+\vfill
 \begin{block}{Rozhodování}
 \begin{itemize}
 \item syntax stejná jako Java/C/C++
 \item podmínka musí být vyhodnocena na typ \lstinline|bool|
 \end{itemize}
 \end{block}
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 int x = 123;
@@ -453,7 +468,7 @@ if (x > 10)
 }
 \end{lstlisting}
 \end{yesblock}
-
+\vfill
 \begin{noblock}
 \begin{lstlisting}
 int x = 123;
@@ -463,6 +478,7 @@ if (x)
 }
 \end{lstlisting}
 \end{noblock}
+\vfill
 \end{frame}
 
 \begin{frame}[fragile]
@@ -486,6 +502,7 @@ else
 
 
 \begin{frame}[fragile]
+\vfill
 \begin{block}{Cykly}
 \begin{itemize}
 \item \lstinline|while, do-while, for, foreach|
@@ -494,6 +511,7 @@ else
 \item podporováno řízení cyklů \lstinline|break, continue|
 \end{itemize}
 \end{block}
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 int x = 123;
@@ -503,11 +521,13 @@ for (int i = 0; i < x; i++)
 }
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
 
 \begin{frame}[fragile]
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 do
@@ -516,7 +536,7 @@ do
 } while (x > 0);
 \end{lstlisting}
 \end{yesblock}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 while (x < 10)
@@ -525,6 +545,7 @@ while (x < 10)
 }
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
@@ -553,6 +574,7 @@ while (true)
 
 
 \begin{frame}[fragile]
+\vfill
 \begin{block}{Switch}
 \begin{itemize}
 \item syntax shodná
@@ -560,7 +582,7 @@ while (true)
 \item nepovinná větev \lstinline|default| pro ostatních hodnot
 \end{itemize}
 \end{block}
-
+\vfill
 \begin{bonusblock}{}
 \begin{itemize}
 \item od C\# 7 podpora pattern matching
@@ -572,6 +594,7 @@ while (true)
 \end{itemize}
 \end{itemize}
 \end{bonusblock}
+\vfill
 \end{frame}
 
 
@@ -709,10 +732,11 @@ Console.WriteLine($"{jaggedArray[0][0]} {jaggedArray[0][1]}");
 
 
 \begin{frame}[fragile]
+\vfill
 \begin{block}{Výstupní parametry metod}
 Umožňují předat volající funkci další výsledky.
 \end{block}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 static void OutMethod(int a, out int b, out int c)
@@ -730,14 +754,16 @@ static void Main(string[] args)
 }
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
 \begin{frame}[fragile]
+\vfill
 \begin{block}{Referenční parametry metod}
 Parametry funkce předávané "odkazem".
 \end{block}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 static void RefMethod(int a, ref int b)
@@ -754,11 +780,13 @@ static void Main(string[] args)
 }
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
 
 \begin{frame}[fragile]
+\vfill
 \begin{exampleblock}{Konverze string $\rightarrow$ int/double/\ldots}
 \begin{lstlisting}
 string str = "123";
@@ -766,7 +794,7 @@ string str = "123";
 int istr = int.Parse(str);
 \end{lstlisting}
 \end{exampleblock}
-
+\vfill
 \begin{exampleblock}{Konverze string $\rightarrow$ int/double/\ldots}
 \begin{lstlisting}
 // TryParse - vrací bool (úspěch/neúspěch konverze), zkonvertovaná hodnota je vrácena výstupním parametrem
@@ -776,9 +804,9 @@ if (uspech)
 {
     Console.WriteLine(istr2);
 }
-
 \end{lstlisting}
 \end{exampleblock}
+\vfill
 \end{frame}
 
 

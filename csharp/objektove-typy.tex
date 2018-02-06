@@ -127,6 +127,7 @@ static void TestStudent()
 
 
 \begin{frame}[fragile]
+\vfill
 \begin{noteblock}{}
 \begin{lstlisting}
 [viditelnost] [modifikátory] class NazevTridy [dědičnostARozhraní] { 
@@ -134,17 +135,19 @@ static void TestStudent()
 }
 \end{lstlisting}
 \end{noteblock}
+\vfill
 \begin{bitemize}{Viditelnost třídy}
 \item \lstinline|internal| (výchozí) -- viditelná v rámci assembly
 \item \lstinline|public| -- viditelná z ostatních assembly
 \end{bitemize}
-
+\vfill
 \begin{bitemize}{Modifikátory}
 \item \lstinline|abstract| -- abstraktní třída (nelze vytvořit instanci, obsahuje abstraktní složky)
 \item \lstinline|static| -- statická třída (nelze vytvořit instanci, pouze statické složky)
 \item \lstinline|sealed| -- zapečetěná třída (nelze z ní dědit)
 \item \lstinline|partial| -- třída rozdělená do více souborů
 \end{bitemize}
+\vfill
 \end{frame}
 
 
@@ -176,11 +179,12 @@ static void TestStudent()
 
 
 \begin{frame}[fragile]
+\vfill
 \begin{bitemize}{Objekt}
 \item vytvořen pomocí \lstinline|new|
 \item předáván referencí, paměť spravuje GC
 \end{bitemize}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 Osoba neexistujiciOsoba = null;
@@ -195,16 +199,18 @@ Osoba osobaZvlastni = new Osoba() {
 };
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
 
 \begin{frame}[fragile]
+\vfill
 \begin{bitemize}{Objekt -- porovnávání}
 \item \lstinline|==, Equals| -- porovnání referencí/obsahu (nezávisle přetížitelné)
 \item \lstinline|object.ReferenceEquals()| -- vždy porovná shodu referencí
 \end{bitemize}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 Osoba mojeOsoba = new Osoba();
@@ -224,6 +230,7 @@ wl($"ReferenceEquals: {object.ReferenceEquals(mojeOsoba, ciziOsoba)}");
 // True/False, True/False, False
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
@@ -256,6 +263,7 @@ class Osoba
 
 
 \begin{frame}[fragile]
+\vfill
 \begin{bonusblock}{~}
 \begin{lstlisting}[basicstyle=\small]
 	public static bool operator ==(Osoba osa, Osoba osb)
@@ -270,7 +278,7 @@ class Osoba
 }
 \end{lstlisting}
 \end{bonusblock}
-
+\vfill
 \begin{bitemize}{Přetěžování Equals, ==, !=}
 \item pokud to má smysl přetižte \lstinline|Equals| (a \lstinline|GetHashCode|) u hodnotových i referenčních typů
 \item přetižte ==
@@ -279,6 +287,7 @@ class Osoba
 \item pokud se jedná o referenční \uv{základní} typ (\lstinline|Point|, \lstinline|string|, \lstinline|BigNumber|) nebo pokud přetěžujete operátory +, -, \ldots
 \end{itemize}
 \end{bitemize}
+\vfill
 \end{frame}
 
 
@@ -310,12 +319,13 @@ class Osoba
 
 \begin{frame}[fragile]
 \frametitle{Konstruktory}
+\vfill
 \begin{noteblock}{}
 \begin{lstlisting}
 [viditelnost] [modifikátory] NázevTřídy([parametry]) [voláníJinéhoKonstruktoru]
 \end{lstlisting}
 \end{noteblock}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 class Student
@@ -331,18 +341,20 @@ class Student
 }
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
 \begin{frame}[fragile]
 \frametitle{Finalizéry}
+\vfill
 \begin{bitemize}{}
 \item slouží k uvolnění prostředů
 \item implicitně volá metodu \lstinline|object.Finalize|
 \item používán spíše výjimečně, není zaručeno, kdy dojde k jeho zavolání
 \item pro řízené uvolnění prostředků existuje rozhraní \lstinline|IDisposable|
 \end{bitemize}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 public class Auto 
@@ -354,6 +366,7 @@ public class Auto
 }
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
@@ -386,24 +399,26 @@ public class Auto
 
 \begin{frame}[fragile]
 \frametitle{Atributy}
-
+\vfill
 \begin{noteblock}{}
 \begin{lstlisting}
 [viditelnost] [modifikátory] datovýTyp názevAtributu [inicializér];
 \end{lstlisting}
 \end{noteblock}
-
+\vfill
 \begin{bitemize}{Modifikátor}
 \item \lstinline|static| -- statická složka (neváže se na instanci)
 \item \lstinline|const| -- konstanta, musí být nastavena v inicializéru
 \item \lstinline|readonly| -- konstanta, musí být nastavena v konstruktoru
 \end{bitemize}
+\vfill
 \end{frame}
 
 
 
 \begin{frame}[fragile]
 \frametitle{Statické složky}
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 class Osoba
@@ -417,18 +432,20 @@ class Osoba
 }
 \end{lstlisting}
 \end{yesblock}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 int pocet = Osoba.PocetInstanci;
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
 
 \begin{frame}[fragile]
 \frametitle{Statická třída}
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 static class Matematika
@@ -442,19 +459,20 @@ static class Matematika
 }
 \end{lstlisting}
 \end{yesblock}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 double pi = Matematika.Pi;
 double sqrt = Matematika.Odmocnina(72);
 \end{lstlisting}
 \end{yesblock}
-
+\vfill
 \begin{noblock}
 \begin{lstlisting}
 Matematika matematika = new Matematika();
 \end{lstlisting}
 \end{noblock}
+\vfill
 \end{frame}
 
 
@@ -507,10 +525,11 @@ class Student
 
 \begin{frame}[fragile]
 \frametitle{Vlastnosti -- zkrácený zápis}
+\vfill
 \begin{bitemize}{C\# 7}
 \item tělo metody/getteru/setteru lze zkrátit na výraz pomocí \textbf{=>}
 \end{bitemize}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 private string firstName;
@@ -521,15 +540,17 @@ public string FirstName
 }
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
 \begin{frame}[fragile]
 \frametitle{Vlastnosti -- viditelnost}
+\vfill
 \begin{bitemize}{}
 \item lze definovat viditelnost operací
 \end{bitemize}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 private string firstName;
@@ -540,15 +561,17 @@ public string FirstName
 }
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
 \begin{frame}[fragile]
 \frametitle{Vlastnosti -- pouze setter/getter}
+\vfill
 \begin{bitemize}{}
 \item lze definovat pouze setter/getter
 \end{bitemize}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 private List<Student> studenti;
@@ -558,15 +581,17 @@ public int PocetStudentu
 }
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
 \begin{frame}[fragile]
 \frametitle{Vlastnosti -- automaticky implementované vlastnosti}
+\vfill
 \begin{bitemize}{}
 \item atribut (datová složka) je neviditelná a automaticky vytvořena kompilátorem
 \end{bitemize}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 public string FirstName { get; set; }
@@ -581,6 +606,7 @@ public uint StudentID { get; }
 //// StudentID = 12345;
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
@@ -588,7 +614,7 @@ public uint StudentID { get; }
 
 \begin{frame}[fragile]
 \frametitle{Javism -- gettery a settery}
-
+\vfill
 \begin{noblock}
 \begin{lstlisting}[basicstyle=\small]
 // String - klíčové slovo "string"
@@ -605,7 +631,7 @@ public void setName(String name) {
 }
 \end{lstlisting}
 \end{noblock}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 // "string"
@@ -613,6 +639,7 @@ public void setName(String name) {
 public string Name { get; set; }
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
@@ -621,7 +648,7 @@ public string Name { get; set; }
 
 \begin{frame}[fragile]
 \frametitle{Metody}
-
+\vfill
 \begin{noteblock}{}
 \begin{lstlisting}
 [viditelnost] [modifikátory] typNávratovéHodnoty názevMetody([parametry]) těloMetody
@@ -631,7 +658,7 @@ těloMetody:
 	{ [příkazy] }
 \end{lstlisting}
 \end{noteblock}
-
+\vfill
 \begin{bitemize}{Modifikátory}
 \item \lstinline|static| -- statická metoda
 \item \lstinline|new| -- zakrývání metody z předka
@@ -640,12 +667,14 @@ těloMetody:
 \item \lstinline|abstract| -- abstraktní metoda
 \item \lstinline|async| -- asynchronní metody
 \end{bitemize}
+\vfill
 \end{frame}
 
 
 
 \begin{frame}[fragile]
 \frametitle{Metody -- příklad}
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 class Student
@@ -659,7 +688,7 @@ class Student
 }
 \end{lstlisting}
 \end{yesblock}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 Student peter = new Student()
@@ -670,6 +699,7 @@ Student peter = new Student()
 peter.SayHello();
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
@@ -681,7 +711,7 @@ peter.SayHello();
 \begin{bitemize}{}
 \item parametry mohou mít uvedenou výchozí hodnotu
 \end{bitemize}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 class MyMath
@@ -695,7 +725,7 @@ class MyMath
 }
 \end{lstlisting}
 \end{yesblock}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 double pi = MyMath.GetPowerOfPi();
@@ -712,7 +742,7 @@ double piSquare = MyMath.GetPowerOfPi(2);
 \begin{bitemize}{}
 \item parametr je možné předat odkazem (referencí)
 \end{bitemize}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 class Toolkit
@@ -724,7 +754,7 @@ class Toolkit
 }
 \end{lstlisting}
 \end{yesblock}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 int intValue = 0;
@@ -741,7 +771,7 @@ Console.WriteLine($"{intValue}");
 \begin{bitemize}{}
 \item parametr může být výstupní
 \end{bitemize}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 class AuthenticationService
@@ -764,7 +794,7 @@ class AuthenticationService
 
 \begin{frame}[fragile]
 \frametitle{Metody -- out}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 string username;
@@ -774,7 +804,7 @@ if(AuthenticationService.Authentize("password", out username))
 }
 \end{lstlisting}
 \end{yesblock}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 // C# 7 - podporuje deklarovat proměnnou v místě volání
@@ -784,6 +814,7 @@ if(AuthenticationService.Authentize("password", out string username))
 }
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
@@ -796,7 +827,7 @@ if(AuthenticationService.Authentize("password", out string username))
 \begin{bitemize}{}
 \item je možné volat metodu s libovolným počtem parametrů (stejného typu)
 \end{bitemize}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 public static int SumArguments(params int[] arguments)
@@ -811,7 +842,7 @@ public static int SumArguments(params int[] arguments)
 }
 \end{lstlisting}
 \end{yesblock}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 int result = Summer.SumArguments(10, 20, 30, 40, 50, 60, 70);
@@ -828,14 +859,14 @@ int result = Summer.SumArguments(10, 20, 30, 40, 50, 60, 70);
 \begin{bitemize}{}
 \item při volání metody je možné specifikovat argumenty v libovolném pořadí, pokud je uveden jejich název
 \end{bitemize}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 public static void AddProduct(string productName, int count = 1, 
     double weight = 0, string description = "")
 \end{lstlisting}
 \end{yesblock}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 AddProduct("Toy", 10, 1.2, "Kid's toy");
@@ -856,7 +887,7 @@ AddProduct(productName: "Toy", 10, description: "Kid's toy");
 \begin{bitemize}{}
 \item z metody je možné vracet referenci (C\# 7)
 \end{bitemize}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 public static ref int FindGreaterThan(int[] array, int condition)
@@ -869,7 +900,7 @@ public static ref int FindGreaterThan(int[] array, int condition)
 }
 \end{lstlisting}
 \end{yesblock}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 int[] array = { 1, 2, 5, 15, 32, 64 };
@@ -892,7 +923,7 @@ Console.WriteLine($"{string.Join(" ", array)}");
 \item (statická) metoda se tváří jako (instanční) metoda jiné třídy
 \item poprvé masivně použito pro realizaci LINQ
 \end{bitemize}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 class Student
