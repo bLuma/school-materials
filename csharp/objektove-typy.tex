@@ -585,6 +585,37 @@ public uint StudentID { get; }
 
 
 
+
+\begin{frame}[fragile]
+\frametitle{Javism -- gettery a settery}
+
+\begin{noblock}
+\begin{lstlisting}[basicstyle=\small]
+// String - klíčové slovo "string"
+// atribut - místo vlastnosti
+private String name;
+
+// metoda jako getter a setter místo vlastosti
+public String getName() {
+    return name;
+}
+
+public void setName(String name) {
+    this.name = name;
+}
+\end{lstlisting}
+\end{noblock}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+// "string"
+// veřejná vlastnost - začíná velkým písmenem
+public string Name { get; set; }
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
 \kapitola{Metody}
 
 

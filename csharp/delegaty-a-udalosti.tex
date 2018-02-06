@@ -1,0 +1,536 @@
+
+\hkapitola{Delegáty, události}
+
+\begin{frame}[fragile]
+\begin{bitemize}{Delegát}
+\item \textbf{definuje datový typ} představující \textit{ukazatel na metodu}
+\item typově bezpečný, bezpečné volání, \textbf{hodnotový typ}
+\item instance delegátu (proměnná typu delegát) může obsahovat 0, 1 nebo více ukazatelů na metodu shodného předpisu
+\end{bitemize}
+\vfill
+\begin{noteblock}{definice delegátu -- nového datového typu}
+\begin{lstlisting}
+delegate typNávratovéHodnoty názevTypuDelegátu([parametryMetody]);
+\end{lstlisting}
+\end{noteblock}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+delegate void SimpleDelegate();
+delegate int ReturnDelegate();
+delegate int FunctionalDelegate(int a, int b);
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\begin{bitemize}{}
+\item název delegátu by se měl skládat z 
+\begin{itemize}
+\item vlastního popisu funkce
+\item koncovky \lstinline|Callback| -- u obecného použití
+\item koncovky \lstinline|EventHandler| -- u událostí
+\end{itemize}
+
+\end{bitemize}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Základní použití delegátu}
+\begin{yesblock}
+\begin{lstlisting}
+delegate int CalculateCallback(); // definice delegáta
+
+class Program
+{
+    static int CalculateStatic() => 1;  // statická metoda
+    int CalculateInstance() => 2;       // instanční metoda
+
+    static void Main(string[] args)
+    {
+        // vytvoření objektů delegátů
+        CalculateCallback calculateStatic = CalculateStatic;
+        CalculateCallback calculateInstance = (new Program()).CalculateInstance;
+
+        var rs = calculateStatic();
+        var ri = calculateInstance();
+        Console.WriteLine($"{rs} {ri}");
+    } }
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Vícenásobný delegát}
+\begin{yesblock}
+\begin{lstlisting}
+delegate void OutputCallback();
+
+class Program
+{
+    void Out1() => Console.WriteLine("1");
+    void Out2() => Console.WriteLine("2");
+    void Out3() => Console.WriteLine("3");
+    void Out4() => Console.WriteLine("4");
+
+    static void Main(string[] args)
+    {
+        // ...
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Vícenásobný delegát\ldots}
+\begin{yesblock}
+\begin{lstlisting}
+var program = new Program();
+OutputCallback cc = null;
+
+cc = program.Out1;
+cc += program.Out2; cc += program.Out3; cc += program.Out4;
+cc(); // 1 2 3 4
+
+cc -= program.Out2;
+cc(); // 1 3 4 
+
+cc += program.Out4;
+cc(); // 1 3 4 4
+
+cc = program.Out2;
+cc(); // 2
+
+cc -= program.Out2;
+cc(); // NullReferenceException
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Bezpečné vyvolání delegátu}
+\begin{yesblock}
+\begin{lstlisting}
+var program = new Program();
+OutputCallback cc = null;
+
+if (cc != null)
+{
+    cc();
+    // nebo
+    cc.Invoke();
+}
+
+// nebo
+
+cc?.Invoke();
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Delegát jako hodnotový typ}
+\begin{yesblock}
+\begin{lstlisting}
+OutputCallback firstDelegate = program.Out1;
+
+// hodnotový typ - zkopíruje ukazatele
+OutputCallback secondDelegate = firstDelegate;
+// změna neovlivní firstDelegate
+secondDelegate += program.Out2;
+
+firstDelegate(); // 1
+secondDelegate(); // 1 2
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Základní typy delegátů v C\# knihovně}
+\item \lstinline|void Action()|
+\item \lstinline|void Action<p1>(p1)| -- generický delegát, je možné dosadit libovolný typ parametrů
+\item \lstinline|void Action<p1, p2>(p1, p2)|
+\item \lstinline|return Func<return>()|
+\item \lstinline|return Func<p1, return>(p1)|
+\item \lstinline|return Func<p1, p2, return>(p1, p2)|
+\item \lstinline|bool Predicate<p>(p)|
+\end{bitemize}
+
+\vfill
+
+\begin{yesblock}
+\begin{lstlisting}
+delegate void Example1Callback(Person person, int value);
+// je "ekvivalentním" typem
+Action<Person, int>
+
+delegate string Example2Callback(Student student);
+Func<Student, string>
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Delegát může obsahovat}
+\item ukazatel na statickou metodu
+\item ukazatel na instanční metodu
+\item ukazatel na anonymní metodu
+\end{bitemize}
+\end{frame}
+
+
+
+\pkapitola{Anonymní metody}
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{}
+\item anonymní metoda -- původní syntaxe
+\begin{itemize}
+\item klíčové slovo \lstinline|delegate|
+\item seznam parametrů metody
+\item tělo metody
+\end{itemize}
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+delegate int TransformCallback(int value);
+
+static void Main(string[] args)
+{
+    TransformCallback tc = delegate (int value)
+    {
+        return value + 1;
+    };
+
+    int result = tc(1);
+    Console.WriteLine($"{result}"); // 2
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{}
+\item anonymní metoda -- lambda funkce / výraz
+\begin{itemize}
+\item \lstinline|([parametry]) => { příkazy }|
+\end{itemize}
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+TransformCallback tc = (int i) => {
+    return i + 1;
+};
+
+// blok může být nahrazen pouze výrazem
+tc = (int i) => i + 1;
+
+// datové typy parametrů mohou být odvozeny
+tc = (i) => i + 1;
+
+// pokud je pouze jeden parametr není nutné uvádět závorky
+tc = i => i + 1;
+
+int result = tc(1);
+Console.WriteLine($"{result}"); // 2
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Praktická ukázka použití delegátů a anonymních metod}
+\item parametrizace chování obecných algoritmů
+\item technologie LINQ
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+List<int> values = new List<int>
+{
+    10, 2, 24, 32, 5, 674, 23, 9875, 12, 43, 43, 23
+};
+
+var result = values
+    // vyber pouze hodnoty větší než 10
+    .Where(v => v > 10)
+    // seřaď hodnoty od nejmenší po největší
+    .OrderBy(v => v)
+    // každou hodnotu umocni na druhou
+    .Select(v => v * v)
+    // vrať výsledek jako List
+    .ToList();
+// result = 144 529 529 576 1024 1849 1849 454276 97515625
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\pkapitola{Události}
+
+\begin{frame}[fragile]
+\begin{bitemize}{Události -- teoreticky}
+\item realizuje návrhový vzor observer
+\item umožňuje objektům sledovat změny stavu konkrétního objektu
+\begin{itemize}
+\item příklad -- časovač nabídne událost Tik, která nastane vždy jednou za sekundu
+\item konzole / grafické rozhraní se přihlásí (metodu PrintTime) k odběru Tiků
+\item časovač odpočítá sekundu a vyvolá událost Tik, dojde k vyvolání metody PrintTime
+\end{itemize}
+
+\end{bitemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+static void Main(string[] args)
+{
+	// vytvoř časovač a spusť ho
+    Timer t = new Timer();
+    // nastav obslužnou metodu události
+    t.Tick += TimerTickHandler;
+
+    // ... program běží do stisku klávesy ...
+    // Tick! Tick! Tick!
+
+    Console.ReadKey();
+}
+
+private static void TimerTickHandler(object sender, EventArgs eventArgs)
+{
+    Console.WriteLine("Tick!");
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Událost -- event}
+\item je složkou třídy
+\item je \uv{proměnná} typu konkrétního delegáta
+\item chová se velmi podobně jako normální proměnná typu delegát, ale
+\begin{itemize}
+\item vyvolat delegát může pouze definující třída
+\item operátor = může použít pouze definující třída
+\item ostatní třídy mohou používat +=, -= pro úpravu ukazatelů uložených v~delegátu
+\end{itemize}
+\end{bitemize}
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Vytvoření vlastní události}
+\vfill
+\begin{bitemize}{1. delegát}
+\item událost musí mít definovaný delegát, který definuje parametry události
+\begin{itemize}
+\item navratová hodnota \lstinline|void|
+\item název delegátu končí \lstinline|EventHandler|
+\item parametry metody
+\begin{itemize}
+\item \lstinline|object sender| -- kdo vyvolal událost
+\item \lstinline|EventArgs eventArgs| -- parametry události (objekt \lstinline|EventArgs| nebo potomek této třídy)
+\end{itemize}
+\end{itemize}
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+delegate void TickEventHandler(object sender, EventArgs eventArgs);
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{2. událost}
+\item ve třídě vytvoříme událost
+\begin{itemize}
+\item od běžné proměnné typu delegát se odlišuje klíčovým slovem \lstinline|event|
+\end{itemize}
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+class Timer
+{
+    public event TickEventHandler Tick;
+
+    // ...
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{3. metoda pro vyvolání události}
+\item ve třídě vytvoříme pomocnou metodu \lstinline|OnEvent...|
+\begin{itemize}
+\item bezpečně vyvolává událost
+\item může být \lstinline|protected virtual| nebo i \lstinline|private| dle použití
+\end{itemize}
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+protected virtual void OnTick(EventArgs eventArgs)
+{
+    Tick?.Invoke(this, eventArgs);
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\begin{oldblock}
+\begin{lstlisting}
+protected virtual void OnTick(EventArgs eventArgs)
+{
+    TickEventHandler handlers = Tick;
+    if (handlers != null)
+        handlers(this, eventArgs);
+}
+\end{lstlisting}
+\end{oldblock}
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{4. kód vyvolávající událost}
+\item doplníme kód, který událost vyvolá
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+public Timer()
+{
+    Thread t = new Thread(TimingThread);
+    t.IsBackground = true;
+    t.Start();
+}
+
+private void TimingThread()
+{
+    while (true)
+    {
+        Thread.Sleep(1000);
+
+        OnTick(new EventArgs()); // <- vyvolej událost
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{5. použití události}
+\item vně třídy nastavíme handler a událost zachytíme
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+static void Main(string[] args)
+{
+	// vytvoř časovač a spusť ho
+    Timer t = new Timer();
+    // nastav obslužnou metodu události
+    t.Tick += TimerTickHandler;
+
+    // Tick! Tick! Tick!
+
+    Console.ReadKey();
+}
+
+private static void TimerTickHandler(object sender, EventArgs eventArgs) =>
+    Console.WriteLine("Tick!");
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{Událost jako vlastnost}
+\item událost může být definována jako vlastnost
+\item vlastnost pak nabízí akce \lstinline|add| a \lstinline|remove| pro zpracování operátorů +=, -=
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+private TickEventHandler tick;
+public event TickEventHandler Tick
+{
+    add { tick += value; }
+    remove { tick -= value; }
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}

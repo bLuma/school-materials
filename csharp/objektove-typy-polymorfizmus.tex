@@ -402,3 +402,225 @@ Person person = new Person();
 \end{lstlisting}
 \end{noblock}
 \end{frame}
+
+
+
+\pkapitola{Rozhraní -- interface}
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Rozhraní}
+\item značí předpis, který musí třída splnit
+\begin{itemize}
+\item třída může realizovat i více rozhraní
+\item třída může rozhraní realizovat implicitně nebo explicitně
+\end{itemize}
+
+\item neobsahuje datové složky (atributy)
+\item rozhraní nemůže definovat viditelnost složek
+\item může obsahovat metody, vlastnosti, indexery, události
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+interface IExample
+{
+    // Property
+    int Property { get; set; }
+    // Method
+    void Method(int paramAlfa, int paramBeta);
+    // Indexer
+    int this[int param] { get; set; }
+    // Event
+    event ExampleEventHandler Event;
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{block}{}
+Implicitní realizace rozhraní
+\end{block}
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+interface IStringizable
+{
+    string Stringize();
+}
+
+class Student : IStringizable
+{
+    public string Name { get; set; }
+
+    public string Stringize()
+    {
+        return Name;
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Implicitní realizace rozhraní}
+\item obdobné chování jako v Javě
+\item metody rozhraní lze volat přímo nad objektem realizující třídy nebo po přetypování
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+Student student = new Student();
+var a = student.Stringize();
+
+IStringizable istringizable = student;
+var b = istringizable.Stringize();
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{block}{}
+Explicitní realizace rozhraní
+\end{block}
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+interface IStringizable
+{
+    string Stringize();
+}
+
+class Student : IStringizable
+{
+    public string Name { get; set; }
+
+    string IStringizable.Stringize() // <- uvedení názvu rozhraní před název metody
+    {
+        return Name;
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Explicitní realizace rozhraní}
+\item nemá obdobu v Javě nebo C++
+\item metody rozhraní lze volat pouze nad typem rozhraní
+\item tento způsob realizace lze využít k rozlišení rozhraní, které mají složky se stejným identifikátorem
+\end{bitemize}
+
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+Student student = new Student();
+// error CS1061
+// var a = student.Stringize();
+
+IStringizable istringizable = student;
+var b = istringizable.Stringize();
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+interface IDrawable
+{
+    void Draw();
+}
+
+interface ISurface
+{
+    void Draw();
+}
+
+class Rectangle : IDrawable, ISurface
+{
+    public void Draw()
+    {
+        // ...
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+
+\begin{bitemize}{}
+\item implicitní realizace
+\item obě rozhraní volají stejnou metodu \lstinline|Draw()|
+\end{bitemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+interface IDrawable { void Draw(); }
+interface ISurface { void Draw(); }
+
+class Rectangle : IDrawable, ISurface
+{
+    public void Draw()
+    {
+        // ISurface
+    }
+
+    void IDrawable.Draw()
+    {
+        // IDrawable
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+
+\begin{bitemize}{}
+\item kombinace implicitní a explicitní realizace
+\end{bitemize}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+interface IDrawable { void Draw(); }
+interface ISurface { void Draw(); }
+
+class Rectangle : IDrawable, ISurface
+{
+    void ISurface.Draw()
+    {
+        // ISurface
+    }
+
+    void IDrawable.Draw()
+    {
+        // IDrawable
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+
+\begin{bitemize}{}
+\item obě rozhraní používají explicitní realizaci
+\end{bitemize}
+\end{frame}
