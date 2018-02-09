@@ -1,3 +1,218 @@
 
 \hkapitola{Výjimky}
 
+\begin{frame}[fragile]
+
+\begin{bitemize}{Výjimky}
+\item slouží k ošetření chybových stavů v programu
+\item systém je velmi podobný Javě
+\item[]
+\item vyvolání výjimky \lstinline|throw ...|
+\item zachycení a zpracování výjimky \lstinline|try - catch - finally|
+\item výjimky odvozeny od základní třídy \lstinline|System.Exception|
+\item[]
+\item nezachycená výjimka se šíří z metody dále
+\begin{itemize}
+\item na nejvyšší úrovni způsobí pád programu s chybovým hlášením
+\end{itemize}
+
+\end{bitemize}
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{Vyvolání výjimky}
+\item \lstinline|throw objektVýjimky|
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+static void ComplexCalculation()
+{
+    throw new InvalidOperationException("broken toe");
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Zachycení výjimky}
+\item \lstinline|catch (typVýjimky názevProměnné)|
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+try
+{
+    Console.WriteLine("pre throw");
+    ComplexCalculation();
+    Console.WriteLine("post throw");
+}
+catch (Exception ex)
+{
+    Console.Error.WriteLine(ex.Message);
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Blok finally}
+\item \lstinline|finally| -- nepovinné, blok je proveden vždy
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+try
+{
+    Console.WriteLine("pre throw");
+    ComplexCalculation();
+    Console.WriteLine("post throw");
+}
+catch (Exception ex)
+{
+    Console.Error.WriteLine(ex.Message);
+}
+finally
+{
+    Console.WriteLine("finally");
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Třída System.Exception}
+\begin{noteblock}{}
+\begin{lstlisting}
+public class Exception : ISerializable, _Exception
+{
+    public Exception();
+    public Exception(string message);
+    public Exception(string message, Exception innerException);
+
+    public virtual string Source { get; set; }
+    public virtual string HelpLink { get; set; }
+    public virtual string StackTrace { get; }
+    public MethodBase TargetSite { get; }
+    public Exception InnerException { get; }
+    public virtual string Message { get; }
+    public int HResult { get; protected set; }
+    public virtual IDictionary Data { get; }
+    
+    // ...
+}
+\end{lstlisting}
+\end{noteblock}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Potomci třídy System.Exception}
+\begin{noteblock}{}
+\begin{itemize}
+\item \lstinline|SystemException|
+\item \lstinline|ApplicationException|
+\item[]
+\item \lstinline|IndexOutOfRangeException|
+\item \lstinline|NullReferenceException|
+\item \lstinline|AccessViolationException|
+\item \lstinline|InvalidOperationException|
+\item \lstinline|ArgumentException|
+\item \lstinline|ArgumentNullException|
+\item \lstinline|ArgumentOutOfRangeException|
+\item \lstinline|ArithmeticException|
+\item \lstinline|IndexOutOfRangeException|
+\item \ldots
+\end{itemize}
+\end{noteblock}
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Řízené použití prostředků pomocí try -- finally}
+\item konstrukci \lstinline|try -- finally| lze využít pro řízený přístup k prostředkům
+\item blok \lstinline|finally| je proveden i v případě výskytu libovolné výjimky uvnitř \lstinline|try| bloku a je tak možné uklidit prostředky
+\item rozhraní \lstinline|IDisposable| slouží k uvolnění těchto prostředků
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+{
+	Font font1 = new Font("Arial", 10.0f);
+	try
+	{
+		byte charset = font1.GdiCharSet;
+	}
+	finally
+	{
+		if (font1 != null)
+			((IDisposable)font1).Dispose();
+	}
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{Řízené použití prostředků pomocí try -- finally}
+\item pro zjednodušení C\# nabízí ekvivalentní konstrukci \lstinline|using(...) { ... }|
+\end{bitemize}
+\vfill
+\begin{yesblock} 
+\begin{lstlisting}
+using (Font font1 = new Font("Arial", 10.0f))
+{
+    byte charset = font1.GdiCharSet;
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\begin{bitemize}{}
+\item \lstinline|using| lze vnořovat nebo lze deklarovat více řízených proměnných najednou
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+using (Font font3 = new Font("Arial", 10.0f),
+            font4 = new Font("Arial", 10.0f))
+{
+    // Use font3 and font4.
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Kdy používat using}
+\item nad objekty realizující rozhraní \lstinline|IDisposable|
+\item \lstinline|System.IO, System.Net| -- třídy realizující operace se soubory/síťovými proudy
+\item \lstinline|System.Data| -- třídy realizující databázové připojení a operace
+\item \lstinline|System.Drawing| -- třídy popisující grafické objekty
+\item \lstinline|System.Windows.Forms.Control| -- WinForms prvky
+\item \ldots
+\end{bitemize}
+\end{frame}
+
+
