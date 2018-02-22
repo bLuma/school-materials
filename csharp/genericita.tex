@@ -1,0 +1,46 @@
+\hkapitola{Genericita}
+
+\begin{frame}[fragile]
+\begin{bitemize}{Genericita}
+\item podobně jako v Javě je v C\# k dispozici genericita pro možnost generického programování
+\item syntaxe velmi podobná Javě
+\begin{itemize}
+\item jinak se definují podmínky kovariance a kontravariance a omezující podmínky
+\end{itemize}
+
+\item Java genericitu realizuje technikou \uv{type erasure} (ve zkompilovaném kódu se genericita zahodí), C\# využívá \uv{reification} (\uv{zhmotnění typů} -- lze používat generické typy v reflexi i všude jinde)
+\begin{itemize}
+\item v důsledku existují třídy/rozhraní s genericitou a bez ní (\lstinline|IEnumerable| není to samé co \lstinline|IEnumerable<T>|)
+\item metody lze přetěžovat s různými generickými parametry
+\end{itemize}
+\item parametrem generického typu může být libovolný hodnotový i referenční typ (tedy i primitivní datové typy)
+\item vnořené typy automaticky dědí nařazené generické parametry
+\end{bitemize}
+\vfill
+
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+class GenericHolder<T>
+{
+    public T Value { get; set; }
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+List<int> list1 = new List<int>();
+
+// No boxing, no casting:
+list1.Add(3);
+
+// Compile-time error:
+// list1.Add("It is raining in Redmond.");
+\end{lstlisting}
+\end{yesblock}
+\end{frame}

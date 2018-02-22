@@ -261,7 +261,7 @@ person = student;
 
 \begin{frame}[fragile]
 \begin{bitemize}{Zakrývání}
-\item zakrývání znamená vytvoření metody se stejným názvem jako v předkovi
+\item zakrývání znamená vytvoření metody se stejným názvem jako v~předkovi
 \begin{itemize}
 \item tato metoda, ale nemá polymorfní chování
 \item metodu je nutné volat přímo nad instancí potomka, jinak se její kód nepoužije
@@ -629,4 +629,131 @@ class Rectangle : IDrawable, ISurface
 \begin{bitemize}{}
 \item obě rozhraní používají explicitní realizaci
 \end{bitemize}
+\end{frame}
+
+
+
+
+
+
+
+
+\pkapitola{Základní rozhraní v knihovně}
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{}
+\item \lstinline|ICloneable| -- \lstinline|object Clone()|
+\begin{itemize}
+\item umožňuje provádět mělkou (\lstinline|MemberwiseClone()|) nebo hlubokou kopii objektu
+\end{itemize}
+
+\item \lstinline|IComparable| -- \lstinline|int CompareTo(object obj)|
+\begin{itemize}
+\item porovnání menší/větší/rovno mezi dvěma objekty
+\end{itemize}
+
+\item \lstinline|IComparer| -- \lstinline|int Compare(object x, object y)|
+\begin{itemize}
+\item podobně jako \lstinline|IComparable|, ale objekt funguje jako nezávislý porovnávač jiných objektů
+\end{itemize}
+
+\item \lstinline|IDisposable| -- řízené uvolnění prostředků
+\item \lstinline|IFormattable| -- převod na řetězec v daném formátu
+\end{bitemize}
+\vfill
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{IEnumerable a foreach}
+\vfill
+\begin{bitemize}{}
+\item slouží k projití prvků kolekce
+\item lze využít cyklus \lstinline|foreach|
+\item metoda \lstinline|IEnumerator GetEnumerator()|
+\begin{itemize}
+\item \lstinline|IEnumerator|
+\begin{itemize}
+\item \lstinline|Object Current|
+\item \lstinline|bool MoveNext()|
+\item \lstinline|void Reset()|
+\end{itemize}
+\end{itemize}
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+var enumerable = new TestEnumerable();
+foreach (var obj in enumerable)
+{
+    Console.WriteLine($"{obj}");
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{IEnumerator}
+\vfill
+\begin{bitemize}{}
+\item enumerátor lze napsat ručně nebo lze využít automatické implementace od kompilátoru a klíčového slova \lstinline|yield|
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+class TestEnumerable : IEnumerable
+{
+    readonly int[] values = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
+    public IEnumerator GetEnumerator()
+    {
+        for (int i = 0; i < values.Length; i++)
+        {
+            if (values[i] > 5)
+                yield break;
+
+            yield return values[i];
+        }
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{IEnumerator}
+\vfill
+\begin{bitemize}{}
+\item \lstinline|yield return ...| -- přidá prvek do výstupu enumerátoru
+\item \lstinline|yield break| -- ukončí iterování
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+class TestEnumerable : IEnumerable
+{
+    ...
+    
+    public IEnumerable DescendingValues
+    {
+        get
+        {
+            for (int i = values.Length - 1; i >= 0; i--)
+                yield return values[i];
+        }
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
 \end{frame}

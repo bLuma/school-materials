@@ -6,14 +6,14 @@
 \begin{frame}[fragile]
 \frametitle{Struktura -- struct}
 \begin{bitemize}{struct}
-\item hodnotový typ (předává se hodnota - nikoliv reference)
+\item \textbf{hodnotový typ} (předává se hodnota - nikoliv reference)
 \item může obsahovat parametrické konstruktory, atributy, vlastnosti, metody, operátory, \ldots
 \item nemůže definovat bezparametrický konstruktor, finalizér (destruktor)
-\item nemůže dědit z předka
+\item \textbf{nemůže dědit} z předka
 \begin{itemize}
 \item vždy dědí z \lstinline|System.ValueType|, dědící z \lstinline|System.Object|
 \end{itemize}
-\item může realizovat rozhraní
+\item může realizovat \textbf{rozhraní}
 \item instanci je možné vytvořit bez \lstinline|new|
 \end{bitemize}
 \end{frame}
@@ -69,20 +69,20 @@ static void TestStudent()
 \begin{frame}[fragile]
 \frametitle{Třídy -- class}
 \begin{bitemize}{class}
-\item referenční typ (předává se reference)
-\item jednoduchá dědičnost
+\item \textbf{referenční typ} (předává se reference)
+\item \textbf{jednoduchá dědičnost}
 \begin{itemize}
 \item může dědit z jednoho předka
 \item rozlišuje se časná a pozdní vazba u metod
 \end{itemize}
-\item může realizovat rozhraní
+\item může realizovat \textbf{rozhraní}
 \begin{itemize}
 \item libovolný počet
 \item implicitní/explicitní realizace rozhraní
 \end{itemize}
 \item může obsahovat konstruktory, finalizér, atributy, vlastnosti, události, metody, operátory, vnořené typy, \ldots
-\item objekty jsou vytvářeny na haldě
-\item paměť spravuje garbage collector
+\item objekty jsou vytvářeny na haldě (heap)
+\item paměť spravuje \textbf{garbage collector}
 \end{bitemize}
 \end{frame}
 
@@ -127,6 +127,7 @@ static void TestStudent()
 
 
 \begin{frame}[fragile]
+\frametitle{Třída -- class}
 \vfill
 \begin{noteblock}{}
 \begin{lstlisting}
@@ -172,7 +173,6 @@ static void TestStudent()
 \end{frame}
 
 
-
 \pkapitola{Objekty}
 
 
@@ -193,6 +193,7 @@ Osoba osobaVychozi = new Osoba();
 
 Osoba osobaParametricka = new Osoba("Franta", "Maly");
 
+// C# podporuje okamžitě inicializovat veřejné složky
 Osoba osobaZvlastni = new Osoba() {
 	Jmeno = "Franta",
 	Prijmeni = "Maly"
@@ -237,7 +238,7 @@ wl($"ReferenceEquals: {object.ReferenceEquals(mojeOsoba, ciziOsoba)}");
 
 
 \begin{frame}[fragile]
-\begin{bonusblock}{~}
+\begin{bonusblock}{Ukázka přetěžování Equals a operátorů ==, !=}
 \begin{lstlisting}[basicstyle=\small]
 class Osoba
 {
@@ -330,13 +331,13 @@ class Osoba
 \begin{lstlisting}[basicstyle=\small]
 class Student
 {
-    // Bezparametrický konstruktor -- volá se při new Student()
+    // Bezparametrický konstruktor - volá se při new Student()
     public Student() { }
 
-    // Parametrický konstruktor -- volá se při new Student(string, string)
+    // Parametrický konstruktor - volá se při new Student(string, string)
     public Student(string jmeno, string prijmeni) { }
 
-    // Statický konstruktor -- volá se při zavedení typu do paměti
+    // Statický konstruktor - volá se při zavedení typu do paměti
     static Student() { }
 }
 \end{lstlisting}
@@ -347,6 +348,12 @@ class Student
 
 \begin{frame}[fragile]
 \frametitle{Finalizéry}
+\vfill
+\begin{noteblock}{}
+\begin{lstlisting}
+~NázevTřídy() { ... }
+\end{lstlisting}
+\end{noteblock}
 \vfill
 \begin{bitemize}{}
 \item slouží k uvolnění prostředů
@@ -385,11 +392,12 @@ public class Auto
 \item alokuje místo v paměti pro uložení hodnoty datového typu (představuje datovou složku)
 \item \lstinline|private string name;|
 \end{itemize}
-
+\vskip 2ex
 \item Vlastnost (Property) -- C\#
 \begin{itemize}
 \item má identifikátor, datový typ, přístupová práva
 \item definuje getter a setter, jak přistoupit k datové složce
+\item není atributem, neobsahuje data!
 \item \lstinline|public string Name { get { return name;} set { name = value; } }|
 \end{itemize}
 \end{bitemize}
@@ -398,7 +406,7 @@ public class Auto
 
 
 \begin{frame}[fragile]
-\frametitle{Atributy}
+\frametitle{Atributy (datové složky)}
 \vfill
 \begin{noteblock}{}
 \begin{lstlisting}
@@ -417,7 +425,7 @@ public class Auto
 
 
 \begin{frame}[fragile]
-\frametitle{Statické složky}
+\frametitle{Statické složky (atributy, metody)}
 \vfill
 \begin{yesblock}
 \begin{lstlisting}
@@ -477,11 +485,47 @@ Matematika matematika = new Matematika();
 
 
 
+
+
+
+\begin{frame}[fragile]
+\frametitle{const/readonly složky}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+class IdGenerator
+{
+    const int prvniId = 123;
+    readonly string prefixId;
+
+    public IdGenerator(string prefix)
+    {
+        // const nelze inicializovat v konstruktoru
+        // prvniId = 100;
+
+        // readonly musí být inicializován v konstruktoru
+        prefixId = prefix;
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+
+
 \pkapitola{Vlastnost -- Property}
 
 
 \begin{frame}[fragile]
 \frametitle{Vlastnosti}
+\vfill
+\begin{bitemize}{}
+\item definují getter a setter pro přístup k datové složce
+\item obyčejná vlastnost neobsahuje data
+\item uvnitř setteru je nastavovaná hodnota předána skrze klíčové slovo \lstinline|value|
+\end{bitemize}
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 class Student
@@ -497,6 +541,7 @@ class Student
 }
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
@@ -702,6 +747,24 @@ peter.SayHello();
 \vfill
 \end{frame}
 
+
+
+
+\begin{frame}[fragile]
+\frametitle{Metody -- příklad zkráceného zápisu}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}[basicstyle=\small]
+class Student
+{
+    public string Name { get; set; }
+
+    public void SayHello() => Console.WriteLine($"Hello, I'm{Name}");
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
 
 
 

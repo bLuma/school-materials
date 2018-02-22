@@ -1,0 +1,135 @@
+\hkapitola{Preprocesor}
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Preprocesor}
+\item podobně jako v C++ nabízí C\# preprocesor a několik příkazů, které se provedou před vlastní kompilací
+\item možnosti jsou více omezené než v C++
+\begin{itemize}
+\item možnost podmíněné kompilace (dle definovaných symbolů preprocesoru)
+\item možnost označovat část kódu (\lstinline|#region|) pro větší přehlednost v~editoru
+\item možnost vyvolat chybu nebo varování při kompilaci části kódu 
+\item možnost změnit číslo řádku nebo název souboru (\lstinline|#line|)
+\item další možnosti dle kompilátoru (\lstinline|#pragma|)
+\end{itemize}
+\end{bitemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{\#define, \#undef}
+\item definuje a ruší symboly (konstanty) preprocesoru
+\item definice musí být na prvním místě v souboru
+\item lze na nich založit podmíněnou kompilaci
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+#define DEBUG
+#undef TRACE
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{\#if, \#elif, \#else, \#endif}
+\item podmínkový blok v preprocesoru
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+#if (DEBUG && !MYTEST)
+    Console.WriteLine("DEBUG is defined");
+#elif (!DEBUG && MYTEST)
+    Console.WriteLine("MYTEST is defined");
+#elif (DEBUG && MYTEST)
+    Console.WriteLine("DEBUG and MYTEST are defined");  
+#else
+    Console.WriteLine("DEBUG and MYTEST are not defined");
+#endif
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{ConditionalAttribute -- podmíněná kompilace pomocí atributu}
+\item lze aplikovat na metody a třídy (pouze atributy)
+\item pokud není podmínka splněna, daný objekt se nezkompiluje
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+[Conditional("CONDITION1")]
+public static void Method1(int x)
+{
+    Console.WriteLine("CONDITION1 is defined");
+}
+
+[Conditional("CONDITION1"), Conditional("CONDITION2")]  
+public static void Method2()
+{
+    Console.WriteLine("CONDITION1 or CONDITION2 is defined");
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{\#warning, \#error}
+\item vyvolá varování nebo error v době kompilace na dané řádce
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+#define DEBUG  
+class MainClass   
+{  
+    static void Main()   
+    {  
+#if DEBUG  
+#warning DEBUG is defined  
+#endif  
+    }  
+}  
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{\#region, \#endregion}
+\item označuje blok kódu, který spolu logicky souvisí
+\item ve VS lze takový blok naráz zobrazit/skrýt pro větší přehlednost
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+#region MyClass definition  
+public class MyClass   
+{  
+    static void Main()   
+    {  
+    }  
+}  
+#endregion  
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+

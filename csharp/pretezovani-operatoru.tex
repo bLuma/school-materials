@@ -1,0 +1,137 @@
+\hkapitola{Přetěžování operátorů}
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{Přetěžování operátorů}
+\item podobně jako C++ lze v C\# přetěžovat operátory u svých objektových typů
+\item množina přetížitelných operátorů je oproti C++ menší
+\item syntax a pravidla pro přetěžování jsou striktnější a snaží se zamezit problémům
+\begin{itemize}
+\item např. není možné přetížit == bez přetížení !=
+\end{itemize}
+
+\end{bitemize}
+\vfill
+\begin{bitemize}{Přetížitelné operátory}
+\item \lstinline|- ! ~ ++ -- true false|
+\item \lstinline|- * / % & ^ | | \lstinline| << >> == != > < >= <=|
+\item konverzní operátory
+\item \lstinline|[ ]| (indexery)
+\end{bitemize}
+\vfill
+\end{frame}
+
+
+\nezkouskove
+
+\begin{frame}[fragile]
+\frametitle{Přetížení oprerátoru}
+\vfill
+\begin{noteblock}{}
+\begin{lstlisting}
+public static typ operator symbol ( parametry ) tělo
+\end{lstlisting}
+\end{noteblock}
+\vfill
+\begin{bitemize}{}
+\item parametry
+\begin{itemize}
+\item unární operátor -- jeden parametr
+\item binární operátor -- dva parametry
+\end{itemize}
+
+\item logické dvojice -- vždy je nutné přetížit oba operátory naráz
+\begin{itemize}
+\item \lstinline|== !=|
+\item \lstinline|< >|
+\item \lstinline|<= >=|
+\item \lstinline|true false|
+\end{itemize}
+
+\item inkremetace/dekremetace se přetěžuje jednou metodou, kompilátor ji automaticky použije pro prefixovou i postfixovou variantu
+\item operátory \lstinline|true,false| umožňují dát objekt přímo do výrazů očekávající logickou hodnotu (\lstinline|if, while, ...|)
+
+\end{bitemize}
+\vfill
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Přetížení oprerátoru -- konverzní operátory}
+\vfill
+\begin{noteblock}{}
+\begin{lstlisting}
+public static implicit operator cílovýTyp ( zdrojovýTyp parametr ) tělo
+public static explicit operator cílovýTyp ( zdrojovýTyp parametr ) tělo
+\end{lstlisting}
+\end{noteblock}
+\vfill
+\begin{bitemize}{}
+\item není možné zároveň definovat pravidla pro implicitní a explicitní konverzi
+\item kompilátor tyto operátory volá při výrazech:
+\begin{itemize}
+\item implicitní
+\begin{itemize}
+\item \lstinline|cílovýTyp proměnná = objektZrojovéhoTypu|
+\end{itemize}
+
+\item explicitní
+\begin{itemize}
+\item \lstinline|cílovýTyp proměnná = (cílovýTyp)objektZdrojovéhoTypu|
+\end{itemize}
+\end{itemize}
+
+\end{bitemize}
+\vfill
+\end{frame}
+
+\zkouskove
+
+\begin{frame}[fragile]
+\frametitle{Indexery}
+\vfill
+\begin{bitemize}{}
+\item definují přetížení operátoru \lstinline|[ ]| pro přístup k prvkům/datům
+\item definují se jako nestatické vlastnosti
+\end{bitemize}
+\vfill
+\begin{noteblock}{}
+\begin{lstlisting}
+[modifikátor] návratovýTyp this [ seznamParametrů ] deklaracePřístupovýchMetod
+\end{lstlisting}
+\end{noteblock}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+class IndexerExample
+{
+    readonly int[] values = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
+    public int this[int index]
+    {
+        get => values[index];
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Indexery}
+\vfill
+\begin{bitemize}{}
+\item je možné definovat několik různých přetížení indexerů s různými parametry
+\item rozhraní mohou definovat indexery
+\item indexer může data číst/zapisovat nebo provádět obojí
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+var indexer = new IndexerExample();
+int numberThree = indexer[2];
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}

@@ -23,6 +23,7 @@ jednoduchá dědičnost & vícenásobná dědičnost & jednoduchá dědičnost \
 \hline
 \multicolumn{3}{c}{\textbf{Organizace modulů}} \\
 package & namespace & assembly,namespace \\
+Maven, Gradle & \ldots & NuGet \\
 
 \hline
 \multicolumn{3}{c}{\textbf{Generické programování}} \\
@@ -34,6 +35,41 @@ java.lang, java.util, \ldots & C/C++, STL & java like \\
 \end{tabular}
 \end{frame}
 
+\begin{frame}[fragile]
+\begin{center}
+\includegraphics[height=\textheight]{img/dotnet_framework_stack.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{center}
+\includegraphics[width=\textwidth]{img/msil_code.jpg}
+\end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{center}
+\includegraphics[width=\textwidth]{img/net_standard.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{bitemize}{C\#}
+\item kompilovaný jazyk (MSIL - mezikód)
+\begin{itemize}
+\item do nativního kódu je převeden runtime pomocí JIT
+\end{itemize}
+\item statické (i dynamické) typování
+\item správa dynamické paměti pomocí garbage collectoru
+\item základní knihovna podobná Javovské
+\item inspirován Javou, C/C++, \ldots
+\item aktuální verze C\# 7.2
+\item standard a některé komponenty uvolněny pod open source licencemi
+\item podpora pro non-Windows platformy pomocí Mono, nově .NET Core
+
+\end{bitemize}
+\end{frame}
 
 
 \begin{frame}[fragile]
@@ -82,6 +118,34 @@ namespace ConsoleApplication1
 }
 \end{lstlisting}
 \end{exampleblock}
+\end{frame}
+
+%\pkapitola{Coding conventions}
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{Coding conventions}
+\item C\# definuje řadu doporučení a pravidel, jakým stylem by měl být psán a formátován kód
+\item Základní doporučení:
+\begin{itemize}
+\item \color{green!50!black}VeřejnéTypy, Třídy, Struktury, Metody, Vlastnosti, \ldots začínají velkým písmenem, používá se PascalCase
+\item \color{blue}privátníAtributy, parametryMetod, lokálníProměnné, \ldots začínají malým písmenem, používá se camelCase
+\item \color{red}nepoužívá se hungarian notation, prefix \lstinline|m_|, \ldots
+\end{itemize}
+
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+class CarFactory { }
+struct StudentRecord { }
+
+public void GetElementAt(int elementIndex) { }
+
+private string name;
+\end{lstlisting}
+\end{yesblock}
+\vfill
 \end{frame}
 
 
@@ -149,7 +213,7 @@ uint bezznamenkovyInteger;
 \end{lstlisting}
 \end{exampleblock}
 \vfill
-\begin{bonusblock}{}
+\begin{bonusblock}{~}
 \begin{lstlisting}
 System.Int16 int16;
 System.Int32 int32; // int
@@ -583,7 +647,7 @@ while (true)
 \end{itemize}
 \end{block}
 \vfill
-\begin{bonusblock}{}
+\begin{bonusblock}{~}
 \begin{itemize}
 \item od C\# 7 podpora pattern matching
 \begin{itemize}
@@ -657,9 +721,9 @@ pole[0] = 10;
 pole[1] = 20;
 //pole[10] = 15; // IndexOutOfRangeExpection
 
-int pocetPrvkuVPoli = pole.Length;
+int pocetPrvkuPole = pole.Length;
 
-Console.WriteLine($"{pocetPrvkuVPoli} {pole.Length} {pole[0]} {pole[1]}");
+Console.WriteLine($"{pocetPrvkuPole} {pole.Length} {pole[0]} {pole[1]}");
 \end{lstlisting}
 \end{yesblock}
 \end{frame}

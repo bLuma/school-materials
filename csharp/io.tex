@@ -1,0 +1,180 @@
+%BinaryReader - stream
+%writer - stream
+%bufferedstream - stream
+%
+%filestream
+%memorystream
+%
+%streamreader - stream
+%streamwriter - stream
+%
+%stringreader/writer - string
+%
+%Stream - abstract
+%textreader/writer - abtstract class
+%
+%File,FileInfo
+%Directory,DirectoryInfo
+%Path
+
+\hkapitola{Input/output}
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{Základní proudy pro práci se soubory, pamětí, \ldots}
+\item knihovna využívá stejných principů jako Java
+\item základní abstraktní třída \lstinline|Stream| reprezentuje datový proud
+\begin{itemize}
+\item potomci představují konkrétní použití -- \lstinline|FileStream|, \lstinline|MemoryStream|, \lstinline|NetworkStream|, \ldots
+\item existuje zde řada dekorátorů -- \lstinline|BufferedStream|, \lstinline|DeflateStream|, \lstinline|GZipStream|, \lstinline|CryptoStream|, \ldots
+\end{itemize}
+\item pro realizaci textových přenosů slouží třídy \lstinline|StreamReader|, \lstinline|StreamWriter|
+\begin{itemize}
+\item binární přenosy \lstinline|BinaryReader|, \lstinline|BinaryWriter|
+\end{itemize}
+\end{bitemize}
+\vfill
+\begin{bitemize}{}
+\item proudy je třeba korektně uzavírat, jinak může dojít ke ztrátě dat a prostředky mohou být dlouho blokovány
+\item proudy typicky realizují \lstinline|IDisposable| rozhraní (lze využít konstrukci \lstinline|using|)
+\end{bitemize}
+\vfill
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{Abstraktní třída Stream}
+\item \lstinline|Position| -- vlastnost, pozice kurzoru
+\item \lstinline|CanRead, CanWrite, CanSeek| -- vlastnosti
+\item \lstinline|Seek| -- přesune kurzor v souboru
+\item \lstinline|Read| -- čte pole bajtů
+\item \lstinline|Write| -- zapisuje pole bajtů
+\item \lstinline|ReadByte| -- čte bajt
+\item \lstinline|WriteByte| -- zapisuje bajt
+\item \lstinline|Close| -- uzavře proud
+\end{bitemize}
+\vfill
+\begin{bitemize}{Potomci třídy Stream}
+\item \lstinline|BaseStream| -- vlastnost, není definováno rozhraním, nemusí být u~všech
+\end{bitemize}
+\vfill
+\end{frame}
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Zápis a čtení z textového souboru}
+\begin{yesblock}
+\begin{lstlisting}
+using (StreamWriter writer = new StreamWriter(new FileStream("output.txt", FileMode.OpenOrCreate), Encoding.UTF8))
+{
+    writer.WriteLine("Hello World");
+    writer.WriteLine("Příliš žluťoučký kůň úpěl ďábelské ódy");
+}
+
+using (var reader = new StreamReader("output.txt"))
+{
+    Console.WriteLine(reader.ReadLine());
+    Console.WriteLine(reader.ReadLine());
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Základní metody StreamReader, StreamWriter}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+writer.Write(123);
+writer.Write(123.456);
+writer.Write(true);
+writer.Write(obj);
+writer.WriteLine(dtto);
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+int char = reader.Read();
+
+char[] buffer = new char[100];
+reader.Read(buffer, 0, buffer.Length);
+
+string tillTheEnd = reader.ReadToEnd();
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{StreamWriter -- konstrukce}
+\item \lstinline|StreamWriter(Stream stream)|
+\item \lstinline|StreamWriter(string path)|
+\item \lstinline|StreamWriter(Stream stream, Encoding encoding)|
+\item \lstinline|StreamWriter(string path, bool append)|
+\item \ldots
+\end{bitemize}
+\vfill
+\begin{bitemize}{StreamReader -- konstrukce}
+\item \lstinline|StreamReader(Stream stream)|
+\item \lstinline|StreamReader(Stream stream, bool detectEncodingFromByteOrderMarks)|
+\item \lstinline|StreamReader(Stream stream, Encoding encoding)|
+\item \lstinline|StreamReader(Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks)|
+\item dtto se \lstinline|string path| \ldots
+\end{bitemize}
+\vfill
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Zápis a čtení z binárních souborů}
+\begin{yesblock}
+\begin{lstlisting}
+using (var writer = new BinaryWriter(new FileStream("binary.dat", FileMode.Create)))
+{
+    // write je přetížena pro všechny základní typy
+    writer.Write(true);
+    writer.Write(0x11223344);
+    writer.Write(123.456);
+    writer.Write('z');
+    writer.Write("string");
+
+    // a podporován je i blokový přenos pomocí pole bajtů
+    byte[] buffer = new byte[16];
+    writer.Write(buffer, 0, buffer.Length);
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Zápis a čtení z binárních souborů}
+\begin{yesblock}
+\begin{lstlisting}
+using (var reader = new BinaryReader(new FileStream("binary.dat", FileMode.Open)))
+{
+    bool boolVar = reader.ReadBoolean();
+    int intVar = reader.ReadInt32();
+    double doubleVar = reader.ReadDouble();
+    char charVar = reader.ReadChar();
+    string strVar = reader.ReadString();
+
+    byte[] buffer = new byte[16];
+    reader.Read(buffer, 0, buffer.Length);
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}

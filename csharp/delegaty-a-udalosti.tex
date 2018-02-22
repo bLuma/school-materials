@@ -170,9 +170,9 @@ secondDelegate(); // 1 2
 \item \lstinline|void Action()|
 \item \lstinline|void Action<p1>(p1)| -- generický delegát, je možné dosadit libovolný typ parametrů
 \item \lstinline|void Action<p1, p2>(p1, p2)|
-\item \lstinline|return Func<return>()|
-\item \lstinline|return Func<p1, return>(p1)|
-\item \lstinline|return Func<p1, p2, return>(p1, p2)|
+\item \lstinline|ret Func<ret>()|
+\item \lstinline|ret Func<p1, ret>(p1)|
+\item \lstinline|ret Func<p1, p2, ret>(p1, p2)|
 \item \lstinline|bool Predicate<p>(p)|
 \end{bitemize}
 
@@ -301,6 +301,89 @@ var result = values
 \end{frame}
 
 
+
+\nezkouskove
+
+\begin{frame}[fragile]
+\begin{bitemize}{Kovariance, kontravariance parametrů a návratových hodnot}
+\item C\# uplatňuje kovarianci návratových typů delegátů
+\item C\# uplatňuje kontravarianci parametrů delegátů
+\end{bitemize}
+
+\begin{bitemize}{}
+\item kovariance znamená, že metoda může mít typ, který je více specifický než původně definovaný 
+\begin{itemize}
+\item metoda vrací potomka typu, který vrací delegát dle definice
+\end{itemize}
+
+\item kontravariance znamená, že metoda může mít typ, který je méně specifický než původně definovaný
+\begin{itemize}
+\item metoda má v parametru předka typu, který definuje delegát
+\end{itemize}
+
+\end{bitemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{exampleblock}{Kovariance}
+\begin{lstlisting}
+class Mammals{}  
+class Dogs : Mammals{}  
+
+class Program  
+{  
+    // Define the delegate.  
+    public delegate Mammals HandlerMethod();  
+
+    public static Mammals MammalsHandler() => null;
+    public static Dogs DogsHandler() => null;
+
+    static void Test()  
+    {  
+        HandlerMethod handlerMammals = MammalsHandler;  
+
+        // Covariance enables this assignment.  
+        HandlerMethod handlerDogs = DogsHandler;  
+    }  
+}  
+\end{lstlisting}
+\end{exampleblock}
+\vfill
+\end{frame}
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{exampleblock}{Kontravariance}
+\begin{lstlisting}
+// Event handler that accepts a parameter of the EventArgs type.  
+private void MultiHandler(object sender, System.EventArgs e)  
+{  
+    label1.Text = System.DateTime.Now.ToString();  
+}  
+
+public Form1()  
+{  
+    InitializeComponent();  
+
+    // You can use a method that has an EventArgs parameter,  
+    // although the event expects the KeyEventArgs parameter.  
+    this.button1.KeyDown += this.MultiHandler;  
+
+    // You can use the same method   
+    // for an event that expects the MouseEventArgs parameter.  
+    this.button1.MouseClick += this.MultiHandler;  
+
+}  
+\end{lstlisting}
+\end{exampleblock}
+\vfill
+\end{frame}
+
+
+\zkouskove
 
 \pkapitola{Události}
 
