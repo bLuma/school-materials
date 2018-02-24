@@ -68,6 +68,15 @@ class Program
 
 \begin{frame}[fragile]
 \frametitle{Vícenásobný delegát}
+\vfill
+\begin{bitemize}{}
+\item do jedné instance (proměnné) delegátu je možné uložit několik odkazů na metody najednou
+\begin{itemize}
+\item při vyvolání delegátu dojde k vyvolání všech metod
+\end{itemize}
+
+\end{bitemize}
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 delegate void OutputCallback();
@@ -86,6 +95,7 @@ class Program
 }
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
@@ -122,6 +132,11 @@ cc(); // NullReferenceException
 
 \begin{frame}[fragile]
 \frametitle{Bezpečné vyvolání delegátu}
+\vfill
+\begin{bitemize}{}
+\item pokus o vyvolání delegátu, ve kterém není uložen žádný odkaz na metodu vyvolá výjimku \lstinline|NullReferenceException|
+\end{bitemize}
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 var program = new Program();
@@ -139,6 +154,7 @@ if (cc != null)
 cc?.Invoke();
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
@@ -146,6 +162,11 @@ cc?.Invoke();
 
 \begin{frame}[fragile]
 \frametitle{Delegát jako hodnotový typ}
+\vfill
+\begin{bitemize}{}
+\item delegát je \textbf{hodnotový typ}, předávání do metody (v parametru) nebo přiřazení do jiné proměnné vytvoří kopii aktuálního stavu delegátu
+\end{bitemize}
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 OutputCallback firstDelegate = program.Out1;
@@ -159,6 +180,7 @@ firstDelegate(); // 1
 secondDelegate(); // 1 2
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 
@@ -205,6 +227,20 @@ Func<Student, string>
 
 
 \pkapitola{Anonymní metody}
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Anonymní metody}
+\item metoda nemá jméno
+\item metoda je obvykle definována někde uprostřed bloku jiné metody
+\item C\# podporuje několik způsobů zápisu anonymních metod
+\begin{itemize}
+\item od C\# 2 -- s využitím \lstinline|delegate|
+\item od C\# 3 -- lambda výrazy (preferovaný způsob)
+\end{itemize}
+
+\end{bitemize}
+\end{frame}
 
 
 \begin{frame}[fragile]
@@ -305,11 +341,12 @@ var result = values
 \nezkouskove
 
 \begin{frame}[fragile]
+\vfill
 \begin{bitemize}{Kovariance, kontravariance parametrů a návratových hodnot}
 \item C\# uplatňuje kovarianci návratových typů delegátů
 \item C\# uplatňuje kontravarianci parametrů delegátů
 \end{bitemize}
-
+\vfill
 \begin{bitemize}{}
 \item kovariance znamená, že metoda může mít typ, který je více specifický než původně definovaný 
 \begin{itemize}
@@ -322,11 +359,13 @@ var result = values
 \end{itemize}
 
 \end{bitemize}
+\vfill
 \end{frame}
 
 
 \begin{frame}[fragile]
 \vfill
+\vskip 1ex
 \begin{exampleblock}{Kovariance}
 \begin{lstlisting}
 class Mammals{}  
@@ -356,6 +395,7 @@ class Program
 
 \begin{frame}[fragile]
 \vfill
+\vskip 1ex
 \begin{exampleblock}{Kontravariance}
 \begin{lstlisting}
 // Event handler that accepts a parameter of the EventArgs type.  
@@ -389,7 +429,7 @@ public Form1()
 
 \begin{frame}[fragile]
 \begin{bitemize}{Události -- teoreticky}
-\item realizuje návrhový vzor observer
+\item realizuje \textit{návrhový vzor observer}
 \item umožňuje objektům sledovat změny stavu konkrétního objektu
 \begin{itemize}
 \item příklad -- časovač nabídne událost Tik, která nastane vždy jednou za sekundu
