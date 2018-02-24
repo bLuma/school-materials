@@ -984,6 +984,10 @@ Console.WriteLine($"{string.Join(" ", array)}");
 
 \begin{bitemize}{}
 \item (statická) metoda se tváří jako (instanční) metoda jiné třídy
+\begin{itemize}
+\item metoda se volá přímo nad objektem rozšířené třídy
+\end{itemize}
+
 \item poprvé masivně použito pro realizaci LINQ
 \end{bitemize}
 \vfill
@@ -991,15 +995,15 @@ Console.WriteLine($"{string.Join(" ", array)}");
 \begin{lstlisting}[basicstyle=\small]
 class Student
 {
-    public string Name { get; set; }
+  public string Name { get; set; }
 }
 
 static class StudentExtension
 {
-    public static void SayHello(this Student student, string weather)
-    {
-        Console.WriteLine($"Hello, I'm {student.Name} and it's {weather}");
-    }
+  public static void SayHello(this Student student, string weather)
+  {
+    Console.WriteLine($"Hello, I'm {student.Name} and it's {weather}");
+  }
 }
 \end{lstlisting}
 \end{yesblock}

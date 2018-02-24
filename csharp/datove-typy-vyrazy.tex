@@ -215,14 +215,19 @@ uint bezznamenkovyInteger;
 \vfill
 \begin{bonusblock}{~}
 \begin{lstlisting}
-System.Int16 int16;
+System.SByte int8; // sbyte
+System.Int16 int16; // short
 System.Int32 int32; // int
-System.Int64 int64;
-System.UInt16 uint16;
+System.Int64 int64; // long
+
+System.Byte uint8; // byte
+System.UInt16 uint16; // ushort
 System.UInt32 uint32; // uint
-System.UInt64 uint64;
-System.Single single; // float
-System.Double double; // double
+System.UInt64 uint64; // ulong
+
+System.Single fSingle; // float
+System.Double fDouble; // double
+System.Decimal fDecimal; // decimal
 \end{lstlisting}
 \end{bonusblock}
 \vfill
@@ -482,6 +487,12 @@ int[] array = null;
 int? x = array?[0];
 \end{lstlisting}
 \end{exampleblock}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+var value = firstObject?.secondObject?.maybeArray?[0] ?? "default";
+\end{lstlisting}
+\end{yesblock}
 \end{frame}
 
 
@@ -723,7 +734,7 @@ pole[1] = 20;
 
 int pocetPrvkuPole = pole.Length;
 
-Console.WriteLine($"{pocetPrvkuPole} {pole.Length} {pole[0]} {pole[1]}");
+Console.WriteLine($"{pocetPrvkuPole} {pole.Length} {pole[0]}{pole[1]}");
 \end{lstlisting}
 \end{yesblock}
 \end{frame}
@@ -875,6 +886,14 @@ if (uspech)
 
 
 \begin{frame}[fragile]
+\vfill
+\begin{exampleblock}{Také lze využít třídu System.Convert}
+\begin{lstlisting}
+int valueInt = Convert.ToInt32("123456");
+double valueDouble = Convert.ToDouble("3,1415");
+\end{lstlisting}
+\end{exampleblock}
+\vfill
 \begin{exampleblock}{Konverze int/double/\ldots $\rightarrow$ string}
 \begin{lstlisting}
 int i = 123;
@@ -884,6 +903,7 @@ string s = i.ToString();
 // string s = 123.ToString();
 \end{lstlisting}
 \end{exampleblock}
+\vfill
 \end{frame}
 
 

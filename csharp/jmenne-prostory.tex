@@ -1,0 +1,149 @@
+\hkapitola{Jmenné prostory}
+
+\begin{frame}[fragile]
+\frametitle{Jmenné prostory}
+
+\begin{bitemize}{namespace}
+\item stejně jako balíčky slouží k logickému oddělení kódu -- rozdělení na spolu související komponenty a zamezení konfliktů jmen
+\item jmenné prostory na rozdíl od Java balíčků nevyžadují přesnou organizaci na disku
+\item jmenné prostory je možné libovolně vnořovat
+\item uvnitř jmenného prostoru jsou vidět komponenty definované v tomto jmenném prostoru
+\item []
+\item komponenty definované v jiném jmenném prostoru je nutné zpřístupnit užitím plné cesty a názvu komponenty nebo zpřístupnit jmenný prostor pomocí \lstinline|using|
+\end{bitemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Definovaní jmenných prostorů}
+
+\begin{yesblock}
+\begin{lstlisting}
+namespace Game
+{
+    // Game ...
+
+    namespace Graphics
+    {
+        // Game.Graphics ...
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+namespace Game.Graphics
+{
+    // Game.Graphics ...
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Použití jmenných prostorů -- definice}
+
+\begin{yesblock}
+\begin{lstlisting}
+namespace First
+{
+    class FirstClass
+    {
+        public const int FirstConst = 1;
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Použití jmenných prostorů -- zpřístupnění jiného jmenného prostoru}
+\vfill
+\begin{bitemize}{}
+\item standardně je nutné uvést plnou \uv{cestu} k dané komponentě
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+namespace Second
+{
+    class SecondClass
+    {
+        static void Method()
+        {
+            // FirstConst // error CS0103
+            var v = First.FirstClass.FirstConst;
+        }
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Použití jmenných prostorů -- using}
+\vfill
+\begin{bitemize}{}
+\item pomocí \lstinline|using| lze zpřístupnit obsah jmenného prostoru do aktuálního kontextu
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+using First;
+
+namespace Second
+{
+    class SecondClass
+    {
+        static void Method()
+        {
+            var v = FirstClass.FirstConst;
+        }
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Zpřístupnění statických položek -- using static}
+\vfill
+\begin{bitemize}{}
+\item od C\# 6 existuje klauzule \lstinline|using static|, která umožňuje přímo pracovat se statickými složkami vybraného typu
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+using static System.Math;
+
+class ExampleUsingStaticClass
+{
+    static double CalculateCircleArea(double radius)
+    {
+        // bez using static:
+        // return Math.PI * Math.Pow(radius, 2);
+        
+        return PI * Pow(radius, 2);
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
