@@ -522,12 +522,13 @@ class Student : IStringizable
 
 
 \begin{frame}[fragile]
+\vfill
 \begin{bitemize}{Explicitní realizace rozhraní}
 \item nemá obdobu v Javě nebo C++
 \item metody rozhraní lze volat pouze nad typem rozhraní
 \item tento způsob realizace lze využít k rozlišení rozhraní, které mají složky se stejným identifikátorem
 \end{bitemize}
-
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
 Student student = new Student();
@@ -538,6 +539,7 @@ IStringizable istringizable = student;
 var b = istringizable.Stringize();
 \end{lstlisting}
 \end{yesblock}
+\vfill
 \end{frame}
 
 

@@ -158,6 +158,11 @@ private string name;
 \begin{block}{Primitivní datové typy, proměnné}
 \begin{itemize}
 \item existují hodnotové a referenční datové typy
+\begin{itemize}
+\item hodnotové typy jsou při předávání do metod nebo ve výrazech typu "\lstinline|promenna = puvodniHodnota|" předány/vytvořeny jako kopie původní hodnoty -- vzniká nová instance (objekt) daného typu se stejnou hodnotou (stavem)
+\item referenční typy jsou předány jako reference, tj. existuje jediná instance daného objektu a manipulace s jejich stavem z nového i původního umístění mění jeden a ten samý objekt
+\end{itemize}
+
 \item lze používat reference (na hodnotové typy, \lstinline|ref|)
 \item lze používat ukazatele (\lstinline|unsafe|)
 \item lokální proměnné se pojmenovávají dle camelCase (pocetZivotu, maximalniVykonMotoru)

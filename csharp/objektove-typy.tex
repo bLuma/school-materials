@@ -527,7 +527,7 @@ class IdGenerator
 \end{bitemize}
 \vfill
 \begin{yesblock}
-\begin{lstlisting}
+\begin{lstlisting}[morekeywords=value]
 class Student
 {
     // atribut - uchovává hodnotu
@@ -549,7 +549,7 @@ class Student
 \begin{frame}[fragile]
 \frametitle{Vlastnosti}
 \begin{yesblock}
-\begin{lstlisting}
+\begin{lstlisting}[morekeywords=value]
 class Student
 {
     private string netID;
@@ -576,7 +576,7 @@ class Student
 \end{bitemize}
 \vfill
 \begin{yesblock}
-\begin{lstlisting}
+\begin{lstlisting}[morekeywords=value]
 private string firstName;
 public string FirstName
 {
@@ -597,7 +597,7 @@ public string FirstName
 \end{bitemize}
 \vfill
 \begin{yesblock}
-\begin{lstlisting}
+\begin{lstlisting}[morekeywords=value]
 private string firstName;
 public string FirstName
 {
@@ -688,6 +688,19 @@ public string Name { get; set; }
 \end{frame}
 
 
+\begin{frame}[fragile]
+\begin{bitemize}{Vytváření vlastností ve Visual Studiu}
+\item vlastnosti lze velmi efektivně vytvářet pomocí připravených code-snippets
+\item []
+\item \lstinline|prop<TAB><TAB>| -- vytvoří automaticky implementovanou vlastnost (TAB - přepíná mezi jednotlivými editovatelnými částmi)
+\item \lstinline|propg<TAB><TAB>| -- stejné jako předchozí, ale je nastaveno \lstinline|private set|
+\item \lstinline|propfull<TAB><TAB>| -- vytvoří vlastnost a backing atribut pro ní
+\item \lstinline|propdp<TAB><TAB>| -- dependency property
+\item \lstinline|propa<TAB><TAB>| -- attached dependency property
+\end{bitemize}
+\end{frame}
+
+
 \kapitola{Metody}
 
 
@@ -710,7 +723,7 @@ těloMetody:
 \item \lstinline|virtual| -- virtuální metoda (polymorfizmus)
 \item \lstinline|override| -- přetížená metoda (polymorfizmus)
 \item \lstinline|abstract| -- abstraktní metoda
-\item \lstinline|async| -- asynchronní metody
+\item \lstinline[morekeywords=async]|async| -- asynchronní metody
 \end{bitemize}
 \vfill
 \end{frame}

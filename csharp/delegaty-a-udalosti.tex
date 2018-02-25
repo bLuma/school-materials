@@ -105,23 +105,23 @@ class Program
 \frametitle{Vícenásobný delegát\ldots}
 \begin{yesblock}
 \begin{lstlisting}
-var program = new Program();
+var p = new Program();
 OutputCallback cc = null;
 
-cc = program.Out1;
-cc += program.Out2; cc += program.Out3; cc += program.Out4;
+cc = p.Out1;
+cc += p.Out2; cc += p.Out3; cc += p.Out4;
 cc(); // 1 2 3 4
 
-cc -= program.Out2;
+cc -= p.Out2;
 cc(); // 1 3 4 
 
-cc += program.Out4;
+cc += p.Out4;
 cc(); // 1 3 4 4
 
-cc = program.Out2;
+cc = p.Out2;
 cc(); // 2
 
-cc -= program.Out2;
+cc -= p.Out2;
 cc(); // NullReferenceException
 \end{lstlisting}
 \end{yesblock}
@@ -217,11 +217,23 @@ Func<Student, string>
 
 
 \begin{frame}[fragile]
+\vfill
 \begin{bitemize}{Delegát může obsahovat}
 \item ukazatel na statickou metodu
 \item ukazatel na instanční metodu
 \item ukazatel na anonymní metodu
 \end{bitemize}
+\vfill
+\begin{bitemize}{}
+\item delegát je datový typ, je možné vytvářet delegáty jako:
+\begin{itemize}
+\item lokální proměnné 
+\item atributy tříd
+\item parametry metod
+\end{itemize}
+
+\end{bitemize}
+\vfill
 \end{frame}
 
 
@@ -432,9 +444,9 @@ public Form1()
 \item realizuje \textit{návrhový vzor observer}
 \item umožňuje objektům sledovat změny stavu konkrétního objektu
 \begin{itemize}
-\item příklad -- časovač nabídne událost Tik, která nastane vždy jednou za sekundu
-\item konzole / grafické rozhraní se přihlásí (metodu PrintTime) k odběru Tiků
-\item časovač odpočítá sekundu a vyvolá událost Tik, dojde k vyvolání metody PrintTime
+\item příklad -- časovač nabídne událost Tick, která nastane vždy jednou za sekundu
+\item konzole / grafické rozhraní se přihlásí (metodu PrintTime) k odběru Ticků
+\item časovač odpočítá sekundu a vyvolá událost Tick, dojde k vyvolání metody PrintTime
 \end{itemize}
 
 \end{bitemize}
@@ -646,7 +658,7 @@ private static void TimerTickHandler(object sender, EventArgs eventArgs) =>
 \end{bitemize}
 \vfill
 \begin{yesblock}
-\begin{lstlisting}
+\begin{lstlisting}[morekeywords={add,remove,value}]
 private TickEventHandler tick;
 public event TickEventHandler Tick
 {
