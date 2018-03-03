@@ -45,7 +45,7 @@
 }
 
 dědičnostARozhraní:
-	: [názevPředkaNeboRozhraní], ...
+	: názevPředkaNeboRozhraní, ...
 \end{lstlisting}
 \end{noteblock}
 \vfill
@@ -68,11 +68,25 @@ class Student : Person
 
 \begin{frame}[fragile]
 \frametitle{Dědičnost -- příklady}
+\begin{noteblock}{}
+\begin{lstlisting}[basicstyle=\small]
+class Object { }
+class LivingEntity { }
+class Person : Object { }
+
+interface IComparable { }
+interface ICloneable { }
+\end{lstlisting}
+\end{noteblock}
+\vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
+class Student : Person { }
 class Student : Person, IComparable, ICloneable { }
 class Student : IComparable { }
 class Student : ICloneable, IComparable { }
+
+struct Student : IComparable { }
 \end{lstlisting}
 \end{yesblock}
 \vfill
@@ -80,6 +94,8 @@ class Student : ICloneable, IComparable { }
 \begin{lstlisting}[basicstyle=\small]
 class Student : Person, Object { }
 class Student : Person, LivingEntity { }
+
+struct Student : Person { }
 \end{lstlisting}
 \end{noblock}
 \end{frame}
@@ -130,6 +146,11 @@ Student studentWithParam = new Student("netid");
 
 
 \begin{frame}[fragile]
+\vfill
+\begin{bitemize}{}
+\item pokud kompilátor nemá k dispozici konstruktor k zavolání a není možné korektně inicializovat objekt, dojde k chybě kompilace
+\end{bitemize}
+\vfill
 \begin{noblock}
 \begin{lstlisting}[basicstyle=\small]
 class Person
@@ -146,6 +167,7 @@ class Student : Person
 }
 \end{lstlisting}
 \end{noblock}
+\vfill
 \end{frame}
 
 
@@ -215,9 +237,9 @@ class Student : Person
 \item všude kde je očekáván předek je možné dosadit potomka
 \end{itemize}
 
-\item potomek může metody předka zakrýt nebo přepsat
+\item potomek může metody předka \textbf{zakrýt} nebo \textbf{přepsat}
 \begin{itemize}
-\item v javě je automaticky uplatňováno přepsání (tzv. pozdní vazba)
+\item v Javě je automaticky uplatňováno přepsání (tzv. pozdní vazba)
 \item v C++ je časná/pozdní vazba rozlišena modifikátorem u metody
 \item v C\# je uplatněn systém podobný C++
 \end{itemize}
@@ -261,7 +283,7 @@ person = student;
 
 \begin{frame}[fragile]
 \begin{bitemize}{Zakrývání}
-\item zakrývání znamená vytvoření metody se stejným názvem jako v~předkovi
+\item zakrývání znamená vytvoření metody se stejným názvem (resp. signaturou) jako v~předkovi
 \begin{itemize}
 \item tato metoda, ale nemá polymorfní chování
 \item metodu je nutné volat přímo nad instancí potomka, jinak se její kód nepoužije
@@ -526,7 +548,7 @@ class Student : IStringizable
 \begin{bitemize}{Explicitní realizace rozhraní}
 \item nemá obdobu v Javě nebo C++
 \item metody rozhraní lze volat pouze nad typem rozhraní
-\item tento způsob realizace lze využít k rozlišení rozhraní, které mají složky se stejným identifikátorem
+\item tento způsob realizace lze využít k rozlišení rozhraní, které mají složky se stejným identifikátorem (signaturou)
 \end{bitemize}
 \vfill
 \begin{yesblock}

@@ -146,7 +146,7 @@ static void TestStudent()
 \item \lstinline|abstract| -- abstraktní třída (nelze vytvořit instanci, obsahuje abstraktní složky)
 \item \lstinline|static| -- statická třída (nelze vytvořit instanci, pouze statické složky)
 \item \lstinline|sealed| -- zapečetěná třída (nelze z ní dědit)
-\item \lstinline|partial| -- třída rozdělená do více souborů
+\item \lstinline[morekeywords=partial]|partial| -- třída rozdělená do více souborů
 \end{bitemize}
 \vfill
 \end{frame}
@@ -187,17 +187,38 @@ static void TestStudent()
 \vfill
 \begin{yesblock}
 \begin{lstlisting}
+// nastavení reference na null
 Osoba neexistujiciOsoba = null;
 
+// volání bezparametrického konstruktoru
 Osoba osobaVychozi = new Osoba();
 
+// volání parametrického konstruktoru
 Osoba osobaParametricka = new Osoba("Franta", "Maly");
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
 
-// C# podporuje okamžitě inicializovat veřejné složky
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{}
+\item C\# umožňuje kombinovat volání konstruktoru a inicializaci vlastností
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
 Osoba osobaZvlastni = new Osoba() {
 	Jmeno = "Franta",
 	Prijmeni = "Maly"
 };
+
+// uvedený kód je ekvivalentem:
+Osoba osobaZvlastni = new Osoba();
+osobaZvlastni.Jmeno = "Franta";
+osobaZvlastni.Prijmeni = "Maly";
 \end{lstlisting}
 \end{yesblock}
 \vfill
@@ -594,6 +615,10 @@ public string FirstName
 \vfill
 \begin{bitemize}{}
 \item lze definovat viditelnost operací
+\begin{itemize}
+\item pokud není uvedena u konkrétní operace, použije se viditelnost uvedená u vlastnosti
+\end{itemize}
+
 \end{bitemize}
 \vfill
 \begin{yesblock}
@@ -634,7 +659,9 @@ public int PocetStudentu
 \frametitle{Vlastnosti -- automaticky implementované vlastnosti}
 \vfill
 \begin{bitemize}{}
-\item atribut (datová složka) je neviditelná a automaticky vytvořena kompilátorem
+\item kompilátor na pozadí vytvoří atribut pro uložení hodnoty
+\item atribut (datová složka) je neviditelná a není přímo přístupná
+\item není možné upravit chování \lstinline|get| nebo \lstinline|set| operace, lze upravit viditelnost
 \end{bitemize}
 \vfill
 \begin{yesblock}
@@ -817,6 +844,10 @@ double piSquare = MyMath.GetPowerOfPi(2);
 \frametitle{Metody -- ref}
 \begin{bitemize}{}
 \item parametr je možné předat odkazem (referencí)
+\begin{itemize}
+\item u parametru i u hodnoty argumentu je nutné uvést \lstinline|ref|
+\end{itemize}
+
 \end{bitemize}
 \vfill
 \begin{yesblock}
@@ -846,6 +877,10 @@ Console.WriteLine($"{intValue}");
 \frametitle{Metody -- out}
 \begin{bitemize}{}
 \item parametr může být výstupní
+\begin{itemize}
+\item u parametru i u hodnoty argumentu je nutné uvést \lstinline|out|
+\end{itemize}
+
 \end{bitemize}
 \vfill
 \begin{yesblock}
@@ -902,6 +937,11 @@ if(AuthenticationService.Authentize("password", out string username))
 \frametitle{Metody -- params}
 \begin{bitemize}{}
 \item je možné volat metodu s libovolným počtem parametrů (stejného typu)
+\begin{itemize}
+\item předáváno jako parametr typu pole s mod. \lstinline|params|
+\item \lstinline|params| parametr musí být uveden jako poslední v seznamu parametrů
+\end{itemize}
+
 \end{bitemize}
 \vfill
 \begin{yesblock}
@@ -934,6 +974,10 @@ int result = Summer.SumArguments(10, 20, 30, 40, 50, 60, 70);
 \frametitle{Metody -- pojmenované argumenty}
 \begin{bitemize}{}
 \item při volání metody je možné specifikovat argumenty v libovolném pořadí, pokud je uveden jejich název
+\begin{itemize}
+\item zapisuje se jako: \lstinline|názevParametru: hodnota|
+\end{itemize}
+
 \end{bitemize}
 \vfill
 \begin{yesblock}
@@ -961,7 +1005,7 @@ AddProduct(productName: "Toy", 10, description: "Kid's toy");
 \frametitle{Metody -- ref return}
 
 \begin{bitemize}{}
-\item z metody je možné vracet referenci (C\# 7)
+\item z metody je možné vracet referenci (C\# 7, mod. \lstinline|ref|)
 \end{bitemize}
 \vfill
 \begin{yesblock}
@@ -998,6 +1042,7 @@ Console.WriteLine($"{string.Join(" ", array)}");
 \begin{bitemize}{}
 \item (statická) metoda se tváří jako (instanční) metoda jiné třídy
 \begin{itemize}
+\item rozšířená třída je uvedena jako první parametr metody s mod. \lstinline|this|
 \item metoda se volá přímo nad objektem rozšířené třídy
 \end{itemize}
 
