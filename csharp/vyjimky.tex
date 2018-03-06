@@ -171,7 +171,7 @@ public class Exception : ISerializable, _Exception
 
 \begin{frame}[fragile]
 \begin{bitemize}{Řízené použití prostředků pomocí try -- finally}
-\item konstrukci \lstinline|try -- finally| lze využít pro řízený přístup k prostředkům
+\item konstrukci \lstinline|try - finally| lze využít pro řízený přístup k prostředkům
 \item blok \lstinline|finally| je proveden i v případě výskytu libovolné výjimky uvnitř \lstinline|try| bloku a je tak možné uklidit prostředky
 \item rozhraní \lstinline|IDisposable| slouží k uvolnění těchto prostředků
 \end{bitemize}
@@ -179,16 +179,16 @@ public class Exception : ISerializable, _Exception
 \begin{yesblock}
 \begin{lstlisting}
 {
-	Font font1 = new Font("Arial", 10.0f);
-	try
-	{
-		byte charset = font1.GdiCharSet;
-	}
-	finally
-	{
-		if (font1 != null)
-			((IDisposable)font1).Dispose();
-	}
+    Font font1 = new Font("Arial", 10.0f);
+    try
+    {
+        byte charset = font1.GdiCharSet;
+    }
+    finally
+    {
+        if (font1 != null)
+            ((IDisposable)font1).Dispose();
+    }
 }
 \end{lstlisting}
 \end{yesblock}

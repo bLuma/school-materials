@@ -173,6 +173,9 @@ static void TestStudent()
 \end{frame}
 
 
+
+
+
 \pkapitola{Objekty}
 
 
@@ -311,6 +314,41 @@ class Osoba
 \end{bitemize}
 \vfill
 \end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Vnořené třídy a struktury}
+\item třída může obsahovat vnořené třídy a struktury
+\item mezi nadřazenou a vnořenou třídou neexistuje žádné spojení
+\begin{itemize}
+\item chování odpovídá v Javě vnořené třídě definované jako statické
+\item stejné chování mají vnořené typy v C++
+\end{itemize}
+
+\item ve vnořených typech se, ale uplatňuje genericita nadřazeného prvku
+\item objekt vnořeného typ se vytváří pomocí nadřazeného typu, nikoliv instance
+\begin{itemize}
+\item \lstinline|Outer.Inner instance = new Outer.Inner(...);|
+\end{itemize}
+
+\end{bitemize}
+\vfill
+\begin{noblock}
+\begin{lstlisting}
+class Outer { private int i; class Inner { ...  } }
+
+// Inner::method
+void Method() {
+  // všechny zápisy jsou neplatné - neexistuje spojení mezi objekty
+  Outer.this.i = 0;
+  Outer.i = 0;
+  i = 0;
+}
+\end{lstlisting}
+\end{noblock}
+\end{frame}
+
 
 
 
@@ -749,7 +787,7 @@ těloMetody:
 \item \lstinline|new| -- zakrývání metody z předka
 \item \lstinline|virtual| -- virtuální metoda (polymorfizmus)
 \item \lstinline|override| -- přetížená metoda (polymorfizmus)
-\item \lstinline|abstract| -- abstraktní metoda
+\item \lstinline|abstract| -- abstraktní metoda (polymorfizmus)
 \item \lstinline[morekeywords=async]|async| -- asynchronní metody
 \end{bitemize}
 \vfill

@@ -43,7 +43,7 @@
 \end{bitemize}
 \vfill
 \begin{yesblock}
-\begin{lstlisting}
+\begin{lstlisting}[deletekeywords={if,else}]
 #if (DEBUG && !MYTEST)
     Console.WriteLine("DEBUG is defined");
 #elif (!DEBUG && MYTEST)
@@ -94,7 +94,7 @@ public static void Method2()
 \end{bitemize}
 \vfill
 \begin{yesblock}
-\begin{lstlisting}
+\begin{lstlisting}[deletekeywords={if,is}]
 #define DEBUG  
 class MainClass   
 {  

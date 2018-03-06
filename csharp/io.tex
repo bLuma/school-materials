@@ -107,6 +107,8 @@ int char = reader.Read();
 char[] buffer = new char[100];
 reader.Read(buffer, 0, buffer.Length);
 
+string line = reader.ReadLine();
+
 string tillTheEnd = reader.ReadToEnd();
 \end{lstlisting}
 \end{yesblock}

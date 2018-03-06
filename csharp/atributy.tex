@@ -1,0 +1,148 @@
+\nezkouskove
+
+\hkapitola{Atributy}
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{Atributy}
+\item obdoba anotací z Javy
+\item slouží k doplnění metadat k jednotlivým typům a jejich složkám
+\item atributy jsou realizovány jako potomci třídy \lstinline|System.Attribute|
+\item atribut může definovat sadu parametrů, které je u něj možné nastavit
+\item informace o atributech lze získat za běhu pomocí reflexe
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+[System.Serializable]  
+public class SampleClass  
+{  
+    // Objects of this type can be serialized.  
+}  
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+// použití nativní funkce z DLL knihovny
+[System.Runtime.InteropServices.DllImport("user32.dll")]  
+extern static void SampleMethod();  
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+void MethodA([In][Out] ref double x) { }  
+void MethodB([Out][In] ref double x) { }  
+void MethodC([In, Out] ref double x) { }  
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+[Conditional("DEBUG"), Conditional("TEST1")]  
+void TraceMethod()  
+{  
+    // ...  
+}  
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{Definice nového atributu}
+\item je třída dědící z \lstinline|System.Attribute|
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+[AttributeUsage(AttributeTargets.Class |  
+                  AttributeTargets.Struct)  
+]  
+public class AuthorAttribute : Attribute  
+{  
+    private string name;  
+    public double version;  
+
+    public Author(string name)  
+    {  
+        this.name = name;  
+        version = 1.0;  
+    }  
+}  
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+[Author("P. Ackerman", version = 1.1)]  
+class SampleClass  
+{  
+    // P. Ackerman's code goes here...  
+}  
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+Type t = typeof(SampleClass);
+Attribute[] attrs = Attribute.GetCustomAttributes(t);
+
+foreach (Attribute attr in attrs)  
+{  
+    if (attr is Author)  
+    {  
+        AuthorAttribute a = (AuthorAttribute)attr;  
+        Console.WriteLine("   {0}, version {1:f}", a.GetName(), a.version);  
+    }  
+}  
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{}
+\item \lstinline|AttributeUsage| specifikuje nad jakými typy/komponentami lze atribut použít, je možné povolit vícenásobné použití nad jednou komponentou
+\item u atributu je možné uvést pro co konkrétné platí
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+// default: applies to method  
+[SomeAttr]  
+int Method1() { return 0; }  
+
+// applies to method  
+[method: SomeAttr]  
+int Method2() { return 0; }  
+
+// applies to return value  
+[return: SomeAttr]  
+int Method3() { return 0; }  
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+% attribute targetting
+% custom attribute
+
+
+\zkouskove

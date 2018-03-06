@@ -72,12 +72,12 @@ public static explicit operator cílovýTyp ( zdrojovýTyp parametr ) tělo
 \begin{itemize}
 \item implicitní
 \begin{itemize}
-\item \lstinline|cílovýTyp proměnná = objektZrojovéhoTypu|
+\item \lstinline|cílovýTyp proměnná = objektZdrojovéhoTypu|
 \end{itemize}
 
 \item explicitní
 \begin{itemize}
-\item \lstinline|cílovýTyp proměnná = (cílovýTyp)objektZdrojovéhoTypu|
+\item \lstinline|cílovýTyp proměnná  = (cílovýTyp)objektZdrojovéhoTypu|
 \end{itemize}
 \end{itemize}
 
@@ -92,7 +92,7 @@ public static explicit operator cílovýTyp ( zdrojovýTyp parametr ) tělo
 \vfill
 \begin{bitemize}{}
 \item definují přetížení operátoru \lstinline|[ ]| pro přístup k prvkům/datům
-\item definují se jako nestatické vlastnosti
+\item definují se jako \textbf{instanční} (nestatické) \textbf{vlastnosti}
 \end{bitemize}
 \vfill
 \begin{noteblock}{}
@@ -124,7 +124,7 @@ class IndexerExample
 \begin{bitemize}{}
 \item je možné definovat několik různých přetížení indexerů s různými parametry
 \item rozhraní mohou definovat indexery
-\item indexer může data číst/zapisovat nebo provádět obojí
+\item indexer může data číst (\lstinline|get|) / zapisovat (\lstinline|set|) nebo provádět obojí
 \end{bitemize}
 \vfill
 \begin{yesblock}

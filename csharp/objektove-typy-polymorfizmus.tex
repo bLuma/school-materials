@@ -446,13 +446,13 @@ Person person = new Person();
 \begin{lstlisting}[basicstyle=\small]
 interface IExample
 {
-    // Property
+    // Vlastnost
     int Property { get; set; }
-    // Method
+    // Metoda
     void Method(int paramAlfa, int paramBeta);
     // Indexer
     int this[int param] { get; set; }
-    // Event
+    // Událost
     event ExampleEventHandler Event;
 }
 \end{lstlisting}
@@ -461,12 +461,28 @@ interface IExample
 
 
 
+\begin{frame}[fragile]
+\begin{bitemize}{Implicitní a explicitní realizace rozhraní}
+\item implicitní realizace
+\begin{itemize}
+\item stejné jako v Javě
+\end{itemize}
+
+\item explicitní realizace
+\begin{itemize}
+\item u definice složky v realizující třídě se uvede název rozhraní
+\item taková složka může být vyvolána pouze nad typem rozhraní a nikoliv nad typem realizující třídy/struktury
+\end{itemize}
+
+\end{bitemize}
+\end{frame}
+
+
+
+
 
 \begin{frame}[fragile]
-\vfill
-\begin{block}{}
-Implicitní realizace rozhraní
-\end{block}
+\frametitle{Implicitní realizace rozhraní}
 \vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
@@ -516,10 +532,7 @@ var b = istringizable.Stringize();
 
 
 \begin{frame}[fragile]
-\vfill
-\begin{block}{}
-Explicitní realizace rozhraní
-\end{block}
+\frametitle{Explicitní realizace rozhraní}
 \vfill
 \begin{yesblock}
 \begin{lstlisting}[basicstyle=\small]
@@ -587,7 +600,7 @@ class Rectangle : IDrawable, ISurface
 {
     public void Draw()
     {
-        // ...
+        // IDrawable i ISurface
     }
 }
 \end{lstlisting}
