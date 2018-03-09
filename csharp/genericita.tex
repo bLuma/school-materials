@@ -34,13 +34,157 @@ class GenericHolder<T>
 \vfill
 \begin{yesblock}
 \begin{lstlisting}
-List<int> list1 = new List<int>();
+GenericHolder<int> intHolder = new GenericHolder<int>();
+intHolder.Value = 123;
 
-// No boxing, no casting:
-list1.Add(3);
+Console.WriteLine(intHolder.Value);
 
-// Compile-time error:
-// list1.Add("It is raining in Redmond.");
+// Chyba kompilace:
+// intHolder.Value = "abcde";
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{Použití genericity}
+\item generická třída/rozhraní -- za názvem třídy/rozhraní se uvede seznam typových parametrů
+\begin{itemize}
+\item \lstinline|class GenericClass<T> { }|
+\end{itemize}
+
+\item generická metoda -- obdobně za názvem metody
+\begin{itemize}
+\item \lstinline|public void GenericMethod<T>() { }|
+\end{itemize}
+
+\item generický delegát -- obdobně
+\item pole a genericita -- jednorozměrná pole automaticky realizují rozhraní \lstinline|IList<T>|, použitelné pro čtení hodnot, modifikace vyvolají výjimku
+\end{bitemize}
+\vfill
+\begin{bitemize}{Vytváření generických objektů/proměnných/\ldots}
+\item při práci s generickými typy je nutné uvádět dosazené typy (\lstinline|Typ<KonkrétníTyp, JinýKonkrétníTyp>|)
+\begin{itemize}
+\item i při vytváření objektu, neexistuje tu obdoba Javovského diamond operátoru
+\end{itemize}
+\end{bitemize}
+\vfill
+\end{frame}
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{Pojmenování typových parametrů}
+\item obecné \lstinline|T| v mnoha případech postačí
+\item pokud je více typových parametrů, měly by být pojmenovány podle jejich účelu
+\begin{itemize}
+\item \lstinline|TÚčel, TJinýÚčel|
+\item pokud je typový parametr omezen na určitý typ, mělo by jeho označení vycházet z omezujícího typu
+\end{itemize}
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+public interface ISessionChannel<TSession> { /*...*/ }
+public delegate TOutput Converter<TInput, TOutput>(TInput from);
+public class List<T> { /*...*/ }
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{Omezení typových parametrů}
+\item C\# umožňuje definovat omezení, které musí platit pro typový parametr
+\item \lstinline[morekeywords={where}]|where T : omezeníTypovéhoParametru|
+\end{bitemize}
+\vfill
+\begin{bitemize}{}
+\item \lstinline|struct| -- musí být hodnotového typu (nezahrnuje nullable typy)
+\item \lstinline|class| -- musí být referenčního typu (třída, rozhraní, delegát, pole)
+\item \lstinline|new()| -- musí mít definovaný veřejný bezparametrický konstruktor
+\item \lstinline|názevTřídy| -- musí být potomkem dané třídy
+\item \lstinline|názevRozhraní| -- musí realizovat dané rozhraní
+\item \lstinline|U| -- musí být stejného typu nebo potomkem jako obecný typ \lstinline|U|
+\end{bitemize}
+\vfill
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}[morekeywords={where}]
+class OrderedList<T> where T : IComparable<T>
+{
+    // ...
+
+    public void Add(T item)
+    {
+        if (item.CompareTo(...) > 0)
+            // ...
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{}
+\item je možné definovat více omezení na jeden typový parametr
+\item je možné definovat omezení pro více typových parametrů
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}[morekeywords={where}]
+class EmployeeList<T> where T : Employee, IEmployee, System.IComparable<T>, new()
+{
+	// ...
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}[morekeywords={where}]
+class Base { }
+class Test<T, U>
+    where U : struct
+    where T : Base, new() { }
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Inicializace proměnné typového parametru}
+\item v obecném případě se může jednat o hodnotový i referenční typ
+\begin{itemize}
+\item hodnota \lstinline|null| je platná jen pro refereční typy
+\item získat výchozí hodnotu pro daný typ je možné pomocí \lstinline|default(Typ)|
+\end{itemize}
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+class PtrCounter<T>
+{
+    public T Ptr { get; set; }
+    public int References { get; set; }
+
+    public PtrCounter()
+    {
+        Ptr = default(T);
+        References = 0;
+    }
+
+    // ...
+}
 \end{lstlisting}
 \end{yesblock}
 \end{frame}

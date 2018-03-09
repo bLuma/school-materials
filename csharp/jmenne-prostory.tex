@@ -2,15 +2,18 @@
 
 \begin{frame}[fragile]
 \frametitle{Jmenné prostory}
-
+\vfill
 \begin{bitemize}{namespace}
 \item stejně jako balíčky slouží k logickému oddělení kódu -- rozdělení na spolu související komponenty a zamezení konfliktů jmen
 \item jmenné prostory na rozdíl od Java balíčků nevyžadují přesnou organizaci na disku
 \item jmenné prostory je možné libovolně vnořovat
-\item uvnitř jmenného prostoru jsou vidět komponenty definované v tomto jmenném prostoru
-\item []
-\item komponenty definované v jiném jmenném prostoru je nutné zpřístupnit užitím plné cesty a názvu komponenty nebo zpřístupnit jmenný prostor pomocí \lstinline|using|
 \end{bitemize}
+\vfill
+\begin{bitemize}{}
+\item uvnitř jmenného prostoru jsou vidět složky definované v tomto jmenném prostoru
+\item složky definované v jiném jmenném prostoru je nutné zpřístupnit užitím plné cesty a názvu komponenty nebo zpřístupnit jmenný prostor pomocí \lstinline|using|
+\end{bitemize}
+\vfill
 \end{frame}
 
 
@@ -67,7 +70,7 @@ namespace First
 \frametitle{Použití jmenných prostorů -- zpřístupnění jiného jmenného prostoru}
 \vfill
 \begin{bitemize}{}
-\item standardně je nutné uvést plnou \uv{cestu} k dané komponentě
+\item standardně je nutné uvést plnou \uv{cestu} k dané složce
 \end{bitemize}
 \vfill
 \begin{yesblock}

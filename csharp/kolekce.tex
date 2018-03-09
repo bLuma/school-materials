@@ -12,3 +12,112 @@
 
 %SystemCollectionsConcurrent
 %ConcurrentDictionary/Queue/Stack
+%ConcurrentBag, BlockingCollection
+
+
+\hkapitola{Kolekce}
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{Kolekce}
+\item podobně jako v Javě se v základní knihovně nachází celá řada kolekcí pro ukládání dat
+\item kolekce se liší způsobem organizace dat a jejich účelem (a tedy i složitostí a variabilitou základních operací)
+\item od C\# 2 přibyla genericita a s ní také generické kolekce a rozhraní
+\end{bitemize}
+\vfill
+\begin{bitemize}{Jmenné prostory kolekcí}
+\item \lstinline|System.Collections| -- základní kolekce
+\item \lstinline|System.Collections.Generic| -- generické kolekce
+\item \lstinline|System.Collections.Concurrent| -- kolekce pro paralelní programování (synchronizované kolekce)
+\end{bitemize}
+\vfill
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{System.Collections.Generic -- obecná rozhraní}
+\item \lstinline|ICollection<T>| -- základ kolekčního chování
+\begin{itemize}
+\item \footnotesize Add(T), Clear(), Contains(T), CopyTo(T[],int), Remove(T), Count, IsReadOnly
+\end{itemize}
+
+\item \lstinline|IComparer<T>| -- porovnání dvou objektů (větší menší)
+\begin{itemize}
+\item \footnotesize Compare(T,T)
+\end{itemize}
+
+\item \lstinline|IEqualityComparer<T>| -- porovnání dvou objektů (shoda neshoda)
+\begin{itemize}
+\item \footnotesize Equals(T,T)
+\end{itemize}
+
+\item \lstinline|IEnumerable<T>| -- enumerovatelná (iterovatelná) kolekce
+\begin{itemize}
+\item \footnotesize GetEnumerator()
+\end{itemize}
+
+\item \lstinline|IEnumerator<T>| -- enumerátor (iterátor)
+\begin{itemize}
+\item \footnotesize Current, MoveNext(), Reset()
+\end{itemize}
+
+\item \lstinline|IReadOnlyCollection<T>| -- kolekce pouze pro čtení
+\begin{itemize}
+\item \footnotesize rozh. IEnumerable, Count
+\end{itemize}
+
+\end{bitemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{System.Collections.Generic -- rozhraní kolekcí}
+\item \lstinline|IList<T>| -- seznam prvků, prvky identifikovány pořadím v kolekci
+\begin{itemize}
+\item \footnotesize IndexOf(T), Insert(int, T), RemoveAt(int), this[int]
+\end{itemize}
+
+\item \lstinline|IDictionary<TKey, TValue>| -- asociativní kolekce, přiřazuje ke klíčům konkrétní hodnoty
+\begin{itemize}
+\item \footnotesize Add(TKey,TValue), ContainsKey(TKey), Remove(TKey), TryGetValue(TKey,out TValue), Keys, Values, this[TKey]
+\end{itemize}
+
+\item \lstinline|ISet<T>| -- množina prvků
+\begin{itemize}
+\item \footnotesize množinové operace (průnik, sjednocení, \ldots), test shody množiny, test je podmnožina, \ldots
+\end{itemize}
+
+\item \lstinline|IReadOnlyList<T>|
+\item \lstinline|IReadOnlyDictionary<TKey, TValue>|
+\end{bitemize}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{System.Collections.Generic -- kolekce}
+\item \lstinline|List<T>|
+\item \lstinline|LinkedList<T>|
+\item \lstinline|SortedList<TKey, TValue>|
+\item []
+\item \lstinline|Dictionary<TKey, TValue>|
+\item \lstinline|SortedDictionary<TKey, TValue>|
+\item \lstinline|SortedSet<T>|
+\item []
+\item \lstinline|Queue<T>|
+\item \lstinline|Stack<T>|
+\end{bitemize}
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
