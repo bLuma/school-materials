@@ -4,9 +4,9 @@
 \frametitle{Jmenné prostory}
 \vfill
 \begin{bitemize}{namespace}
-\item stejně jako balíčky slouží k logickému oddělení kódu -- rozdělení na spolu související komponenty a zamezení konfliktů jmen
-\item jmenné prostory na rozdíl od Java balíčků nevyžadují přesnou organizaci na disku
-\item jmenné prostory je možné libovolně vnořovat
+\item stejně jako balíčky slouží k logickému oddělení kódu -- rozdělení na spolu související komponenty a \textbf{zamezení konfliktů jmen}
+\item jmenné prostory na rozdíl od Java balíčků \textbf{nevyžadují přesnou organizaci na disku}
+\item jmenné prostory je možné \textbf{libovolně vnořovat}
 \end{bitemize}
 \vfill
 \begin{bitemize}{}
@@ -17,9 +17,14 @@
 \end{frame}
 
 
-\begin{frame}[fragile]
-\frametitle{Definovaní jmenných prostorů}
 
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{Definování jmenných prostorů}
+\item jmenný prostor je možné definovat na globální úrovni nebo v jiném jmenném prostoru
+\item [] \lstinline|namespace NázevJmennéhoProstoru { ... }|
+\end{bitemize}
+\vfill
 \begin{yesblock}
 \begin{lstlisting}
 namespace Game
@@ -33,6 +38,18 @@ namespace Game
 }
 \end{lstlisting}
 \end{yesblock}
+\vfill
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{Vnořené jmenné prostory}
+\item u vnořených jmenných prostorů není nutné vytvářet N vnořených bloků \lstinline|namespace|, ale postačí uvést plnou cestu k jmennému prostoru 
+\end{bitemize}
 \vfill
 \begin{yesblock}
 \begin{lstlisting}
@@ -82,6 +99,7 @@ namespace Second
         static void Method()
         {
             // FirstConst // error CS0103
+            // FirstClass.FirstConst // error CS0103
             var v = First.FirstClass.FirstConst;
         }
     }
