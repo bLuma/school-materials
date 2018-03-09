@@ -56,6 +56,71 @@ public static typ operator symbol ( parametry ) tělo
 \end{frame}
 
 
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+class Complex
+{
+    public double Re { get; set; }
+    public double Im { get; set; }
+
+    public static Complex operator +(Complex a, Complex b)
+    {
+        return new Complex()
+        {
+            Re = a.Re + b.Re,
+            Im = a.Im + b.Im
+        };
+    }
+
+    // ...
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+    public static bool operator ==(Complex a, Complex b)
+    {
+        return a.Re == b.Re && a.Im == b.Im;
+    }
+
+    public static bool operator !=(Complex a, Complex b)
+    {
+        return a.Re != b.Re || a.Im != b.Im;
+    }
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+    public static Complex operator ++(Complex c)
+    {
+        return new Complex()
+        {
+            Re = c.Re + 1,
+            Im = c.Im
+        };
+    }
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
 \begin{frame}[fragile]
 \frametitle{Přetížení oprerátoru -- konverzní operátory}
 \vfill
@@ -84,6 +149,40 @@ public static explicit operator cílovýTyp ( zdrojovýTyp parametr ) tělo
 \end{bitemize}
 \vfill
 \end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+    public static explicit operator double(Complex c)
+    {
+        return c.Re;
+    }
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+Complex c = new Complex()
+{
+    Re = 10,
+    Im = 5
+};
+
+double realPart = (double)c;
+Console.WriteLine($"{realPart}");
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+
+
+
+
 
 \zkouskove
 
@@ -134,4 +233,29 @@ int numberThree = indexer[2];
 \end{lstlisting}
 \end{yesblock}
 \vfill
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+class Table
+{
+    public Row this[int row]
+    {
+        get => GetRow(row);
+        set => SetRow(row, value);
+    }
+
+    public string this[string identifier]
+    {
+        get => GetMetadata(identifier);
+    }
+
+    // ...
+
+}
+\end{lstlisting}
+\end{yesblock}
 \end{frame}

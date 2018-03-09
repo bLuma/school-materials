@@ -306,7 +306,7 @@ tc = (int i) => i + 1;
 // datové typy parametrů mohou být odvozeny
 tc = (i) => i + 1;
 
-// pokud je pouze jeden parametr není nutné uvádět závorky
+// pokud je pouze jeden parametr, není nutné uvádět závorky
 tc = i => i + 1;
 
 int result = tc(1);
@@ -639,8 +639,7 @@ static void Main(string[] args)
     Console.ReadKey();
 }
 
-private static void TimerTickHandler(object sender, EventArgs eventArgs) =>
-    Console.WriteLine("Tick!");
+private static void TimerTickHandler(object sender, EventArgs eventArgs) => Console.WriteLine("Tick!");
 \end{lstlisting}
 \end{yesblock}
 \vfill

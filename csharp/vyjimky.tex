@@ -88,6 +88,29 @@ catch
 
 
 \begin{frame}[fragile]
+\begin{bitemize}{Zachycení výjimky -- a rethrow}
+\item zachycenou výjimku je možné znovu vyvolat a dále šířit pomocí \lstinline|throw|
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+try
+{
+    Console.WriteLine("pre throw");
+    ComplexCalculation();
+    Console.WriteLine("post throw");
+}
+catch (Exception)
+{
+    Console.WriteLine("Catched!");
+    throw;
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
 \begin{bitemize}{Blok finally}
 \item \lstinline|finally| -- nepovinné, blok je proveden vždy
 \end{bitemize}
