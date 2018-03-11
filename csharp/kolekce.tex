@@ -51,7 +51,7 @@
 \item \footnotesize Equals(T,T)
 \end{itemize}
 
-\item \lstinline|IEnumerable<T>| -- enumerovatelná (iterovatelná) kolekce
+\item \lstinline|IEnumerable<T>| -- enumerovatelná (iterovatelná) kolekce (\lstinline|foreach|)
 \begin{itemize}
 \item \footnotesize GetEnumerator()
 \end{itemize}
@@ -98,17 +98,72 @@
 
 \begin{frame}[fragile]
 \begin{bitemize}{System.Collections.Generic -- kolekce}
-\item \lstinline|List<T>|
-\item \lstinline|LinkedList<T>|
+\item \lstinline|List<T>| -- \uv{ArrayList}
+\item \lstinline|LinkedList<T>| -- spojový seznam
 \item \lstinline|SortedList<TKey, TValue>|
 \item []
-\item \lstinline|Dictionary<TKey, TValue>|
+\item \lstinline|Dictionary<TKey, TValue>| -- tabulka 
 \item \lstinline|SortedDictionary<TKey, TValue>|
-\item \lstinline|SortedSet<T>|
+\item \lstinline|SortedSet<T>| -- množina hodnot
+\item \lstinline|HashSet<T>|
 \item []
-\item \lstinline|Queue<T>|
-\item \lstinline|Stack<T>|
+\item \lstinline|Queue<T>| -- fronta 
+\item \lstinline|Stack<T>| -- zásobník
 \end{bitemize}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+List<string> listOfStrings = new List<string>()
+{
+    "Hello",
+    "World"
+};
+
+string hello = listOfStrings[0];
+
+listOfStrings.Add("!");
+listOfStrings.Remove("Hello");
+listOfStrings.Insert(1, hello);
+
+foreach (string str in listOfStrings)
+{
+    Console.WriteLine(str);
+}
+
+// World Hello !
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+LinkedList<string> linkedList = new LinkedList<string>();
+linkedList.AddFirst("2");
+linkedList.AddFirst("1");
+linkedList.AddLast("3");
+
+LinkedListNode<string> node = linkedList.Find("2");
+node.Value = "-2";
+linkedList.AddAfter(node, "2.5");
+linkedList.AddBefore(node, "1.5");
+
+foreach (var item in linkedList)
+{
+    Console.WriteLine(item);
+}
+
+// 1 1.5 -2 2.5 3 
+\end{lstlisting}
+\end{yesblock}
 \end{frame}
 
 
@@ -116,8 +171,86 @@
 
 
 
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+Dictionary<string, double> prevodyJednotek = new Dictionary<string, double>()
+{
+    {"dm",  0.1},
+    {"cm",  0.01}
+};
+
+prevodyJednotek["mm"] = 0.001;
+double mmRatio = prevodyJednotek["mm"];
+
+if (prevodyJednotek.TryGetValue("cm", out double cm)) {
+    // ...
+}
+
+prevodyJednotek.Add("um", 0.000001);
+bool hasUm = prevodyJednotek.ContainsKey("um");
+
+double value = prevodyJednotek["pm"] * 25; // KeyNotFoundException
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
 
 
 
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}[deletekeywords={set}]
+HashSet<int> set = new HashSet<int>();
+set.Add(1);
+set.Add(1);
+set.Add(2);
+set.Add(1);
+set.Add(3);
+set.Add(5);
+set.Add(100);
+set.Add(1500);
+set.Add(500);
 
+bool hasFour = set.Contains(4);
+bool isSubset = set.IsSubsetOf(new List<int>() { 2, 5 });
+
+foreach (var item in set)
+{
+    Console.WriteLine(item);
+}
+
+// 1 2 3 5 100 1500 500
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+class MyInt { public int Integer { get; set; } }
+class MyIntComparer : IComparer<MyInt>
+{
+    public int Compare(MyInt x, MyInt y) => x.Integer - y.Integer;
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+SortedList<MyInt, string> sl = new SortedList<MyInt, string>(
+    new MyIntComparer());
+sl[new MyInt() { Integer = 10 }] = "V10";
+sl[new MyInt() { Integer = 1 }] = "V1";
+sl[new MyInt() { Integer = 30 }] = "V30";
+
+foreach (KeyValuePair<MyInt, string> item in sl)
+{
+    Console.WriteLine(item.Value);
+}
+
+// V1 V10 V30
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
 

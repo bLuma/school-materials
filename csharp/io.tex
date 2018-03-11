@@ -19,6 +19,112 @@
 
 \hkapitola{Input/output}
 
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Abstrakce souborového systému}
+\item Jmenný prostor \lstinline|System.IO|
+\item Základní třídy:
+\begin{itemize}
+\item \lstinline|File| -- statická třída pro práci se soubory
+\item \lstinline|Path| -- statická třída pro práci s cestami
+\item \lstinline|Directory| -- statická třída pro práci s adresáři
+\item[]
+\item \lstinline|FileInfo| -- objekt představuje konkrétní soubor
+\item \lstinline|DirectoryInfo| -- objekt představuje konkrétní adresář
+\item \lstinline|DriveInfo| -- objekt představuje konkrétní jednotku
+
+\end{itemize}
+
+\end{bitemize}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+if (File.Exists(".\\file.txt"))
+{
+    // ...
+}
+
+FileInfo file = new FileInfo(".\\file.txt");
+if (file.Exists)
+{
+    // ...
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+FileStream fs = File.Create(".\\created.txt");
+fs.Close();
+
+FileStream fsInstance = new FileInfo(".\\created.txt").Create();
+fsInstance.Close();
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+DirectoryInfo di = new DirectoryInfo(".\\");
+foreach (FileInfo file in di.EnumerateFiles())
+{
+    Console.WriteLine($"{file.Name} - {file.Extension} - {file.LastAccessTime}");
+}
+
+/*
+ConsoleApp1.exe - .exe - 05.02.2018 22:07:58
+ConsoleApp1.exe.config - .config - 05.02.2018 22:07:58
+ConsoleApp1.pdb - .pdb - 05.02.2018 22:07:58
+created.txt - .txt - 11.03.2018 10:23:01
+ */
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+DirectoryInfo di = new DirectoryInfo(".\\nonExistentDirectory");
+di.Create();
+
+Console.WriteLine(di.FullName);
+// C:\Users\<...>\ConsoleApp1\bin\Debug\nonExistentDirectory
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+DriveInfo di = new DriveInfo("C");
+
+var sizeInGB = di.TotalSize / 1024 / 1024 / 1024;
+var freeInGB = di.TotalFreeSpace / 1024 / 1024 / 1024;
+var fs = di.DriveFormat;
+
+Console.WriteLine($"{fs} - free {freeInGB} / {sizeInGB} GB");
+// NTFS - free 125 / 432 GB
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+
+
+
+
 \begin{frame}[fragile]
 \vfill
 \begin{bitemize}{Základní proudy pro práci se soubory, pamětí, \ldots}
