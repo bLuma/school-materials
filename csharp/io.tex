@@ -20,6 +20,8 @@
 \hkapitola{Input/output}
 
 
+\kapitola{Souborový systém}
+
 
 \begin{frame}[fragile]
 \begin{bitemize}{Abstrakce souborového systému}
@@ -45,12 +47,12 @@
 \begin{frame}[fragile]
 \begin{yesblock}
 \begin{lstlisting}
-if (File.Exists(".\\file.txt"))
+if (File.Exists(@".\file.txt"))
 {
     // ...
 }
 
-FileInfo file = new FileInfo(".\\file.txt");
+FileInfo file = new FileInfo(@".\file.txt");
 if (file.Exists)
 {
     // ...
@@ -60,10 +62,10 @@ if (file.Exists)
 \vfill
 \begin{yesblock}
 \begin{lstlisting}
-FileStream fs = File.Create(".\\created.txt");
+FileStream fs = File.Create(@".\created.txt");
 fs.Close();
 
-FileStream fsInstance = new FileInfo(".\\created.txt").Create();
+FileStream fsInstance = new FileInfo(@".\created.txt").Create();
 fsInstance.Close();
 \end{lstlisting}
 \end{yesblock}
@@ -75,7 +77,7 @@ fsInstance.Close();
 \begin{frame}[fragile]
 \begin{yesblock}
 \begin{lstlisting}
-DirectoryInfo di = new DirectoryInfo(".\\");
+DirectoryInfo di = new DirectoryInfo(@".\");
 foreach (FileInfo file in di.EnumerateFiles())
 {
     Console.WriteLine($"{file.Name} - {file.Extension} - {file.LastAccessTime}");
@@ -92,7 +94,7 @@ created.txt - .txt - 11.03.2018 10:23:01
 \vfill
 \begin{yesblock}
 \begin{lstlisting}
-DirectoryInfo di = new DirectoryInfo(".\\nonExistentDirectory");
+DirectoryInfo di = new DirectoryInfo(@".\nonExistentDirectory");
 di.Create();
 
 Console.WriteLine(di.FullName);
@@ -116,11 +118,24 @@ Console.WriteLine($"{fs} - free {freeInGB} / {sizeInGB} GB");
 // NTFS - free 125 / 432 GB
 \end{lstlisting}
 \end{yesblock}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+DriveInfo[] drives = DriveInfo.GetDrives();
+foreach (DriveInfo drive in drives)
+{
+    Console.WriteLine($"{drive.Name} - {drive.DriveFormat} - {drive.DriveType}");
+}
+
+// C:\ - NTFS - Fixed
+// D:\ - NTFS - Fixed
+\end{lstlisting}
+\end{yesblock}
 \end{frame}
 
 
 
-
+\kapitola{Proudy}
 
 
 
@@ -169,7 +184,51 @@ Console.WriteLine($"{fs} - free {freeInGB} / {sizeInGB} GB");
 \end{frame}
 
 
+\pkapitola{Zápis a čtení textových dat}
 
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{Zápis a čtení textových dat}
+\item Třídy \lstinline|StreamWriter|, \lstinline|StreamReader|
+\item pracují nad obecným proudem (soubor, paměť, síť, \ldots)
+\item kódování znaků je volitelné
+\begin{itemize}
+\item výchozí kódování je UTF-8
+\end{itemize}
+\end{bitemize}
+\vfill
+\begin{bitemize}{Základní metody}
+\item \lstinline|Write()| -- zápis znaku/znaků/hodnoty základních dat. typů
+\item \lstinline|WriteLine()| -- zápis řádku textu
+\item \lstinline|Read()| -- načtení znaku nebo pole znaků
+\item \lstinline|ReadLine()| -- načtení řádku
+\end{bitemize}
+\vfill
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{StreamWriter -- konstrukce}
+\item \lstinline|StreamWriter(Stream stream)|
+\item \lstinline|StreamWriter(string path)|
+\item \lstinline|StreamWriter(Stream stream, Encoding encoding)|
+\item \lstinline|StreamWriter(string path, bool append)|
+\item \ldots
+\end{bitemize}
+\vfill
+\begin{bitemize}{StreamReader -- konstrukce}
+\item \lstinline|StreamReader(Stream stream)|
+\item \lstinline|StreamReader(Stream stream, bool detectEncodingFromByteOrderMarks)|
+\item \lstinline|StreamReader(Stream stream, Encoding encoding)|
+\item \lstinline|StreamReader(Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks)|
+\item dtto se \lstinline|string path| \ldots
+\end{bitemize}
+\vfill
+\end{frame}
 
 
 
@@ -223,25 +282,70 @@ string tillTheEnd = reader.ReadToEnd();
 
 
 
+
+
+
 \begin{frame}[fragile]
-\vfill
-\begin{bitemize}{StreamWriter -- konstrukce}
-\item \lstinline|StreamWriter(Stream stream)|
-\item \lstinline|StreamWriter(string path)|
-\item \lstinline|StreamWriter(Stream stream, Encoding encoding)|
-\item \lstinline|StreamWriter(string path, bool append)|
-\item \ldots
+\begin{bitemize}{Kódování textu}
+\item Třída \lstinline|System.Text.Encoding|
+\item Vlastnosti:
+\begin{itemize}
+\item \lstinline|ASCII| - ASCII kódování, bez podpory rozšířených znaků
+\item \lstinline|BigEndianUnicode| -- UTF-16 Big Endian
+\item \lstinline|Default| -- výchozí pro aktuální platformu (Windows - cp1250/windows-1250/iso-8859-2)
+\item \lstinline|Unicode| -- UTF-16 Little Endian
+\item \lstinline|UTF32| -- UTF-32 Little Endian
+\item \lstinline|UTF7| -- UTF-7
+\item \lstinline|UTF8| -- UTF-8
+\end{itemize}
+\item Statické metody
+\begin{itemize}
+\item \lstinline|Convert(...)| -- převede pole bajtů ze zadaného kódování do cílového
+\item \lstinline|GetEncoding(...)| -- vrátí kódování podle označení nebo čísla kódové stránky
+\item \lstinline|GetEncodings()| -- vrátí pole všech použitelných kódování
+\end{itemize}
+
 \end{bitemize}
-\vfill
-\begin{bitemize}{StreamReader -- konstrukce}
-\item \lstinline|StreamReader(Stream stream)|
-\item \lstinline|StreamReader(Stream stream, bool detectEncodingFromByteOrderMarks)|
-\item \lstinline|StreamReader(Stream stream, Encoding encoding)|
-\item \lstinline|StreamReader(Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks)|
-\item dtto se \lstinline|string path| \ldots
-\end{bitemize}
-\vfill
 \end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Kódování textu}
+\begin{yesblock}
+\begin{lstlisting}
+// zápis v UTF-16 Little Endian
+using (StreamWriter sw = new StreamWriter(File.OpenWrite("unicode.txt"), Encoding.Unicode)) {
+    sw.WriteLine("Příliš žluťoučký kůň úpěl dábělské ódy");
+}
+
+// false - nedetekuj kódování z BOM hlavičky souboru
+// provede čtení v UTF-8
+using (StreamReader sr = new StreamReader(File.OpenRead("unicode.txt"), false))
+{
+    Console.WriteLine(sr.ReadLine());
+    // ??P Y?? l i a?  ~?l u e?o u
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\pkapitola{Zápis a čtení binárních dat}
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Binární soubory}
+\item pro práci s binárními soubory slouží třídy \lstinline|BinaryWriter|, \lstinline|BinaryReader|
+\item nabízejí metody pro čtení a zápis všech primitivních datových typů
+\item[]
+\item C\# dále nabízí možnosti serializace nebo i možnost práce s unmanaged memory
+
+\end{bitemize}
+\end{frame}
+
 
 
 
@@ -282,6 +386,122 @@ using (var reader = new BinaryReader(new FileStream("binary.dat", FileMode.Open)
 
     byte[] buffer = new byte[16];
     reader.Read(buffer, 0, buffer.Length);
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\nezkouskove
+
+\begin{frame}[fragile]
+\vfill
+\begin{bonusblock}{~}
+\begin{itemize}
+\item ukázka použití unmanaged memory a marshallingu
+\end{itemize}
+\end{bonusblock}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+// třída nemá ve výchozím chování pevnou strukturu, proto je třeba ji označit atributem
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+class Student
+{
+    // rovněž je možné specifikovat konkrétní způsob marshallingu jednotlivých datových složek
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 50)]
+    private string name;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 50)]
+    private string lastName;
+    [MarshalAs(UnmanagedType.I4)]
+    private int id;
+
+    // ...
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+using (FileStream fs = File.OpenWrite("binary.dat"))
+{
+    Student student = new Student()
+    {
+        Name = "Petr",
+        LastName = "Rychly",
+        Id = 1234
+    };
+
+    var size = Marshal.SizeOf(student); // velikost struktury
+
+    var ptr = Marshal.AllocHGlobal(size); // alokace unmanaged pole
+    Marshal.StructureToPtr(student, ptr, false); 
+
+    var bytes = new byte[size]; // managed pole pro uložení struktury
+    Marshal.Copy(ptr, bytes, 0, size); // copy unmanaged -> managed
+    Marshal.FreeHGlobal(ptr); // uvolnění pole
+
+    fs.Write(bytes, 0, size);
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+using (FileStream fs = File.OpenRead("binary.dat"))
+{
+    Student student = new Student();
+
+    var size = Marshal.SizeOf<Student>();
+
+    var bytes = new byte[size];
+    fs.Read(bytes, 0, size);
+
+    var ptr = Marshal.AllocHGlobal(size);
+    Marshal.Copy(bytes, 0, ptr, size);
+    Marshal.PtrToStructure(ptr, student);
+    Marshal.FreeHGlobal(ptr);
+
+    Console.WriteLine($"{student.Name} {student.LastName} {student.Id}");
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\zkouskove
+
+
+\pkapitola{Paměťové proudy}
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Paměťové proudy}
+\item realizovány třídou \lstinline|MemoryStream|
+\item na pozadí používají pole bajtů (\lstinline|byte[]|), může být fixní délky nebo rozšířitelné
+\item podporuje základní \lstinline|Write()| a \lstinline|Read()| operace
+\item po ukončení zápisu lze pole získat pomocí met. \lstinline|ToArray()| nebo zapsat obsah do jiného proudu pomocí \lstinline|WriteTo(stream)|
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+using (MemoryStream ms = new MemoryStream())
+{
+    for (int i = 0; i < 256; i++)
+        ms.WriteByte((byte)i);
+
+    using (FileStream fs = File.OpenWrite("bytes.dat"))
+    {
+        ms.WriteTo(fs);
+    }
 }
 \end{lstlisting}
 \end{yesblock}
