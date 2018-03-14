@@ -506,3 +506,286 @@ using (MemoryStream ms = new MemoryStream())
 \end{lstlisting}
 \end{yesblock}
 \end{frame}
+
+
+
+\kapitola{Serializace}
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Serializace}
+\item metoda pro převedení objektu(ů) do přenositelné podoby (textová/binární)
+\item při serializaci je převáděn kompletní objektový graf
+\item C\# podporuje několik základních druhů serializátorů
+\begin{itemize}
+\item binární formát 
+\begin{itemize}
+\item \lstinline|System.Runtime.Serialization.Formatters.Binary.BinaryFormatter|
+\end{itemize}
+
+\item XML
+\begin{itemize}
+\item \lstinline|System.Xml.Serialization.XmlSerializer|
+\item \lstinline|System.Runtime.Serialization.DataContractSerializer|
+\end{itemize}
+
+\item SOAP
+\begin{itemize}
+\item \lstinline|System.Runtime.Serialization.Formatters.Soap.SoapFormatter|
+\end{itemize}
+
+\end{itemize}
+\end{bitemize}
+\end{frame}
+
+
+\pkapitola{Binární / SOAP serializace}
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Birnání / SOAP serializace}
+\item serializovatelná třída nebo struktura musí být označena atributem \lstinline|Serializable|
+\item datové složky, které se nemají serializovat lze označit \lstinline|Nonserialized|
+\item datové složky, které se budou serializovat musí být serializovatelné (atribut \lstinline|Serializable|) jinak dojde k výjimce \lstinline|SerializationException|
+\item serializují se všechny datové složky (i privátní), vlastnosti se neserializují
+\item základní třídy a typy (\lstinline|string|, kolekce) jsou serializovatelné
+\end{bitemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{System.Runtime.Serialization.Formatters.Binary.BinaryFormatter}
+\item základní metody:
+\begin{itemize}
+\item \lstinline|void Serialize(Stream serializationStream, object graph)|
+\item \lstinline|object Deserialize(Stream serializationStream)|
+\end{itemize}
+
+\end{bitemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+[Serializable] // označení serializovatelné třídy
+public class TestClass
+{
+    public int Property { get; set; }
+    private int attribute;
+
+    public TestClass(int attr)
+    {
+        attribute = attr;
+    }
+
+    public override string ToString()
+    {
+        return $"{Property} {attribute}";
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+BinaryFormatter bf = new BinaryFormatter();
+using (FileStream fs = File.OpenWrite("serialize.dat"))
+{
+    TestClass savedObject = new TestClass(10)
+    {
+        Property = 123
+    };
+
+    bf.Serialize(fs, savedObject);
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+BinaryFormatter bf = new BinaryFormatter();
+using (FileStream fs = File.OpenRead("serialize.dat"))
+{
+    TestClass loadedObject = (TestClass)bf.Deserialize(fs);
+    Console.WriteLine(loadedObject);
+    // 123 10
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+[Serializable]
+public class TestGraphObject
+{
+    public TestClass SerializedProperty { get; set; }
+
+    // zakázání serializace tohoto atributu (nelze použít na vlastnost)
+    [NonSerialized] 
+    private TestClass nonSerializedAttribute;
+
+    public TestClass NonSerializedProperty
+    {
+        get { return nonSerializedAttribute; }
+        set { nonSerializedAttribute = value; }
+    }
+
+    public override string ToString()
+    {
+        return $"SP: {SerializedProperty} NSP: {NonSerializedProperty}";
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+BinaryFormatter bf = new BinaryFormatter();
+using (FileStream fs = File.OpenWrite("serialize.dat"))
+{
+    TestClass savedObject = new TestClass(10) { Property = 123 };
+    TestClass unsavedObject = new TestClass(-4) { Property = 999 };
+    TestGraphObject tgo = new TestGraphObject()
+    {
+        SerializedProperty = savedObject,
+        NonSerializedProperty = unsavedObject
+    };
+
+    bf.Serialize(fs, tgo);
+}      
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+using (FileStream fs = File.OpenRead("serialize.dat"))
+{
+    TestGraphObject loadedObject = (TestGraphObject)bf.Deserialize(fs);
+    Console.WriteLine(loadedObject);
+    // SP: 123 10 NSP:
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Přizpůsobení serializace -- rozhraní ISerializable}
+\item rozhraní \lstinline|ISerializable| umožňuje přizpůsobit serializaci vlastním potřebám
+\item při serializaci je vyvolána metoda rozhraní \lstinline|GetObjectData(SerializationInfo info, StreamingContext context)|, která slouží k uložení informací o serializovaném objektu
+\begin{itemize}
+\item \lstinline|SerializationInfo| slouží k předání serializovaných hodnot
+\item \lstinline|StreamingContext| může nést dodatečné informace použitelné pro (de)serializaci
+\end{itemize}
+
+\item objekt je rekonstruován pomocí konstruktoru \lstinline|Třída(SerializationInfo info, StreamingContext context)|
+\begin{itemize}
+\item konstruktor by měl být chráněný, u zapečetěné třídy může být soukromý
+\end{itemize}
+
+\end{bitemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+[Serializable]
+public class TestClass : ISerializable
+{
+    public int Property { get; set; } private int attribute;
+    // ...
+
+    protected TestClass(SerializationInfo info, StreamingContext context)
+    {
+        Property = info.GetInt32("my-property");
+        attribute = info.GetInt32("my-attribute");
+    }
+
+    public void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        info.AddValue("my-property", Property);
+        info.AddValue("my-attribute", attribute);
+    }
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{Přizpůsobení serializace -- atributy}
+\item od C\# 2 je také možné definovat metody anotované atributy:
+\begin{itemize}
+\item \lstinline|OnSerializing|
+\item \lstinline|OnSerialized|
+\item \lstinline|OnDeserializing|
+\item \lstinline|OnDeserialized|
+\end{itemize}
+
+\item metody musí být předpisu: \lstinline|void Metoda(StreamingContext context)|
+
+\end{bitemize}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+[Serializable]
+public class TestClass
+{
+    [OnSerializing]
+    void HandleOnSerializing(StreamingContext context) => 
+        Console.WriteLine("On serializing...");
+        
+    [OnSerialized]
+    void HandleOnSerialized(StreamingContext context) => 
+        Console.WriteLine("On serialized...");
+        
+    [OnDeserializing]
+    void HandleOnDeserializing(StreamingContext context) => 
+        Console.WriteLine("On deserializing...");
+        
+    [OnDeserialized]
+    void HandleOnDeserialized(StreamingContext context) => 
+        Console.WriteLine("On deserialized...");
+}
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\pkapitola{XmlSerializer}
+
+
+\begin{frame}[fragile]
+\begin{bitemize}{XmlSerializer}
+\item ...
+\end{bitemize}
+\end{frame}
