@@ -77,7 +77,7 @@ fsInstance.Close();
 \begin{frame}[fragile]
 \begin{yesblock}
 \begin{lstlisting}
-DirectoryInfo di = new DirectoryInfo(@".\");
+DirectoryInfo di = new DirectoryInfo(".\\");
 foreach (FileInfo file in di.EnumerateFiles())
 {
     Console.WriteLine($"{file.Name} - {file.Extension} - {file.LastAccessTime}");
@@ -506,6 +506,64 @@ using (MemoryStream ms = new MemoryStream())
 \end{lstlisting}
 \end{yesblock}
 \end{frame}
+
+
+
+\kapitola{Příklad komprese a dekomprese}
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+string str = "Testování deflate komprese";
+int randomLen = 1024 * 1024;
+
+long originalLength = Encoding.Default.GetBytes(str).Length + randomLen;
+Console.WriteLine($"Original len: {originalLength}");
+
+using (var fileStream = File.OpenWrite("compressed.dat"))
+{
+    using (var deflateStream = new DeflateStream(fileStream, CompressionMode.Compress))
+    {
+        using (var stream = new StreamWriter(deflateStream))
+        {
+            stream.WriteLine(str);
+
+            Random random = new Random();
+            for (int i = 0; i < randomLen; i++)
+                stream.Write((char)random.Next('a', 'z'));
+}   }   }
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{yesblock}
+\begin{lstlisting}
+long length = new FileInfo("compressed.dat").Length;
+Console.WriteLine($"Compressed len: {length}");
+Console.WriteLine($"Compression ratio: {length/(double)originalLength*100} %");
+
+using (var fileStream = File.OpenRead("compressed.dat"))
+{
+    using (var deflateStream = new DeflateStream(fileStream, CompressionMode.Decompress))
+    {
+        using (var stream = new StreamReader(deflateStream))
+        {
+            Console.WriteLine(stream.ReadLine());
+            Console.ReadKey();
+            Console.WriteLine(stream.ReadLine());
+} } }
+// Original len: 1048602
+// Compressed len: 664080
+// Compression ratio: 63,3300337020147 %
+\end{lstlisting}
+\end{yesblock}
+\end{frame}
+
+
+
 
 
 

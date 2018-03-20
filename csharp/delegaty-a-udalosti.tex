@@ -647,13 +647,43 @@ private static void TimerTickHandler(object sender, EventArgs eventArgs) => Cons
 
 
 
+\begin{frame}[fragile]
+\vfill
+\begin{bitemize}{Předávání parametrů událostí}
+\item druhý parametr delegáta je typu \lstinline|EventArgs| nebo jeho potomkem
+\begin{itemize}
+\item pomocí vlastního potomka můžeme předat parametry události
+\end{itemize}
+
+\end{bitemize}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+class TickEventArgs : EventArgs 
+{
+    public int Interval { get; set; }
+    public long TotalElapsed { get; set; }
+    
+    // ...
+}
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\begin{yesblock}
+\begin{lstlisting}
+delegate void TickEventHandler(object sender, TickEventArgs eventArgs);
+\end{lstlisting}
+\end{yesblock}
+\vfill
+\end{frame}
+
 
 
 \begin{frame}[fragile]
 \vfill
 \begin{bitemize}{Událost jako vlastnost}
 \item událost může být definována jako vlastnost
-\item vlastnost pak nabízí akce \lstinline|add| a \lstinline|remove| pro zpracování operátorů +=, -=
+\item vlastnost pak nabízí akce \lstinline[morekeywords={add,remove,value}]|add| a \lstinline[morekeywords={add,remove,value}]|remove| pro zpracování operátorů +=, -=
 \end{bitemize}
 \vfill
 \begin{yesblock}
